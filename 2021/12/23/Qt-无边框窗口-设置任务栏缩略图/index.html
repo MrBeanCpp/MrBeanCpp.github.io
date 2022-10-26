@@ -1,0 +1,799 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Qt-无边框窗口 设置任务栏缩略图 with Qt API &amp; Windows API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt-无边框窗口 设置任务栏缩略图">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2021/12/23/Qt-%E6%97%A0%E8%BE%B9%E6%A1%86%E7%AA%97%E5%8F%A3-%E8%AE%BE%E7%BD%AE%E4%BB%BB%E5%8A%A1%E6%A0%8F%E7%BC%A9%E7%95%A5%E5%9B%BE/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Qt-无边框窗口 设置任务栏缩略图 with Qt API &amp; Windows API">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20211223155027008.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20211223163614109.png">
+<meta property="article:published_time" content="2021-12-23T07:38:22.000Z">
+<meta property="article:modified_time" content="2022-01-30T14:07:56.050Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20211223155027008.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Qt-无边框窗口 设置任务栏缩略图 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt-无边框窗口 设置任务栏缩略图"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-12-23 15:38" pubdate>
+          2021年12月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          4.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          40 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Qt-无边框窗口 设置任务栏缩略图</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年1月30日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p><strong>任务栏缩略图</strong>可以在不激活窗口的状态下提供窗口的缩略信息</p>
+<p>对于音乐播放器等软件，尤其重要，不仅可以增加观感，还能添加控制按钮</p>
+<p>是专业程序员的不二之选</p>
+<h2 id="且"><a href="#且" class="headerlink" title="且"></a>且</h2><p>都1202年了，不会还有人不用<code>无边框窗口(Framless)</code>吧</p>
+<h2 id="でも"><a href="#でも" class="headerlink" title="でも"></a>でも</h2><p><code>Qt</code>自带的<code>QWinThumbnailToolBar</code>类是可以很方便地进行任务栏缩略图的控制</p>
+<p>但是，对于无边框窗口，貌似出现了一些问题：</p>
+<ul>
+<li>缩略图周围出现了[类似标题栏的边框] 导致图片错位 十分影响美观</li>
+</ul>
+<p><img src="/img/image-20211223155027008.png" srcset="/img/loading.gif" lazyload alt="错位边框"></p>
+<p>在仔细阅读了<code>Qt</code>文档后，并没有什么收获，该类十分简洁，并无多于函数可供操作</p>
+<p>焯</p>
+<h2 id="止まるんじゃねよ"><a href="#止まるんじゃねよ" class="headerlink" title="止まるんじゃねよ"></a>止まるんじゃねよ</h2><blockquote>
+<p>不要停下来啊 团长！</p>
+</blockquote>
+<p>毕竟<code>Qt</code>还是封装的<code>Windows API</code></p>
+<p>所以还得从<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/shell/taskbar-extensions?redirectedfrom=MSDN"><code>Windows API</code></a>文档入手</p>
+<p>在搜寻了关于<code>TaskBar</code>的内容后，我找到了这样一个函数：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/dwmapi/nf-dwmapi-dwmseticonicthumbnail"><code>DwmSetIconicThumbnail</code></a></p>
+<p>这个函数与Qt-<code>QWinThumbnailToolBar::setIconicThumbnailPixmap</code>不能说很像，简直就是同父异母</p>
+<h2 id="DwmSetIconicThumbnail"><a href="#DwmSetIconicThumbnail" class="headerlink" title="DwmSetIconicThumbnail"></a>DwmSetIconicThumbnail</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">HRESULT <span class="hljs-title">DwmSetIconicThumbnail</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">  [in] HWND    hwnd,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in] HBITMAP hbmp,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in] DWORD   dwSITFlags</span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>重点在于最后一个参数 <code>dwSITFlags</code>：</p>
+<ul>
+<li>0 (0x00000000) - 提供的缩略图周围不显示任何<strong>框架</strong></li>
+<li>DWM_SIT_DISPLAYFRAME (0x00000001) - 在提供的缩略图周围显示一个<strong>框架</strong></li>
+</ul>
+<p>主要就在于这个参数中的<strong>框架</strong>二字，联想我们之前出现的错位情况，那可不就是多了一个<strong>框架</strong>嘛</p>
+<p>那么只要将参数设置为<strong>0</strong>，不就可以解决了嘛</p>
+<h2 id="根源"><a href="#根源" class="headerlink" title="根源"></a>根源</h2><p>可是，<code>Qt</code> 为什么会出现这样的问题，难道是！</p>
+<p>说罢，我便去查阅了<a target="_blank" rel="noopener" href="https://code.woboq.org/qt5/qtwinextras/src/winextras/qwinthumbnailtoolbar.cpp.html#_ZN27QWinThumbnailToolBarPrivate21updateIconicThumbnailEPKi"><code>Qt</code>源码</a>：</p>
+<p>やはり啊</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">QWinThumbnailToolBarPrivate::updateIconicThumbnail</span><span class="hljs-params">(<span class="hljs-type">const</span> MSG *message)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!iconicThumbnail)<br>        <span class="hljs-keyword">return</span>;<br>    <span class="hljs-function"><span class="hljs-type">const</span> QSize <span class="hljs-title">maxSize</span><span class="hljs-params">(HIWORD(message-&gt;lParam), LOWORD(message-&gt;lParam))</span></span>;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-type">const</span> HBITMAP bitmap = iconicThumbnail.<span class="hljs-built_in">bitmap</span>(maxSize)) &#123;<br>        <span class="hljs-type">const</span> HRESULT hr = <span class="hljs-built_in">DwmSetIconicThumbnail</span>(message-&gt;hwnd, bitmap, dWM_SIT_DISPLAYFRAME);<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">FAILED</span>(hr))<br>            <span class="hljs-built_in">qWarning</span>() &lt;&lt; QWinThumbnailToolBarPrivate::<span class="hljs-built_in">msgComFailed</span>(<span class="hljs-string">&quot;DwmSetIconicThumbnail&quot;</span>, hr);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意观察第7行：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> HRESULT hr = <span class="hljs-built_in">DwmSetIconicThumbnail</span>(message-&gt;hwnd, bitmap, dWM_SIT_DISPLAYFRAME);<br></code></pre></td></tr></table></figure>
+
+<p>最后一个参数 写死了 <code>dWM_SIT_DISPLAYFRAME</code></p>
+<p>导致强制产生边框，与<code>无边框窗口</code> 产生冲突</p>
+<p>而且还不提供接口修改参数</p>
+<p><code>Qt</code>程序员也太不走心了吧</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>那咋办</p>
+<p>其实哈，与<code>Windows API</code>打交道是很烦人的一件事</p>
+<p>所以，能少写就少写，尽量用<code>Qt</code>封装的类</p>
+<p>だから、我们将采用<code>Qt API</code>与<code>Windows API</code>结合的方式 完成缩略图</p>
+<p>毕竟 就只有<code>setIconicThumbnailPixmap</code>这一个函数写得不好嘛</p>
+<p>我们只要用<code>DwmSetIconicThumbnail</code>代替它即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++">HBITMAP hbm = QtWin::<span class="hljs-built_in">toHBITMAP</span>(pixmap.<span class="hljs-built_in">scaled</span>(maxSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));<br><span class="hljs-keyword">if</span> (hbm) &#123;<br>    HRESULT hr = <span class="hljs-built_in">DwmSetIconicThumbnail</span>((HWND)<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">winId</span>(), hbm, <span class="hljs-number">0</span>);<br>    <span class="hljs-built_in">DeleteObject</span>(hbm);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="困难总比办法多"><a href="#困难总比办法多" class="headerlink" title="困难总比办法多"></a>困难总比办法多</h2><p>即可？什么<code>TM</code>的叫<code>TM</code>的即可</p>
+<p>想在<code>Qt</code>中使用这样一个冷门的<code>Windows API</code>可不容易</p>
+<h3 id="头文件：dwmapi-h"><a href="#头文件：dwmapi-h" class="headerlink" title="+头文件：dwmapi.h"></a>+头文件：<code>dwmapi.h</code></h3><blockquote>
+<p>Error：undefined function 缺少定义</p>
+</blockquote>
+<p>What，不是加了头文件吗，一看，由于 <code>_WIN32_WINNT</code> 数值过低（版本不足）,导致定义屏蔽</p>
+<h3 id="头文件中覆盖宏定义："><a href="#头文件中覆盖宏定义：" class="headerlink" title="头文件中覆盖宏定义："></a>头文件中覆盖宏定义：</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">define</span> WINVER 0x0A00</span><br><span class="hljs-meta">#<span class="hljs-keyword">define</span> _WIN32_WINNT 0x0A00 <span class="hljs-comment">//Win10</span></span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Error：undefined reference 缺少引用（需要链接库）</p>
+</blockquote>
+<h3 id="pro：LIBS-lDwmapi-lGdi32"><a href="#pro：LIBS-lDwmapi-lGdi32" class="headerlink" title="+.pro：LIBS += -lDwmapi -lGdi32"></a>+.pro：<code>LIBS += -lDwmapi -lGdi32</code></h3><p>这就完了？Nonono</p>
+<p>缩略图大小是有限制的，<code>Windows</code>不会自动帮你缩放</p>
+<p>那么如何知道大小限制</p>
+<p>答：在<code>Windows</code>传递的native Message中有</p>
+<p>但是很可惜 我们用了<code>QWinThumbnailToolBar</code>，导致事件被拦截，我们无法获取</p>
+<p><strong>焯</strong></p>
+<p>什么叫寄人篱下</p>
+<p><strong>寄</strong></p>
+<p>这时候就只能想点偷鸡摸狗的办法了</p>
+<p><code>DwmSetIconicThumbnail</code>函数的返回值可以标识调用是否成功</p>
+<p>图片过大则不成功</p>
+<p><code>Size</code>从大到小开始遍历，直到返回<code>S_OK</code></p>
+<h2 id="我滴任务，完成啦！啊哈哈哈哈"><a href="#我滴任务，完成啦！啊哈哈哈哈" class="headerlink" title="我滴任务，完成啦！啊哈哈哈哈"></a>我滴任务，完成啦！啊哈哈哈哈</h2><p><img src="/img/image-20211223163614109.png" srcset="/img/loading.gif" lazyload alt="成品"></p>
+<h2 id="TNND-跟我玩阴的是吧"><a href="#TNND-跟我玩阴的是吧" class="headerlink" title="TNND 跟我玩阴的是吧"></a>TNND 跟我玩阴的是吧</h2><p>遍历Size会导致耗时过长，导致缩略图刷新不及时，显示为空白（需要鼠标移动刷新）</p>
+<p><strong>焯</strong></p>
+<p>根源还是在于获取不到<code>maxSize</code>（<code>Qt</code>类获取<code>NativeEvent</code>后<code>return true</code> 拦截消息 不再传递）</p>
+<p>所以还是得想办法以高优先级 获取<code>NativeEvent</code></p>
+<h2 id="直接来吧"><a href="#直接来吧" class="headerlink" title="直接来吧"></a>直接来吧</h2><p>参考<code>Qt</code>源码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++">QCoreApplication::<span class="hljs-built_in">instance</span>()-&gt;<span class="hljs-built_in">installNativeEventFilter</span>(<span class="hljs-keyword">this</span>);<br></code></pre></td></tr></table></figure>
+
+<p>要想以高优先级获取<code>NativeEvent</code>必须<code>installNativeEventFilter</code>并且重载<code>nativeEventFilter</code>函数</p>
+<p>但要想重载这个函数，就必须实现<code>QAbstractNativeEventFilter</code>接口</p>
+<p>在<code>C++</code>中，采用多继承实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Widget</span> : <span class="hljs-keyword">public</span> QWidget, <span class="hljs-keyword">public</span> QAbstractNativeEventFilter<br></code></pre></td></tr></table></figure>
+
+<p>关于<code>installNativeEventFilter</code></p>
+<blockquote>
+<p>If multiple event filters are installed, the filter that was installed last is activated first.</p>
+<p>也就是如果多个filter被安装，则后安装的先激活</p>
+</blockquote>
+<p>我们要与<code>QWinThumbnailBar</code>竞争所以必须在其之后安装，也就是在它构造之后</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++">QWinThumbnailToolBar* thumbbar = <span class="hljs-keyword">new</span> <span class="hljs-built_in">QWinThumbnailToolBar</span>(<span class="hljs-keyword">this</span>);<br>qApp-&gt;<span class="hljs-built_in">installNativeEventFilter</span>(<span class="hljs-keyword">this</span>); <span class="hljs-comment">//后安装filter的先获取nativeEvent 所以在↑构造之后</span><br></code></pre></td></tr></table></figure>
+
+<p>这样，在<code>nativeEventFilter</code>中就可以接收到请求缩略图和实时预览图的消息了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Widget::nativeEventFilter</span><span class="hljs-params">(<span class="hljs-type">const</span> QByteArray&amp; eventType, <span class="hljs-type">void</span>* message, <span class="hljs-type">long</span>* result)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">const</span> MSG* msg = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">const</span> MSG*&gt;(message);<br>    <span class="hljs-keyword">switch</span> (msg-&gt;message) &#123;<br>    <span class="hljs-keyword">case</span> WM_DWMSENDICONICTHUMBNAIL: &#123;<br>        <span class="hljs-function"><span class="hljs-type">const</span> QSize <span class="hljs-title">maxSize</span><span class="hljs-params">(HIWORD(msg-&gt;lParam), LOWORD(msg-&gt;lParam))</span></span>;<span class="hljs-comment">//获取最大Size</span><br>        <span class="hljs-built_in">setThumbnailPixmap</span>(pixmap, maxSize);<br>   	&#125;<br>    	<span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> WM_DWMSENDICONICLIVEPREVIEWBITMAP:<br>        <span class="hljs-built_in">setLivePreviewPixmap</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">grab</span>());<span class="hljs-comment">//实时预览图 没有大小限制 直接截图</span><br>        <span class="hljs-keyword">break</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>原本的信号连接就可以删了，但是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++">thumbbar-&gt;<span class="hljs-built_in">setIconicPixmapNotificationsEnabled</span>(<span class="hljs-literal">true</span>); <span class="hljs-comment">//进行一些属性设置，否则不能设置缩略图</span><br></code></pre></td></tr></table></figure>
+
+<p>这句话还是得留着的↑</p>
+<h2 id="我滴任务-又完成啦-啊哈哈哈哈"><a href="#我滴任务-又完成啦-啊哈哈哈哈" class="headerlink" title="我滴任务 又完成啦 啊哈哈哈哈"></a>我滴任务 又完成啦 啊哈哈哈哈</h2><hr>
+<h2 id="ちょっと待って-2022-1-30"><a href="#ちょっと待って-2022-1-30" class="headerlink" title="ちょっと待って(2022.1.30)"></a>ちょっと待って(2022.1.30)</h2><p>既然是对类的修正 就应该封装为类</p>
+<p>重点就是：</p>
+<ul>
+<li>继承<code>QAbstractNativeEventFilter</code></li>
+<li>安装过滤器 <code>QCoreApplication::instance()-&gt;installNativeEventFilter(this);</code></li>
+<li>重载<code>nativeEventFilter</code>并捕获<code>WM_DWMSENDICONICTHUMBNAIL</code>消息</li>
+<li>重写<code>setIconicThumbnailPixmap</code>，采用<code>Windows API(DwmSetIconicThumbnail)</code></li>
+</ul>
+<p>注：删去对<code>WM_DWMSENDICONICLIVEPREVIEWBITMAP</code>的捕获，没必要，直接用原生的即可</p>
+<h2 id="附：Qt源码"><a href="#附：Qt源码" class="headerlink" title="附：Qt源码"></a>附：Qt源码</h2><p><a target="_blank" rel="noopener" href="https://code.woboq.org/qt5/qtwinextras/src/winextras/qwinthumbnailtoolbar.cpp.html">https://code.woboq.org/qt5/qtwinextras/src/winextras/qwinthumbnailtoolbar.cpp.html</a></p>
+<h2 id="附：QtWinThumbnailToolBar原理浅析-Qt源码"><a href="#附：QtWinThumbnailToolBar原理浅析-Qt源码" class="headerlink" title="附：QtWinThumbnailToolBar原理浅析(Qt源码)"></a>附：QtWinThumbnailToolBar原理浅析(Qt源码)</h2><p><code>Native</code>事件交给单独的<code>QWinThumbnailToolBarPrivate</code>类(继承自<code>QAbstractNativeEventFilter</code>)处理，本体持有其指针</p>
+<p>接收到<code>Native</code>事件后，开始更新缩略图（如果用<code>setIconicThumbnailPixmap</code>设置过的话）</p>
+<p>并<code>emit iconicThumbnailPixmapRequested</code>供用户更新缩略图</p>
+<p>如果要调用<code>Windows API</code>手动设置缩略图 就不能调用<code>setIconicThumbnailPixmap</code>否则会被覆盖</p>
+<p><code>setIconicLivePreviewPixmap</code>不进行实际更新</p>
+<p>实际更新在<code>Native Event</code>时<code>updateIconicLivePreview()</code></p>
+<p>所以我们在接收事件时必须往下传递，不能<code>return true</code>，否则没有代码去实现<code>LivePreview</code>了</p>
+<p># 其实根本没有必要重写与拦截<code>LivePreview</code>事件，用原生的就行</p>
+<p># 重写<code>Thumbail</code>就行</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/shell/taskbar-extensions?redirectedfrom=MSDN">任务栏扩展 - Win32 apps | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/win32/api/dwmapi/nf-dwmapi-dwmseticonicthumbnail">DwmSetIconicThumbnail 函数 (dwmapi.h) - Win32 应用 | 微软文档</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/cpp/porting/modifying-winver-and-win32-winnt?view=msvc-170">Update WINVER and _WIN32_WINNT | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/163yun/p/9711867.html">一个体验好的Windows 任务栏缩略图开发心得 - 网易数帆 - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://cpp.hotexamples.com/examples/-/-/DwmSetIconicThumbnail/cpp-dwmseticonicthumbnail-function-examples.html">C++ (Cpp) DwmSetIconicThumbnail Examples - HotExamples</a></p>
+<p><a target="_blank" rel="noopener" href="https://code.woboq.org/qt5/qtwinextras/src/winextras/qwinthumbnailtoolbar.cpp.html#_ZN27QWinThumbnailToolBarPrivate21updateIconicThumbnailEPKi">qwinthumbnailtoolbar.cpp source code [qtwinextras&#x2F;src&#x2F;winextras&#x2F;qwinthumbnailtoolbar.cpp] - Woboq Code Browser</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.coder.work/article/1239944">c++ - Qt::nativeEvent 调用 - IT工具网</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/nicai_xiaoqinxi/article/details/95251380">使用Qt接口获取Windows系统的事件_Qt君-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34179968/article/details/86336424?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-1.essearch_pc_relevant&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~default-1.essearch_pc_relevant">qt捕获全局windows消息_weixin_34179968的博客-CSDN博客</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt-无边框窗口 设置任务栏缩略图</div>
+      <div>https://mrbeanc.gitee.io/2021/12/23/Qt-无边框窗口-设置任务栏缩略图/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年12月23日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/02/01/%E6%B5%85%E6%9E%90std-function-std-bind/" title="浅析std::function &amp; std::bind">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">浅析std::function &amp; std::bind</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/30/WinPcap-in-Qt-_snprintf%E7%AD%89%E5%87%BD%E6%95%B0%E5%86%B2%E7%AA%81%E5%AE%9A%E4%B9%89%E9%97%AE%E9%A2%98/" title="WinPcap in Qt - _snprintf等函数冲突定义问题">
+                        <span class="hidden-mobile">WinPcap in Qt - _snprintf等函数冲突定义问题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

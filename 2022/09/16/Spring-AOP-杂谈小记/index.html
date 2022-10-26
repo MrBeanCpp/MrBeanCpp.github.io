@@ -1,0 +1,726 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Spring-AOP的一些注意事项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring-AOP 杂谈小记">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/09/16/Spring-AOP-%E6%9D%82%E8%B0%88%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Spring-AOP的一些注意事项">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-16T02:43:58.000Z">
+<meta property="article:modified_time" content="2022-09-16T04:50:08.984Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Spring">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="AOP">
+<meta property="article:tag" content="AspectJ">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Spring-AOP 杂谈小记 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Spring-AOP 杂谈小记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-16 10:43" pubdate>
+          2022年9月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Spring-AOP 杂谈小记</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年9月16日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>IOC(Inversion of Control)</code> &amp;&amp; <code>AOP(Aspect-Oriented Programming)</code>是<code>Spring</code>的两大核心</p>
+<p>而<code>AOP</code>又是基于<code>IOC</code>的</p>
+<p><code>AOP</code>，面向切面编程，是<code>OOP</code>（面向对象编程）的拓展和延伸，是设计模式中<strong>代理模式</strong>的一种实现</p>
+<p><code>OOP</code>通常只能对连续代码进行封装，而类似日志这样分散核心代码前后各处的非核心代码，却难以实现集中处理，是一大痛点</p>
+<p>官方一点就是：它将业务逻辑的各个部分进行隔离，使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，使开发人员在编写业务逻辑时可以专心于核心业务，从而提高了开发效率</p>
+<p>于是便有了<code>AOP</code></p>
+<p><code>Spring</code>的<code>AOP</code>基于<code>AspectJ</code>，具体底层实现有两种：</p>
+<ul>
+<li><code>JDK</code>原生动态代理（有接口的情况）：需要被代理的目标类必须实现接口，因为这个技术要求<strong>代理对象和目标对象实现同样的接口</strong>（兄弟两个拜把子模式）</li>
+<li><code>cglib</code>（无接口的情况）：通过<strong>继承被代理的目标类</strong>（认干爹模式）实现代理，所以不需要目标类实现接口，但是不能对<code>final</code>方法进行代理；其底层使用字节码处理框架<code>ASM</code>，来转换字节码并生成新的类（效率高于前者）</li>
+</ul>
+<h2 id="正片（叠底"><a href="#正片（叠底" class="headerlink" title="正片（叠底"></a>正片（叠底</h2><p>好的，上面都是官方废话</p>
+<p>前情提要啊，前情提要</p>
+<p>（略过切面的配置，你们都懂的对吧）</p>
+<p>现在的主要问题是如何使用<code>AOP</code>生成的代理类呢</p>
+<p>（我发现大部分都在讲怎么配置 没讲怎么用啊大哥）</p>
+<h3 id="有接口的情况（JDK动态代理）"><a href="#有接口的情况（JDK动态代理）" class="headerlink" title="有接口的情况（JDK动态代理）"></a>有接口的情况（JDK动态代理）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">test</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-type">ApplicationContext</span> <span class="hljs-variable">ioc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassPathXmlApplicationContext</span>(<span class="hljs-string">&quot;spring-context.xml&quot;</span>);<br>    <span class="hljs-type">Calculator</span> <span class="hljs-variable">cal</span> <span class="hljs-operator">=</span> ioc.getBean(Calculator.class); <br>    System.out.println(cal.div(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>好的，现在假装：我们有一个接口（<code>Calculator</code>）和一个实现类（<code>CalculatorImpl</code>）</p>
+<p>前面说了，<code>Spring</code>的<code>AOP</code>基于<code>IOC</code>，所以我们的目标类和代理类都是交给<code>IOC</code>管理的</p>
+<p>并且，我们将不能再通过<code>IOC</code>容器获取原始目标类（被从<code>IOC</code>中删除，可能是给代理类让位）</p>
+<p>好的，问题来了，我们要如何获取代理类呢？</p>
+<p>首先，我们不知道代理类的类名，其次不知道其<code>bean</code>的<code>id</code>，how to get it</p>
+<p><em>（插叙：其实通过<code>cal.getClass().getName()</code>可以获得类名，发现是动态生成的：<code>com.sun.proxy.$Proxy16</code>）</em></p>
+<p>但是，前面说了，代理类和目标类共同实现同一个接口，而且<code>IOC</code>容器可以智能地根据接口返回实现类（前提是实现类唯一）</p>
+<p>这可能就是<code>IOC</code>自动删除目标类<code>bean</code>的原因，这样我们就可以根据接口直接获取代理类了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Calculator</span> <span class="hljs-variable">cal</span> <span class="hljs-operator">=</span> ioc.getBean(Calculator.class); <br></code></pre></td></tr></table></figure>
+
+<p>但是捏，问题来了，如果实现类不唯一怎么办</p>
+<p>比如还有一个实现类：<code>CalculatorImpl2</code>也实现了<code>Calculator</code>接口</p>
+<p>那么<code>IOC</code>容器中将有两个代理类（实现了同一接口<code>Calculator</code>）</p>
+<p>这种情况下<code>ioc.getBean(Calculator.class)</code>就不知道返回哪一个实现类了，就会抛出异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">NoUniqueBeanDefinitionException<br></code></pre></td></tr></table></figure>
+
+<p>那我们在这种情况下该如何获取<code>CalculatorImpl</code>的代理类呢（大部分资料都没说aaaaa 气shi我啦）</p>
+<p>这种时候就需要回想一下<code>IOC</code>的知识了，在接口有多个实现类的情况下，我们如何获取指定实现类</p>
+<p>通过重载函数<code>getBean(String var1, Class&lt;T&gt; var2)</code>是吧，第一个参数是<code>bean id</code>，第二个是接口类</p>
+<p>那么此时，我们也可以通过这种方法标识实现类（毕竟直接通过<code>实现类.class</code>已经不行了对吧，deleted）</p>
+<h4 id="id？"><a href="#id？" class="headerlink" title="id？"></a>id？</h4><p>那么问题又来了，<code>id</code>是啥，如果是通过<code>xml</code>配置的，<code>id</code>就是自己写的</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;calImpl&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;com.mrbeanc.spring.aop.CalculatorImpl&quot;</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>如果是通过<code>@Component</code>注解控制的，那么默认<code>id</code>为类名的小驼峰，即<code>calculatorImpl</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Calculator</span> <span class="hljs-variable">cal</span> <span class="hljs-operator">=</span> ioc.getBean(<span class="hljs-string">&quot;calculatorImpl&quot;</span>, Calculator.class);<br></code></pre></td></tr></table></figure>
+
+<p>当然<code>@Component</code>也可以自定义<code>id</code>，like <code>@Component(&quot;calImpl&quot;)</code></p>
+<h4 id="这个故事告诉我们知识需要回顾和串联"><a href="#这个故事告诉我们知识需要回顾和串联" class="headerlink" title="这个故事告诉我们知识需要回顾和串联"></a>这个故事告诉我们知识需要回顾和串联</h4><h3 id="无接口（cglib继承实现子类）"><a href="#无接口（cglib继承实现子类）" class="headerlink" title="无接口（cglib继承实现子类）"></a>无接口（cglib继承实现子类）</h3><p>这种情况下直接通过目标类即可获取代理类（子类）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">CalculatorImpl</span> <span class="hljs-variable">cal</span> <span class="hljs-operator">=</span> ioc.getBean(<span class="hljs-string">&quot;calculatorImpl&quot;</span>);<br><span class="hljs-comment">//or</span><br><span class="hljs-type">CalculatorImpl</span> <span class="hljs-variable">cal</span> <span class="hljs-operator">=</span> ioc.getBean(CalculatorImpl.class); <br><span class="hljs-comment">//maybe 我猜的hh</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7019868958140399629">Spring——AOP实现方式 - 掘金</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/glpghz/article/details/107362344">字节码增强和spring AOP 原理_长不大的大灰狼的博客-CSDN博客_字节码增强实现aop</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ba6610930b01">理解Spring中的getBean() - 简书</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Sampson_S/article/details/106908797">【Spring框架】Spring的AOP使用_Sampson_S的博客-CSDN博客</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Spring/" class="category-chain-item">Spring</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Spring/">#Spring</a>
+      
+        <a href="/tags/Java/">#Java</a>
+      
+        <a href="/tags/AOP/">#AOP</a>
+      
+        <a href="/tags/AspectJ/">#AspectJ</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Spring-AOP 杂谈小记</div>
+      <div>https://mrbeanc.gitee.io/2022/09/16/Spring-AOP-杂谈小记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月16日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/09/Qt%E7%BC%96%E8%AF%91%E5%99%A8%E8%BF%81%E7%A7%BB%EF%BC%9A%E4%BB%8EMinGW%E5%88%B0MSVC/" title="Qt编译器迁移：从MinGW到MSVC">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Qt编译器迁移：从MinGW到MSVC</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/09/09/%E8%AE%BA-Resources-getResourceAsStream-mybatis-config-xml-%E6%98%AF%E5%A6%82%E4%BD%95%E5%AF%BB%E5%9D%80%E7%9A%84/" title="论 Resources.getResourceAsStream(&#34;mybatis-config.xml&#34;) 是如何寻址的">
+                        <span class="hidden-mobile">论 Resources.getResourceAsStream(&#34;mybatis-config.xml&#34;) 是如何寻址的</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

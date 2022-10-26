@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="C++11新特性 std::function &amp; std::bind 绑定各种可调用对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析std::function &amp; std::bind">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/02/01/%E6%B5%85%E6%9E%90std-function-std-bind/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="C++11新特性 std::function &amp; std::bind 绑定各种可调用对象">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-01T11:03:49.000Z">
+<meta property="article:modified_time" content="2022-02-01T13:39:49.266Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="std::function">
+<meta property="article:tag" content="std::bind">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>浅析std::function &amp; std::bind - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="浅析std::function &amp; std::bind"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-02-01 19:03" pubdate>
+          2022年2月1日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">浅析std::function &amp; std::bind</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年2月1日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>函数(Function)</code>封装了一系列可复用的操作集合，是各类编程语言中非常重要的概念</p>
+<p>在<code>C++</code>中，除了普通函数，还增加了<code>仿函数(Functor)</code>，又称为<code>函数对象</code>，实际上是重载了<code>函数调用运算符operator()</code>的类</p>
+<p>而<code>C++11</code>中新增的<code>lambda</code>表达式其实就是<code>匿名Functor</code></p>
+<h3 id="这些统称为可调用对象-callable-entity"><a href="#这些统称为可调用对象-callable-entity" class="headerlink" title="这些统称为可调用对象(callable entity):"></a>这些统称为<code>可调用对象(callable entity)</code>:</h3><ul>
+<li><p>普通函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span></span>&#123;<span class="hljs-keyword">return</span> a + b;&#125; <br></code></pre></td></tr></table></figure>
+</li>
+<li><p><code>lambda</code>表达式： </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">auto</span> mod = [](<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)&#123; <span class="hljs-keyword">return</span> a % b;&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>函数对象类：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">divide</span>&#123;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">operator</span><span class="hljs-params">()</span><span class="hljs-params">(<span class="hljs-type">int</span> denominator, <span class="hljs-type">int</span> divisor)</span></span>&#123;<br>        <span class="hljs-keyword">return</span> denominator/divisor;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="問題点"><a href="#問題点" class="headerlink" title="問題点"></a>問題点</h2><p>以上三种可调用对象虽然调用形式都是 <code>int(int,int)</code></p>
+<p>但是定义形式五花八门，导致很难用<strong>统一的方式</strong>传递或保存</p>
+<p>如果再遇到类成员函数，如何声明和调用，更是令人头大</p>
+<h2 id="大一统：平权衡，正度量，调轻重"><a href="#大一统：平权衡，正度量，调轻重" class="headerlink" title="大一统：平权衡，正度量，调轻重"></a>大一统：平权衡，正度量，调轻重</h2><p>天下分久必合，合久必分</p>
+<p>是时候来统一度量衡了</p>
+<h2 id="std-function"><a href="#std-function" class="headerlink" title="std::function"></a>std::function</h2><p><code>std::function</code>是一个可调用对象包装器，是一个类模板，可以容纳所有可调用对象，用统一的方式处理函数和仿函数，并允许保存和延迟它们的执行</p>
+<p>例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; a = add;<span class="hljs-comment">//普通函数</span><br>std::function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; b = mod;<span class="hljs-comment">//lambda</span><br>std::function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; c = <span class="hljs-built_in">divide</span>();<span class="hljs-comment">//divide()创建匿名对象</span><br><span class="hljs-built_in">a</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);<br><span class="hljs-built_in">b</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);<br><span class="hljs-built_in">c</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<p>这样便可以舒适地定义、存储与调用一切<code>可调用对象</code>了</p>
+<blockquote>
+<p>如果这还不酷，什么是酷？—— 《Effective C++中文版（第三版）》p175</p>
+</blockquote>
+<h2 id="等一下"><a href="#等一下" class="headerlink" title="等一下"></a>等一下</h2><p>ちょっと待って，我刚刚是不是说了“一切”</p>
+<p>我是不是忘了什么</p>
+<p>什么呢</p>
+<h2 id="成员函数"><a href="#成员函数" class="headerlink" title="成员函数"></a>成员函数</h2><p>成员函数的传递与调用一直是一个令人头疼的问题</p>
+<p>但只要抓住其与普通函数的区别便可以一击毙命</p>
+<h2 id="成员函数-vs-普通函数"><a href="#成员函数-vs-普通函数" class="headerlink" title="成员函数 vs 普通函数"></a>成员函数 vs 普通函数</h2><p>成员函数属于类，且可以使用成员变量（非static函数）</p>
+<p>而成员变量依赖于具体实例</p>
+<p>在不明确具体实例的情况下，成员函数没有办法正确执行</p>
+<p>正是因为如此，成员函数其实是有一个隐含参数的（指向具体实例指针）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Object</span>&#123;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> a,<span class="hljs-type">int</span> b)</span></span>&#123;<span class="hljs-keyword">return</span> a+b;&#125;<br>&#125;<br><span class="hljs-comment">//Object::sum的形式其实是</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sum</span><span class="hljs-params">(Object* ptr,<span class="hljs-type">int</span> a,<span class="hljs-type">int</span> b)</span></span>;<span class="hljs-comment">//隐式参数Object* ptr</span><br><span class="hljs-comment">//调用：</span><br>(ptr-&gt;*sum)(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);<span class="hljs-comment">//-&gt;*为成员指针访问运算符</span><br></code></pre></td></tr></table></figure>
+
+<p>所以在调用成员函数时，必须想办法提供具体实例的指针</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>普通调用时，我们可以采用 <code>.*</code> 或者 <code>-&gt;*</code> 运算符</p>
+<p>但是在<code>std::function</code>对象中，更为简便</p>
+<p>直接具象为第一个参数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Object</span>&#123;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> a,<span class="hljs-type">int</span> b)</span></span>&#123;<span class="hljs-keyword">return</span> a+b;&#125;<br>&#125;<br>Object a;<br>std::function&lt;<span class="hljs-type">int</span>(Object*,<span class="hljs-type">int</span>,<span class="hljs-type">int</span>)&gt; func = &amp;Object::sum;<br><span class="hljs-built_in">func</span>(&amp;a,<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);<span class="hljs-comment">//直接作为第一个参数即可</span><br></code></pre></td></tr></table></figure>
+
+<p>如果你不想在调用时绑定实例，也可以通过<code>std::bind</code>函数在定义时绑定</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Object a;<br>std::function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>,<span class="hljs-type">int</span>)&gt; func = std::<span class="hljs-built_in">bind</span>(&amp;Object::sum, &amp;a);<br><span class="hljs-built_in">func</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);<br></code></pre></td></tr></table></figure>
+
+<p>这样就把对象<code>a</code>的地址绑定到了函数对象<code>func</code>的第一个参数上（从三个参数变成了两个参数）</p>
+<h4 id="顺便一提，std-bind其实是将对象进行了拷贝"><a href="#顺便一提，std-bind其实是将对象进行了拷贝" class="headerlink" title="顺便一提，std::bind其实是将对象进行了拷贝"></a>顺便一提，<code>std::bind</code>其实是将对象进行了<strong>拷贝</strong></h4><p>也就是说，如果对象<code>a</code>销毁，<code>func</code>照样可以正常调用</p>
+<p>如果想将拷贝改为引用，可以采用<code>ref(a)</code>形式</p>
+<h2 id="lambda"><a href="#lambda" class="headerlink" title="lambda"></a>lambda</h2><p>其实，调用<code>std::bind</code>进行绑定还是有些麻烦的</p>
+<blockquote>
+<p>毕竟，只有”懒”，才能推动自动化</p>
+</blockquote>
+<p><code>lambda</code>其实本身就是为了简化函数定义而存在的</p>
+<p>而且其本质是重载了<code>operator()</code>的匿名函数对象类</p>
+<p>所以在传递给<code>std::function</code>时，是一个对象，也就无需额外传递实例信息</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; add = [](<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b) &#123; <span class="hljs-keyword">return</span> a + b; &#125;;<br><span class="hljs-built_in">add</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>);<br></code></pre></td></tr></table></figure>
+
+<p>如果需要其余变量或者所在类的成员变量，可以通过<code>lambda</code>的捕获列表传递</p>
+<p>peace</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zh379835552/article/details/19542181">C++11中的Lambda表达式构成之——捕获值列表</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xusd-null/p/3698969.html">bind原理图释 - xusd-null - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/analogous_love/article/details/77750629">关于std::bind绑定栈变量对象的思考</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f191e88dcc80">C++11 中的std::function和std::bind - 简书</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/25146152">如何使用std::function指向类的成员函数？ - 知乎</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/C/" class="category-chain-item">C++</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/std-function/">#std::function</a>
+      
+        <a href="/tags/std-bind/">#std::bind</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>浅析std::function &amp; std::bind</div>
+      <div>https://mrbeanc.gitee.io/2022/02/01/浅析std-function-std-bind/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年2月1日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/02/05/C++%E9%87%8D%E6%9E%84%E6%A1%88%E4%BE%8B1%EF%BC%9Arepeat-in-switch/" title="C++重构案例1：repeat in switch">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">C++重构案例1：repeat in switch</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/23/Qt-%E6%97%A0%E8%BE%B9%E6%A1%86%E7%AA%97%E5%8F%A3-%E8%AE%BE%E7%BD%AE%E4%BB%BB%E5%8A%A1%E6%A0%8F%E7%BC%A9%E7%95%A5%E5%9B%BE/" title="Qt-无边框窗口 设置任务栏缩略图">
+                        <span class="hidden-mobile">Qt-无边框窗口 设置任务栏缩略图</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

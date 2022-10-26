@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Windows系统，模拟按键の件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模拟按键 - keybd_event Send&#x2F;PostMessage的一些思考">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/03/23/%E6%A8%A1%E6%8B%9F%E6%8C%89%E9%94%AE-keybd-event-Send-PostMessage%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Windows系统，模拟按键の件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220323145807093.png">
+<meta property="og:image" content="https://docs.microsoft.com/en-us/windows/win32/inputdev/images/csinp-02.png">
+<meta property="article:published_time" content="2022-03-23T02:49:09.000Z">
+<meta property="article:modified_time" content="2022-03-23T08:40:52.382Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20220323145807093.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>模拟按键 - keybd_event Send/PostMessage的一些思考 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="模拟按键 - keybd_event Send/PostMessage的一些思考"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-23 10:49" pubdate>
+          2022年3月23日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">模拟按键 - keybd_event Send/PostMessage的一些思考</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年3月23日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>在软件开发，特别是辅助软件开发过程中，经常需要用到键盘按键模拟来实现自动化</p>
+<p>比如，使用虚拟键码<code>VK_VOLUME_UP</code> &amp; <code>VK_VOLUME_DOWN</code>来实现音量调节</p>
+<p>或者，使用<code>VK_SNAPSHOT</code>实现截屏</p>
+<p>这是一种可以避开系统<code>API</code>复杂操作的，非常讨巧的捷径</p>
+<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><h3 id="keybd-event"><a href="#keybd-event" class="headerlink" title="keybd_event"></a>keybd_event</h3><p>为了实现按键模拟，我们常用<code>Windows API</code> - <code>keybd_event</code>:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">keybd_event</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">  [in] BYTE      bVk, <span class="hljs-comment">//一个虚拟键码。代码必须是 1 到 254 范围内的值</span></span></span><br><span class="hljs-params"><span class="hljs-function">  [in] BYTE      bScan, <span class="hljs-comment">//密钥的硬件扫描码</span></span></span><br><span class="hljs-params"><span class="hljs-function">  [in] DWORD     dwFlags, <span class="hljs-comment">//控制功能操作的各个方面: KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP</span></span></span><br><span class="hljs-params"><span class="hljs-function">  [in] ULONG_PTR dwExtraInfo <span class="hljs-comment">//与击键关联的附加值</span></span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>一般情况下，我们只需要使用<code>bVK</code> &amp; <code>dwFlags</code>参数即可（复杂情况，如游戏窗口，需要加上扫描码）</p>
+<p>一个击键的过程分为两个步骤：按下 &amp; 抬起</p>
+<p>所以，如果我们要模拟键盘上<code>A</code>键的击键：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">keybd_event</span>(<span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">//第三个参数0代表KeyDown</span><br><span class="hljs-built_in">keybd_event</span>(<span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">0</span>, KEYEVENTF_KEYUP, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+<p>或者是，回车键<code>（ENTER）</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">keybd_event</span>(VK_RETURN, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br><span class="hljs-built_in">keybd_event</span>(VK_RETURN, <span class="hljs-number">0</span>, KEYEVENTF_KEYUP, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+<p>知道了这点，那么模拟组合键也不在话下了，如<code>Ctrl+Tab</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">keybd_event</span>(VK_CONTROL, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<span class="hljs-comment">//按下Ctrl</span><br><span class="hljs-built_in">keybd_event</span>(VK_TAB, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<span class="hljs-comment">//按下Tab</span><br><span class="hljs-built_in">keybd_event</span>(VK_TAB, <span class="hljs-number">0</span>, KEYEVENTF_KEYUP, <span class="hljs-number">0</span>);<span class="hljs-comment">//抬起Tab</span><br><span class="hljs-built_in">keybd_event</span>(VK_CONTROL, <span class="hljs-number">0</span>, KEYEVENTF_KEYUP, <span class="hljs-number">0</span>);<span class="hljs-comment">//抬起Ctrl</span><br></code></pre></td></tr></table></figure>
+
+<p>其他按键的宏定义可以参考：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes">虚拟键代码（Virtual-Key Codes）</a></p>
+<p><em>注：微软官方建议 - 此功能已被取代。请改用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-sendinput">SendInput</a>（其实差不多）</em></p>
+<h3 id="SendMessage-x2F-PostMessage"><a href="#SendMessage-x2F-PostMessage" class="headerlink" title="SendMessage&#x2F;PostMessage"></a>SendMessage&#x2F;PostMessage</h3><p>众所周知，<code>Windows</code>系统是基于消息的，而这两个函数都是向窗口发送消息</p>
+<p>他们的区别在于：</p>
+<ul>
+<li><code>SendMessage</code>是同步函数，或者说阻塞函数，调用指定窗口的窗口过程，直到窗口过程<strong>处理完</strong>消息才返回</li>
+<li><code>PostMessage</code>是异步函数，在与创建指定窗口的线程关联的消息队列中发布一条消息，并在<strong>不等待</strong>线程处理消息的情况下返回。</li>
+</ul>
+<p>也就是说，<code>SendMessage</code>返回的时候，消息肯定被对方处理完了</p>
+<p>而<code>PostMessage</code>不管处理没处理，什么时候处理，直接扔过去就返回了</p>
+<p>好处是，对方不回应的时候，自己不会卡死（挂起）</p>
+<p>为什么要提这两个函数呢，因为<code>Windows</code>基于消息，所以按键也是<code>消息(WM_KEYDOWN | WM_KEYUP)</code></p>
+<p>那么只要向指定窗口发送消息就可以模拟按键了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-comment">//模拟A键</span><br><span class="hljs-built_in">SendMessage</span>(hwnd, WM_KEYDOWN, <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">0</span>);<br><span class="hljs-built_in">SendMessage</span>(hwnd, WM_KEYUP, <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+<p>比<code>keybd_event</code>多一个参数，这里的<code>hwnd</code>指的是窗口句柄，类似于窗口的<code>ID</code></p>
+<p>而<code>PostMessage</code>如果这么写的话，就会发现不对劲了，按键貌似被重复了两遍</p>
+<p>查询资料 &amp; 官方文档可知，我们忽略了最后一个参数：<code>lParam</code></p>
+<blockquote>
+<p>重复计数、扫描码、扩展键标志、上下文代码、前一个键状态标志和转换状态标志，如下所示</p>
+</blockquote>
+<p><img src="/img/image-20220323145807093.png" srcset="/img/loading.gif" lazyload alt="lParam"></p>
+<blockquote>
+<p>击键消息的<strong>lParam</strong>参数包含有关生成消息的击键的附加信息。该信息包括重复计数、扫描码、扩展键标志、上下文代码、前一个键状态标志和转换状态标志。下图显示了这些标志和值在<strong>lParam</strong>参数中的位置。</p>
+</blockquote>
+<p><img src="https://docs.microsoft.com/en-us/windows/win32/inputdev/images/csinp-02.png" srcset="/img/loading.gif" lazyload alt="击键消息的 lparam 参数中的标志和值的位置"></p>
+<p>也就是在一个<code>32</code>位的参数中，表示了大量标志信息，这需要用到位运算</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C++">DWORD dwVKFkeyData;<br>WORD dwScanCode = <span class="hljs-built_in">MapVirtualKey</span>(<span class="hljs-string">&#x27;B&#x27;</span>, <span class="hljs-number">0</span>);<span class="hljs-comment">//计算扫描码</span><br>dwVKFkeyData = <span class="hljs-number">1</span>; <span class="hljs-comment">//00000...00001(b)</span><br>dwVKFkeyData |= dwScanCode &lt;&lt; <span class="hljs-number">16</span>;<br><span class="hljs-built_in">PostMessage</span>(hwnd, WM_KEYDOWN, <span class="hljs-string">&#x27;B&#x27;</span>, dwVKFkeyData);<br>dwVKFkeyData |= <span class="hljs-number">3</span> &lt;&lt; <span class="hljs-number">30</span>; <span class="hljs-comment">//11(b) &lt;&lt; 30</span><br><span class="hljs-built_in">PostMessage</span>(hwnd, WM_KEYUP, <span class="hljs-string">&#x27;B&#x27;</span>, dwVKFkeyData);<br></code></pre></td></tr></table></figure>
+
+<p>这样才能完成一次<code>PostMessage</code>击键消息的正确发送</p>
+<p>显然是<code>SendMessage</code>更方便，但要考虑到阻塞函数的成本</p>
+<h2 id="问题与思考"><a href="#问题与思考" class="headerlink" title="问题与思考"></a>问题与思考</h2><p>以上都是一些基础操作，没什么好说的，也都是大家公认的</p>
+<p>但是呢，需求一旦复杂化，基本的信息就不够用了，问题就蜂拥而至了</p>
+<h3 id="差异"><a href="#差异" class="headerlink" title="差异"></a>差异</h3><p>首先我们说一下，<code>keybd_event</code> 与 <code>Send/PostMessage</code>的区别吧</p>
+<ul>
+<li><p><code>keybd_event</code>是全局按键模拟，也就是像真实地按键一样，将消息发送给<strong>前台活动</strong>窗口，也就是<strong>焦点</strong>窗口，这是一大限制</p>
+</li>
+<li><p><code>Send/PostMessage</code>可以自行指定发送的窗口对象，可以向<strong>无焦点</strong>的窗口发送按键信息，更灵活</p>
+</li>
+</ul>
+<p>如果世上真有这样完美的函数就好了，那另一方就会被抹杀</p>
+<p>这两者同时存在是有原因的：</p>
+<ul>
+<li><code>Send/PostMessage</code>无法模拟组合键（<code>ALT</code>除外），这是一个很大的限制，因为消息只是状态的<strong>切换</strong>，不能<strong>维持</strong>按下，而程序通常是直接检测<code>Ctrl Shift</code>等修饰键的状态来决定组合键的</li>
+<li>模拟按键时，<code>SendMessage</code>有时会失效（如QQ窗口），所以建议用<code>PostMessage</code>（<em>原因不明</em>）</li>
+</ul>
+<h3 id="组合键处理"><a href="#组合键处理" class="headerlink" title="组合键处理"></a>组合键处理</h3><p>那怎么办，要发送组合键怎么办</p>
+<p>如果是活动窗口，那直接<code>keybd_event</code>模拟，没啥好说的</p>
+<p>如果是非活动窗口怎么办</p>
+<ul>
+<li>最粗暴，直接将其变为前台活动窗口，然后再模拟（设置前台窗口参见：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-attachthreadinput">AttachThreadInput</a> &amp; <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow">SetForegroundWindow</a>）</li>
+<li>↑但这是个悖论，这样就不是非活动窗口了</li>
+<li>或者用<code>keybd_event</code>模拟修饰键（如<code>Ctrl</code>） + <code>Send/PostMessage</code>模拟其他按键（如<code>A</code>），但问题在于无法很好地配合消息顺序，因为<code>keybd_event</code>不会等待消息处理</li>
+<li>解决办法：在<code>keybd_event</code>之后延时一段时间，再进行<code>SendMessage</code>，可实现对非活动窗口的组合键控制</li>
+</ul>
+<h3 id="往下-再往下（驱动级模拟）"><a href="#往下-再往下（驱动级模拟）" class="headerlink" title="往下 再往下（驱动级模拟）"></a>往下 再往下（驱动级模拟）</h3><p>一般的窗口这样就行了，但是游戏窗口可能会直接使用底层硬件输入（低延时），而不经过<code>Windows</code></p>
+<p>这时候就不能在使用<code>Windows</code>消息机制了，必须直接对底层端口进行操作</p>
+<p>这时候就需要外力帮助了</p>
+<blockquote>
+<p>WinIO程序库允许在32位的Windows应用程序中直接对I&#x2F;O端口和物理内存进行存取操作。通过使用一种内核模式的设备驱动器和其它几种底层编程技巧，它绕过了Windows系统的保护机制</p>
+</blockquote>
+<p>拓展资料：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/starofrainnight/winio">winio下载winio的源码_GitHub_帮酷</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/WoodHower/p/14850251.html">winIO介绍 - 野蛮木头 - 博客园</a></p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="http://www.noobyard.com/article/p-fxffgjkm-gg.html">键盘鼠标模拟全知道 - 菜鸟学院</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-keybd_event">keybd_event function (winuser.h) - Win32 apps | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-message-flags">About Keyboard Input - Win32 apps | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-keydown">WM_KEYDOWN message (Winuser.h) - Win32 apps | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lzl_li/article/details/117386885">通过PostMessage&#x2F;SendMessage实现模拟键盘鼠标按键，发送不成功或出现重复按键的可参考本文_lzl_li的博客-CSDN博客_c# sendmessage模拟键盘</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.codeleading.com/article/40993377446/">向某个窗口发送按键消息(包括后台隐藏的窗口) - 代码先锋网</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Windows/" class="category-chain-item">Windows</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>模拟按键 - keybd_event Send/PostMessage的一些思考</div>
+      <div>https://mrbeanc.gitee.io/2022/03/23/模拟按键-keybd-event-Send-PostMessage的一些思考/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月23日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/04/07/Windows-Hook-%E6%8A%80%E6%9C%AF%E6%B5%85%E6%9E%90/" title="Windows Hook 技术浅析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Windows Hook 技术浅析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/21/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E7%AF%A1%E6%94%B9%E5%AF%BC%E8%87%B4%E7%9A%84%E9%87%8E%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E7%81%BE%E9%9A%BE/" title="记一次数组越界引发的内存篡改导致的野指针引用灾难">
+                        <span class="hidden-mobile">记一次数组越界引发的内存篡改导致的野指针引用灾难</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

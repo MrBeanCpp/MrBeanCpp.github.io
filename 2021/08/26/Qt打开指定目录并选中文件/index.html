@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Qt打开指定目录并选中文件-ShellExecute&#x2F;QProcess">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt打开指定目录并选中文件">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2021/08/26/Qt%E6%89%93%E5%BC%80%E6%8C%87%E5%AE%9A%E7%9B%AE%E5%BD%95%E5%B9%B6%E9%80%89%E4%B8%AD%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Qt打开指定目录并选中文件-ShellExecute&#x2F;QProcess">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/Qt-%E5%9C%A8Explorer%E4%B8%AD%E6%98%BE%E7%A4%BA.jpg">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/Chrome-%E5%9C%A8%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%98%BE%E7%A4%BA.jpg">
+<meta property="article:published_time" content="2021-08-26T10:53:22.000Z">
+<meta property="article:modified_time" content="2021-08-26T12:10:50.222Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/Qt-%E5%9C%A8Explorer%E4%B8%AD%E6%98%BE%E7%A4%BA.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Qt打开指定目录并选中文件 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt打开指定目录并选中文件"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-26 18:53" pubdate>
+          2021年8月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Qt打开指定目录并选中文件</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2021年8月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>有时，为了方便用户查看，我们可能需要提供<code>在资源管理器中打开文件</code>的功能</p>
+<p>比如：Qt(<code>在Explorer中显示</code>)、Chrome(<code>在文件夹中显示</code>)</p>
+<p><img src="/img/Qt-%E5%9C%A8Explorer%E4%B8%AD%E6%98%BE%E7%A4%BA.jpg" srcset="/img/loading.gif" lazyload alt="Qt-在Explorer中显示"></p>
+<p><img src="/img/Chrome-%E5%9C%A8%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%AD%E6%98%BE%E7%A4%BA.jpg" srcset="/img/loading.gif" lazyload alt="Chrome-在文件夹中显示"></p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>该功能用于打开一个指定文件夹，并选中指定<code>文件</code></p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>打开<code>文件夹</code>本质上和打开<code>文件</code>没什么区别，说白了就是一个<code>URL</code>(Uniform Resource Locator)</p>
+<p>打开<code>URL</code>，我们能想到很多种方法：</p>
+<ul>
+<li><code>Windows API</code>中的<code>ShellExecute()</code>函数</li>
+<li><code>CMD</code> 的 start命令</li>
+<li>Qt自带的<code>QDesktopServices::openUrl(const QUrl &amp;url)</code>静态函数</li>
+<li>and so on…</li>
+</ul>
+<p>打开<code>URL</code>并不是什么难事</p>
+<p>但我们在打开<code>文件夹</code>后还必须选中<code>文件</code></p>
+<p>这一点，一般的函数都做不到</p>
+<h2 id="もっと分析"><a href="#もっと分析" class="headerlink" title="もっと分析"></a>もっと分析</h2><p>究其原因</p>
+<p>我们要明白，<code>资源管理器</code>本质上是一个<code>应用程序</code></p>
+<p>即<code>explorer.exe</code></p>
+<p>我们要对<code>应用程序</code>下手，最好的办法还是通过其自身的参数</p>
+<h3 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h3><p>所谓命令行参数，就是在启动时传递给程序的参数，用以执行不同操作</p>
+<p>比如：传递给图片查看器<code>图片的绝对路径</code></p>
+<p>在<code>C/C++</code>中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span>* argv[])</span></span><br></code></pre></td></tr></table></figure>
+
+<p><code>argv</code>指针数组便是命令行参数</p>
+<p>通过这些参数，程序自身便可以进行判断，获取更多外界信息</p>
+<p>我们可以通过<code>CMD</code>或者拖拽文件传递命令行参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs command">test.exe argument<br></code></pre></td></tr></table></figure>
+
+<p><em>应用程序路径 + 空格 + 参数即可</em>（参数间用空格分开）</p>
+<h3 id="explorer参数"><a href="#explorer参数" class="headerlink" title="explorer参数"></a>explorer参数</h3><p>明白了这些，我们只需要给<code>explorer</code>传递对应参数即可选中文件</p>
+<p>格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs command">explorer.exe /select, URL<br></code></pre></td></tr></table></figure>
+
+<h2 id="理论存在-实践开始"><a href="#理论存在-实践开始" class="headerlink" title="理论存在 实践开始"></a>理论存在 实践开始</h2><p>要能非阻塞开启外部程序，并传递参数</p>
+<p>我们大体有两种方法：</p>
+<ul>
+<li><code>ShellExecute()</code></li>
+<li><code>QProcess</code></li>
+</ul>
+<h3 id="ShellExecute-Windows-API"><a href="#ShellExecute-Windows-API" class="headerlink" title="ShellExecute() - Windows API"></a>ShellExecute() - Windows API</h3><p><code>ShellExecute</code>函数原型及参数含义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">ShellExecute</span>(<br>hWnd: HWND; <span class="hljs-comment">//&#123;指定父窗口[句柄]&#125;</span><br>Operation: PChar; <span class="hljs-comment">//&#123;指定动作, 譬如: open、runas、print、edit、explore、find&#125;</span><br>FileName: PChar; <span class="hljs-comment">//&#123;指定要打开的文件或程序&#125;</span><br>Parameters: PChar; <span class="hljs-comment">//&#123;给要打开的程序指定参数&#125; &lt;-命令行参数</span><br>Directory: PChar; <span class="hljs-comment">//&#123;缺省目录&#125;</span><br>ShowCmd: Integer <span class="hljs-comment">//&#123;打开选项&#125;</span><br>);<br></code></pre></td></tr></table></figure>
+
+<p>看起来复杂，但主要就是<code>FileName</code>和<code>Parameters</code>，举个例子便一目了然</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">ShellExecute</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-string">&quot;open&quot;</span>, <span class="hljs-string">&quot;explorer&quot;</span>, <span class="hljs-string">&quot;/select, E:\test.png&quot;</span>, <span class="hljs-literal">NULL</span>, SW_SHOW);<span class="hljs-comment">//打开E:\test.png并选中</span><br></code></pre></td></tr></table></figure>
+
+<p>但是在实际应用中，我们还是要注意一点</p>
+<p>大多<code>Windows API</code>都分为了两个版本：W版和A版</p>
+<p>也就是<code>ShellExecuteW</code>和<code>ShellExecuteA</code></p>
+<p>区别是W代表宽字符，采用Unicode编码，A代表ASCII编码</p>
+<p>由于<code>文件路径</code>可能出现中文，所以我们采用<code>ShellExecuteW</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">ShellExecuteW</span>(<span class="hljs-literal">NULL</span>, <span class="hljs-string">L&quot;open&quot;</span>, <span class="hljs-string">L&quot;explorer&quot;</span>, <span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;/select, \&quot;%1\&quot;&quot;</span>).<span class="hljs-built_in">arg</span>(ImagePath).<span class="hljs-built_in">toStdWString</span>().<span class="hljs-built_in">c_str</span>(), <span class="hljs-literal">NULL</span>, SW_SHOW);<br></code></pre></td></tr></table></figure>
+
+<p><code>L&quot;open&quot;</code>前的<code>L</code>代表将<code>&quot;open&quot;</code>转化为宽字符，否则不符合参数类型<code>LPCWSTR</code>(<code>typedef const wchar_t* LPCWSTR;</code>)</p>
+<p>而QString也要相应地转化为宽字符版本</p>
+<p><strong>Perfect</strong></p>
+<h3 id="QProcess-Qt类"><a href="#QProcess-Qt类" class="headerlink" title="QProcess - Qt类"></a>QProcess - Qt类</h3><p>接下来我们看看Qt特有的类-QProcess</p>
+<p>该类可用于完成启动外部程序，并与之交互通信</p>
+<p>但此次我们不需要通信，只要传入参数并非阻塞启动即可</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++">QProcess process;<br>process.<span class="hljs-built_in">startDetached</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;explorer /select,\&quot;%1\&quot;&quot;</span>).<span class="hljs-built_in">arg</span>(ImagePath));<span class="hljs-comment">//启动后分离，即非阻塞</span><br></code></pre></td></tr></table></figure>
+
+<p>由于是Qt内部的类，所以不需要特殊处理宽字符，因为Qt一律采用Unicode编码</p>
+<p><em>Windows API，你看看人家</em></p>
+<p>Over</p>
+<p>两种方法，掷硬币决定吧</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt打开指定目录并选中文件</div>
+      <div>https://mrbeanc.gitee.io/2021/08/26/Qt打开指定目录并选中文件/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月26日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/09/17/windeployqt%E5%8F%91%E5%B8%83%E9%A1%B9%E7%9B%AE-%E4%B8%BA%E4%BD%95%E6%80%BB%E6%98%AF%E7%BC%BA%E5%B0%91dll/" title="windeployqt发布项目 为何总是缺少dll">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">windeployqt发布项目 为何总是缺少dll</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/08/22/%E8%89%B3%E9%98%B3%E5%B0%8F%E6%95%85%E4%BA%8B-%E5%85%B6%E4%B8%80%EF%BC%9A%E9%AC%BC%E8%8A%82%E4%B9%B0%E7%BA%B8/" title="艳阳小故事 其一：鬼节买纸">
+                        <span class="hidden-mobile">艳阳小故事 其一：鬼节买纸</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

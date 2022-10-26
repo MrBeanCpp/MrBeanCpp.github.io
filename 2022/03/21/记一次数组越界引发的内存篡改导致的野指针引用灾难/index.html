@@ -1,0 +1,869 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="数组越界-&gt;篡改static对象内存-&gt;野指针产生-&gt;非法内存访问导致崩溃">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次数组越界引发的内存篡改导致的野指针引用灾难">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/03/21/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E7%AF%A1%E6%94%B9%E5%AF%BC%E8%87%B4%E7%9A%84%E9%87%8E%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E7%81%BE%E9%9A%BE/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="数组越界-&gt;篡改static对象内存-&gt;野指针产生-&gt;非法内存访问导致崩溃">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175514697.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175153078.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175236363.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321181024001.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321192456055.png">
+<meta property="article:published_time" content="2022-03-21T07:56:16.000Z">
+<meta property="article:modified_time" content="2022-03-29T02:29:44.379Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="Debug">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20220321175514697.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>记一次数组越界引发的内存篡改导致的野指针引用灾难 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="记一次数组越界引发的内存篡改导致的野指针引用灾难"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-21 15:56" pubdate>
+          2022年3月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          52 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">记一次数组越界引发的内存篡改导致的野指针引用灾难</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年3月29日 上午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>那是一个风和日丽的晚上，我回到寝室，打开电脑，发现我的程序窗口（姑且叫它<code>QF.exe</code>）消失了</p>
+<ul>
+<li>这是一个跟随QQ窗口的辅助小程序</li>
+</ul>
+<p>“可能是之前忘记开了吧”，我并没有太在意</p>
+<p>随后便再次打开了<code>QF.exe</code></p>
+<p>刷刷B站，玩玩游戏，好不快活</p>
+<p>可当我再次打开QQ，点击<code>QF</code>的窗口时，看着旋转的鼠标指针，我好像知道接下来要发生什么了</p>
+<ul>
+<li><code>QF</code>再次消失了</li>
+</ul>
+<blockquote>
+<p>ta 轻轻地走了，正如 ta 轻轻地来，挥一挥鼠标，不带走一块内存</p>
+<p>只留我一人，在风中凌乱</p>
+</blockquote>
+<p>“ta 不是这样的人，ta 从不会不辞而别”</p>
+<p>我这才意识到事情的严重性，其实之前也发生过类似的事情，但我却一直不以为意，让 ta 承受了太多</p>
+<p>悔不当初，如果给我再来一次的机会，我一定会对 ta 说三个字：<strong>我焯！</strong></p>
+<p>加班吧</p>
+<h2 id="你能再表演一次吗"><a href="#你能再表演一次吗" class="headerlink" title="你能再表演一次吗"></a>你能再表演一次吗</h2><blockquote>
+<p>修正程序错误的第一步是要重现这个错误。—— Tom Duff</p>
+</blockquote>
+<p>如果收集不到足够多的<code>bug</code>样例，就没有办法对<code>bug</code>进行分析</p>
+<p>所以<code>debug</code>的第一步就是复现<code>bug</code></p>
+<p>当时无论我如何测试程序，ta 表现得都极其正常，反而是在我抛之脑后几小时，才会出现闪退，并且时机极其<strong>随机</strong></p>
+<ul>
+<li>即：无法确定<code>bug</code>触发机制</li>
+</ul>
+<p>调查陷入了僵局</p>
+<h2 id="搜狗，我叫你一声你敢应吗"><a href="#搜狗，我叫你一声你敢应吗" class="headerlink" title="搜狗，我叫你一声你敢应吗"></a>搜狗，我叫你一声你敢应吗</h2><p>唯一值得在意的是，异常退出前，在<code>QtCreator</code>的输出窗口中出现了这么一行：<code>D:\SogouInput\Components</code></p>
+<p><img src="/img/image-20220321175514697.png" srcset="/img/loading.gif" lazyload alt="D:\SogouInput\Components"></p>
+<p>可以肯定的是，这不是本程序的任何输出</p>
+<p>也就是说，要么是<code>QtCreator</code>的提示，要么是搜狗输入法搞的鬼</p>
+<p>经过搜索，发现我并不是唯一一个受到搜狗青睐的码农</p>
+<p>有不少人都遇到过这样的提示，但大伙都一致表示，这锅还真不能让搜狗背</p>
+<p><img src="/img/image-20220321175153078.png" srcset="/img/loading.gif" lazyload alt="Google"></p>
+<p><img src="/img/image-20220321175236363.png" srcset="/img/loading.gif" lazyload alt="跟搜狗没关系"></p>
+<p>而且，我的记忆中貌似也遇到过这样的提示，确实是野指针的问题</p>
+<h2 id="是你，又不是你"><a href="#是你，又不是你" class="headerlink" title="是你，又不是你"></a>是你，又不是你</h2><p>既然知道了是野指针的问题，那就找呗</p>
+<p>但奇怪的是，在反反复复阅读了所有代码后，我确认了一个事实：</p>
+<ul>
+<li>我的代码里没有任何可能的野指针，全员初始化</li>
+</ul>
+<p>调查再次陷入僵局</p>
+<h2 id="Windows-你怎么看"><a href="#Windows-你怎么看" class="headerlink" title="Windows, 你怎么看"></a>Windows, 你怎么看</h2><p>通过<code>Windows</code>的事件查看器，我们发现，程序的异常退出触发了一次<code>Application Error</code>记录</p>
+<p><img src="/img/image-20220321181024001.png" srcset="/img/loading.gif" lazyload alt="事件查看器"></p>
+<p>可以发现，出错的模块为：Qt5Gui.dll</p>
+<p>至少可以确认是与<code>GUI</code>相关函数出错，且通过错误偏移量可以确认函数名称（虽然当时并不知道How）</p>
+<p>但与<code>GUI</code>操作相关的类太多，依旧难以定位</p>
+<h2 id="对不起，搜狗"><a href="#对不起，搜狗" class="headerlink" title="对不起，搜狗"></a>对不起，搜狗</h2><p>有谁还记得搜狗给我留下的线索：<code>D:\SogouInput\Components</code></p>
+<p>我尝试着进入这个目录，发现了<code>crash</code>文件夹，里面含有：</p>
+<ul>
+<li>crash.dmp</li>
+<li>errorlog.txt</li>
+</ul>
+<p><code>errorlog.txt</code>里记录了<code>QF</code>的崩溃时间，模块以及当时的所有进程</p>
+<p>而<code>crash.dmp</code>是<code>Windows</code>的内存转储文件，需要用<code>windbg</code>打开</p>
+<p>里面记录了<code>QF</code>崩溃瞬间的内存信息，以及函数调用链</p>
+<p>这是程序生命最后的黑匣子（www）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs dmp">ExceptionAddress: 000000000119fa8a (Qt5Gui!ZNK4QPeneqERKS_+0x000000000000001a)<br>ExceptionCode: c0000005 (Access violation)<br>ExceptionFlags: 00000000<br>NumberParameters: 2<br>   Parameter[0]: 0000000000000000<br>   Parameter[1]: ffffffffffffffff<br>Attempt to read from address ffffffffffffffff<br><br>STACK_TEXT:  <br> Qt5Gui!ZNK4QPeneqERKS_+0x1a<br> Qt5Gui!ZN8QPainter6setPenERK4QPen+0x23<br> QQ_Follower+0x4d51<br></code></pre></td></tr></table></figure>
+
+<p>这是<code>dll</code>的导出函数，虽然函数名经过处理，不过还是能大致看出其本来面目</p>
+<h2 id="是谁？"><a href="#是谁？" class="headerlink" title="是谁？"></a>是谁？</h2><p>可以清晰地看到，元凶是<code>ZNK4QPeneqERKS_</code>这个函数进行了非法内存访问，导致的崩溃</p>
+<p>而上一级调用函数是<code>ZN8QPainter6setPenERK4QPen</code></p>
+<p>根据代码猜测，这两个函数分别是<code>QPen::operator==()</code> 和 <code>QPainter::setPen()</code></p>
+<p>而且本程序唯一使用<code>QPainter::setPen()</code>的地方只有<code>paintEvent()</code></p>
+<p>并且貌似之前都是在窗体重新渲染时，出现的闪退</p>
+<p>这么一来，基本可以确定是<code>paintEvent()</code>中<code>QPainter::setPen()</code>的问题了</p>
+<h2 id="为什么是你？"><a href="#为什么是你？" class="headerlink" title="为什么是你？"></a>为什么是你？</h2><p>乍一看，已经找到了问题所在，但你仔细想想，这是十分不合理的</p>
+<p>在<code>paintEvent()</code>中利用<code>QPainter::setPen()</code>设置画笔，改变颜色 &amp; 线条粗细等，是常规操作，不应该出问题</p>
+<p>在仔细阅读了<code>Qt</code>源码后，我发现，<code>QPainter::setPen()</code>中确实用到了<code>QPen::operator==()</code> 用以比较新旧画笔</p>
+<p>但是这个函数想要出现指针引用错误，就只能是<code>QPainter::setPen(const QPen&amp; pen)</code>传入的参数<code>pen</code>的问题了</p>
+<p>这个<code>pen</code>，嗯，嗯？嗯！嗯？</p>
+<p>这次确实有些不同，为了减少每次构造 &amp; 析构的开销，我使用了<code>static</code>将<code>pen</code>修饰为静态变量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">Widget::paintEvent</span><span class="hljs-params">(QPaintEvent* event)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-function">QPainter <span class="hljs-title">painter</span><span class="hljs-params">(<span class="hljs-keyword">this</span>)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">static</span> QPen <span class="hljs-title">pen</span><span class="hljs-params">(Qt::darkGray, <span class="hljs-number">2</span>)</span></span>;<br>    painter.<span class="hljs-built_in">setPen</span>(pen);<br>    painter.<span class="hljs-built_in">drawRect</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">rect</span>());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>不过，那又如何呢</p>
+<p>一个<code>static QPen</code>总不可能是野指针吧，况且是通过<code>const &amp;</code>引用传递</p>
+<p>虽说<code>QPen</code>类内含指针成员，但是没有任何函数修改这个<code>static</code>对象呀</p>
+<h2 id="不，不是你"><a href="#不，不是你" class="headerlink" title="不，不是你"></a>不，不是你</h2><p>不应该不应该，怎么说都不可能是<code>static</code>的问题</p>
+<p>这非常违反我多年来的<code>C++</code>常识</p>
+<p>此案另有隐情</p>
+<h2 id="试试也无妨"><a href="#试试也无妨" class="headerlink" title="试试也无妨"></a>试试也无妨</h2><p>在数次希望与失望中徘徊后，我甚至想过是<code>Sougou</code>的<code>32/64 bits</code>版本问题</p>
+<p>在思索无果后，虽然很冲击我的常识，但还是决定死马当活马医，试试去掉<code>static</code></p>
+<h2 id="扑朔迷离"><a href="#扑朔迷离" class="headerlink" title="扑朔迷离"></a>扑朔迷离</h2><p>在去除<code>static</code>后，离奇的事情发生了</p>
+<p>虽然程序还是崩溃了，但是<code>dmp</code>的分析结果却产生了变化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs dmp">ExceptionAddress: 000000006895a94e (Qt5Core!ZN9QtPrivate20QStringList_containsEPK11QStringListRK7QStringN2Qt15CaseSensitivityE+0x000000000000000e)<br>ExceptionCode: c0000005 (Access violation)<br>ExceptionFlags: 00000000<br>NumberParameters: 2<br>   Parameter[0]: 0000000000000000<br>   Parameter[1]: ffffffffffffffff<br>Attempt to read from address ffffffffffffffff<br></code></pre></td></tr></table></figure>
+
+<p>这次发生异常的函数不再是<code>QPen::operator==()</code> 而是<code>ZN9QtPrivate20QStringList_containsEPK11QStringListRK7QStringN2Qt15CaseSensitivityE</code></p>
+<p>也就是：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++">QPrivate::<span class="hljs-built_in">QStringList_contains</span>(<span class="hljs-type">const</span> QStringList *that, <span class="hljs-type">const</span> QString &amp;str, Qt::CaseSensitivity cs)<br></code></pre></td></tr></table></figure>
+
+<h2 id="惊人的相似"><a href="#惊人的相似" class="headerlink" title="惊人的相似"></a>惊人的相似</h2><p>那么，我在什么地方使用了这个函数呢</p>
+<p>我记得非常清楚</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">static</span> <span class="hljs-type">const</span> QStringList BlackList = &#123; <span class="hljs-string">&quot;XXX&quot;</span>, <span class="hljs-string">&quot;YYY&quot;</span>, <span class="hljs-string">&quot;ZZZ&quot;</span> &#125;;<br><span class="hljs-keyword">if</span>(BlackList.<span class="hljs-built_in">contains</span>(title))&#123;...&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我只在这个<code>QStringList</code>对象上调用了<code>contains</code>函数（该函数在内部会继续调用上述函数）</p>
+<p>发现了吗，又是一个<code>static</code>对象，又是野指针非法内存访问</p>
+<p>这种不谋而合的相似，真是让我不寒而栗</p>
+<p>难以言说，但有种真相呼之欲出的感觉</p>
+<h2 id="前方是什么"><a href="#前方是什么" class="headerlink" title="前方是什么"></a>前方是什么</h2><p>为了解决这个疑问</p>
+<p>我决定要亲眼看一看内存</p>
+<p>用<code>QtCreator</code>的<code>debug</code>模式调试，并设置断点，查看<code>BlackList</code>的内存</p>
+<p>乍一看，平平无奇，但当我抬头时，我却看到了令人震撼的一幕</p>
+<h2 id="鬼压床"><a href="#鬼压床" class="headerlink" title="鬼压床"></a>鬼压床</h2><p><img src="/img/image-20220321192456055.png" srcset="/img/loading.gif" lazyload alt="内存"></p>
+<p>在<code>BlackList</code>的内存上方，赫然立着两个数组 <code>text</code> &amp; <code>path</code>，分别存储窗口标题和进程路径</p>
+<p>如果这俩数组下溢的话，那将直接覆盖<code>BlackList</code>的内存，后果不堪设想，其中的指针必然野化</p>
+<p>顺便说一下，这俩数组为何会并列<code>BlackList</code>出现在这里</p>
+<p>那是因为 <code>text</code> <code>path</code> <code>BlackList</code>均为<code>static</code>变量，统一置于静态存储区</p>
+<h2 id="真相？"><a href="#真相？" class="headerlink" title="真相？"></a>真相？</h2><p>至此，我们可以大致还原事件的真相</p>
+<p>可能是某数组下溢，导致<code>BlackList</code>中的指针被覆盖，导致产生野指针，解引用后非法内存访问导致崩溃</p>
+<p>不过，究竟是什么导致数组溢出？</p>
+<h2 id="柳暗花明"><a href="#柳暗花明" class="headerlink" title="柳暗花明"></a>柳暗花明</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">QString <span class="hljs-title">Win::getWindowText</span><span class="hljs-params">(HWND hwnd)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">static</span> WCHAR text[<span class="hljs-number">128</span>];<span class="hljs-comment">//#</span><br>    <span class="hljs-built_in">GetWindowTextW</span>(hwnd, text, <span class="hljs-built_in">sizeof</span>(text));<span class="hljs-comment">//#</span><br>    <span class="hljs-keyword">return</span> QString::<span class="hljs-built_in">fromWCharArray</span>(text);<br>&#125;<br><span class="hljs-function">QString <span class="hljs-title">Win::getProcessName</span><span class="hljs-params">(HWND hwnd)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (hwnd == <span class="hljs-literal">nullptr</span>) <span class="hljs-keyword">return</span> <span class="hljs-built_in">QString</span>();<br>    DWORD PID = <span class="hljs-built_in">getProcessID</span>(hwnd);<br><br>    <span class="hljs-type">static</span> WCHAR path[<span class="hljs-number">128</span>];<span class="hljs-comment">//#</span><br>    HANDLE Process = <span class="hljs-built_in">OpenProcess</span>(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, PID);<br>    <span class="hljs-built_in">GetProcessImageFileNameW</span>(Process, path, <span class="hljs-built_in">sizeof</span>(path));<span class="hljs-comment">//#</span><br>    <span class="hljs-built_in">CloseHandle</span>(Process);<br><br>    QString pathS = QString::<span class="hljs-built_in">fromWCharArray</span>(path);<br>    <span class="hljs-keyword">return</span> pathS.<span class="hljs-built_in">mid</span>(pathS.<span class="hljs-built_in">lastIndexOf</span>(<span class="hljs-string">&#x27;\\&#x27;</span>) + <span class="hljs-number">1</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>问题只可能出现在<code>GetWindowTextW</code> &amp; <code>GetProcessImageFileNameW</code>的参数上（Windows API分为W和A版本，W代表宽字符）</p>
+<p>但是为什么明明用了<code>sizeof</code>还会溢出呢？</p>
+<p>问题就出在这</p>
+<p>阅读官方文档可知：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">GetWindowTextW</span><span class="hljs-params">(</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]  HWND   hWnd,</span></span><br><span class="hljs-params"><span class="hljs-function">  [out] LPWSTR lpString,</span></span><br><span class="hljs-params"><span class="hljs-function">  [in]  <span class="hljs-type">int</span>    nMaxCount <span class="hljs-comment">//复制到缓冲区的最大字符数，包括空字符。如果文本超出此限制，则将其截断。</span></span></span><br><span class="hljs-params"><span class="hljs-function">)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<p>最后一个参数是 最大<strong>字符数</strong>，而非<strong>字节数</strong></p>
+<p>一字之差，导致了程序的崩溃</p>
+<p>在<code>ASCII</code>编码下，一字符为一字节，可以用<code>sizeof</code>直接获取</p>
+<p>而为了表示中文，就需要用到宽字符<code>WCHAR</code>（wchar_t）</p>
+<p>一个宽字符并不是一字节 所以使用<code>sizeof</code>会导致结果大于字符数，导致<code>text</code>溢出</p>
+<p>正确的做法是使用<a target="_blank" rel="noopener" href="https://www.cnblogs.com/envoy/p/8352467.html"><code>_countof</code></a>宏来获取实际数组元素个数</p>
+<p><code>path</code>同上</p>
+<h2 id="结束了吗？"><a href="#结束了吗？" class="headerlink" title="结束了吗？"></a>结束了吗？</h2><p>并没有</p>
+<p>仔细观察可以发现，<code>text</code>在<code>path</code>上方，要溢出也是先覆盖<code>path</code>，并不会对<code>BlackList</code>造成影响</p>
+<p>真相就在眼前，却要峰回路转了嘛？</p>
+<p>仔细回忆可以发现，程序貌似只在<code>release</code>模式下崩溃过，在<code>debug</code>模式下虽然也会有<code>SougouInput</code>的信息：</p>
+<ul>
+<li>Shared library architecture i386 is not compatible with target architecture i386:x86-64.</li>
+</ul>
+<p>但显然与之前不同，且不会造成崩溃</p>
+<h2 id="冷不丁"><a href="#冷不丁" class="headerlink" title="冷不丁"></a>冷不丁</h2><p>难道是<code>release</code> &amp; <code>debug</code>模式下内存分布不同？</p>
+<p>确是如此</p>
+<p>在<code>release</code>模式下输出三者地址：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs dns">path:         <span class="hljs-number">0x40d140</span><br>text:         <span class="hljs-number">0x40d240</span><br>&amp;BlackList:   <span class="hljs-number">0x40d358</span><br></code></pre></td></tr></table></figure>
+
+<p>发现<code>text</code>更靠近<code>BlackList</code>，溢出后直接导致其覆盖</p>
+<h2 id="还没完"><a href="#还没完" class="headerlink" title="还没完"></a>还没完</h2><p>知道了内部机理，但究竟是什么导致了<code>text</code>溢出</p>
+<p>一般情况下，窗口标题是不太可能超过128字符的</p>
+<p>这也是此<code>bug</code>难以复现的原因之一</p>
+<p>在偶然情况下，我记录到了使程序崩溃的窗口标题，长达173字符</p>
+<ul>
+<li>是<code>Chrome</code>浏览器在加载网页的瞬间，窗口标题短暂变为网址（可能还未获取到网页标题）</li>
+</ul>
+<p>这也解释了必须在玩乐之后才会崩溃的原因</p>
+<p>而且在<code>text</code>越界后，程序并不会马上崩溃，必须要在QQ窗口重新获取焦点并监测<code>BlackList</code>时，才会触发野指针</p>
+<p>更增加了<code>debug</code>难度</p>
+<h2 id="结案"><a href="#结案" class="headerlink" title="结案"></a>结案</h2><p>该事件，十分复杂，让我们来捋一捋<code>bug</code>发生的流程：</p>
+<ul>
+<li>是<code>Chrome</code>浏览器在加载网页的瞬间，窗口标题短暂变为网址，导致<code>text</code>溢出</li>
+<li><code>text</code>溢出覆盖<code>static</code>的<code>QPen</code>（before） 或者 覆盖<code>static</code>的<code>QStringList</code>（After），导致两者内部的指针野化</li>
+<li>前者在<code>paintEvent()</code>时崩溃，后者在QQ获取焦点，比较<code>BlackList</code>时崩溃（非法内存访问）</li>
+</ul>
+<p>注意点：</p>
+<ul>
+<li><code>release</code> &amp; <code>debug</code>模式下内存分布可能不同</li>
+</ul>
+<p>解决办法：</p>
+<ul>
+<li>使用<a target="_blank" rel="noopener" href="https://www.cnblogs.com/envoy/p/8352467.html"><code>_countof</code></a>宏来获取实际数组元素个数，而非<code>sizeof</code></li>
+</ul>
+<p>启示：</p>
+<ul>
+<li>使用<code>dmp</code>内存转储文件来记录程序崩溃瞬间的内存，并用<code>windbg</code>分析调用链</li>
+<li>使用调试模式，观察内存，注意数组越界 &amp; 野指针</li>
+<li>使用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sysinternals/downloads/procdump"><code>ProcDump</code></a>工具创建<code>dmp</code>文件</li>
+<li>其实<code>Windows</code>系统也会自动生成<code>dmp</code>文件，路径：<code>C:\Users\用户名\AppData\Local\CrashDumps</code>（在系统属性-高级-启动和故障恢复中设置）</li>
+</ul>
+<p>注：</p>
+<ul>
+<li>搜狗输入法可以获取程序崩溃信息 可能是因为输入法需要<code>dll</code>注入</li>
+</ul>
+<p>焯：</p>
+<ul>
+<li>我两年前好像犯过这样的错误：</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33374268/article/details/107687784?spm=1001.2014.3001.5501">记一次 C++ string 假性“内存泄露“ (_Big_allocation_sentinel)_MrBeanC的博客-CSDN博客_c++ string内存泄漏</a></li>
+</ul>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sysinternals/downloads/procdump">ProcDump - Windows Sysinternals | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_38416696/article/details/107576060">Qt 利用 dmp 文件进行调试_Copy-&gt;Paste的博客-CSDN博客_dmp qt</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/envoy/p/8352467.html">读懂_countof，可以懂得什么 - envoy - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d30c4fdd43cb">野指针 Crash - 简书</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw">GetWindowTextW function (winuser.h) - Win32 apps | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/debugger/getting-started-with-windbg">WinDbg 入门（用户模式） - Windows drivers | Microsoft Docs</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Evennaire/article/details/82229695">Qt报错：C:\Program Files (x86)\SogouInput\Components_PlasticMatrix的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://code.woboq.org/qt5/qtbase/src/gui/painting/qpainter.cpp.html#_ZN8QPainterD1Ev">qpainter.cpp source code [qtbase&#x2F;src&#x2F;gui&#x2F;painting&#x2F;qpainter.cpp] - Woboq Code Browser</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/C/" class="category-chain-item">C++</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/C/">#C++</a>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+        <a href="/tags/Debug/">#Debug</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>记一次数组越界引发的内存篡改导致的野指针引用灾难</div>
+      <div>https://mrbeanc.gitee.io/2022/03/21/记一次数组越界引发的内存篡改导致的野指针引用灾难/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月21日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/23/%E6%A8%A1%E6%8B%9F%E6%8C%89%E9%94%AE-keybd-event-Send-PostMessage%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83/" title="模拟按键 - keybd_event Send/PostMessage的一些思考">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">模拟按键 - keybd_event Send/PostMessage的一些思考</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/02/14/%E5%85%B3%E4%BA%8EWindows%E6%96%87%E4%BB%B6%E5%85%B3%E8%81%94/" title="关于Windows文件关联">
+                        <span class="hidden-mobile">关于Windows文件关联</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

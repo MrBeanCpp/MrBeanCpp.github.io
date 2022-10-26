@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="鼠标长按式弹出菜单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt-鼠标长按式弹出菜单的一种实现方案">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/10/26/Qt-%E9%BC%A0%E6%A0%87%E9%95%BF%E6%8C%89%E5%BC%8F%E5%BC%B9%E5%87%BA%E8%8F%9C%E5%8D%95%E7%9A%84%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="鼠标长按式弹出菜单">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026191207095.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026191539227.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026192838016.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026194920895.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026201007425.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026210503942.png">
+<meta property="article:published_time" content="2022-10-26T11:00:52.000Z">
+<meta property="article:modified_time" content="2022-10-26T14:56:43.088Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Menu">
+<meta property="article:tag" content="MouseLongPress">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20221026191207095.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Qt-鼠标长按式弹出菜单的一种实现方案 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt-鼠标长按式弹出菜单的一种实现方案"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-26 19:00" pubdate>
+          2022年10月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          1.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Qt-鼠标长按式弹出菜单的一种实现方案</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年10月26日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>菜单，所为何物？</p>
+<p>餐馆里菜品的种类表嘛</p>
+<p>核理 太河里了</p>
+<p>今天的blog就写到这里，开饭了</p>
+<p>end</p>
+<p>在软件中，在大众印象里，菜单应该是右键单击后弹出来的那玩意儿：</p>
+<p><img src="/img/image-20221026191207095.png" srcset="/img/loading.gif" lazyload alt="Menu"></p>
+<p>横平竖直，死板而不富有生力</p>
+<p>但是菜单项右侧的小箭头预示着 该项也是个菜单，可以开启二级菜单</p>
+<p>同理可以开启多级菜单，aka 级联菜单</p>
+<p><img src="/img/image-20221026191539227.png" srcset="/img/loading.gif" lazyload alt="级联菜单"></p>
+<p><code>Qt</code>中，这玩意儿叫做<code>QMenu</code></p>
+<p><code>QMenu</code>中可以放入若干个菜单项：</p>
+<ul>
+<li>可以是QAction</li>
+<li>也可以是QMenu，构成级联树状结构</li>
+</ul>
+<p>太好了，<code>Qt</code>提供了<code>QMenu</code>，太好用了，简直是救苦救难活菩萨</p>
+<p>blog到这里又可以结束了 开饭了</p>
+<h3 id="欲求不满"><a href="#欲求不满" class="headerlink" title="欲求不满"></a>欲求不满</h3><p>太没追求了，太埋汰了，太丑了</p>
+<p>他甚至不能自定义菜单项的位置，只能垂直排列</p>
+<p>作为一个有追求的程序员，决不能就此罢休</p>
+<p>让我们来康康<code>Maya</code>的菜单：</p>
+<p><img src="/img/image-20221026192838016.png" srcset="/img/loading.gif" lazyload alt="Maya Menu"></p>
+<p>我靠，什么叫<code>Maya</code>，什么叫业内标杆，就一个字：newbility</p>
+<h3 id="哭闹"><a href="#哭闹" class="headerlink" title="哭闹"></a>哭闹</h3><p>我也要我也要，不嘛不嘛，我就要，www</p>
+<p>我不听我不听，别人有我也要</p>
+<h3 id="义眼盯针"><a href="#义眼盯针" class="headerlink" title="义眼盯针"></a>义眼盯针</h3><p>论断：</p>
+<blockquote>
+<p>这肯定是自绘菜单，肯定不是用的系统菜单（虽然QMenu也是Qt自绘的）</p>
+</blockquote>
+<p>你问我怎么知道的？</p>
+<p>我只能说：dddd，懂的都懂，不懂的也不必多说，这里面的水很深，不说也是为你好</p>
+<h2 id="正片（叠底"><a href="#正片（叠底" class="headerlink" title="正片（叠底"></a>正片（叠底</h2><p>那么要如何实现这种效果呢？</p>
+<h3 id="大聪明"><a href="#大聪明" class="headerlink" title="大聪明"></a>大聪明</h3><p>有人可能会说：一个menu不行，那就多个menu同时<code>popup()</code>就可以了呀</p>
+<p>聪明，太聪明了</p>
+<p>但是经过实验发现，只有一个menu可以响应鼠标划过（hover），其他的均无反应</p>
+<h3 id="自绘"><a href="#自绘" class="headerlink" title="自绘"></a>自绘</h3><p>当然，自绘控件（窗体）肯定是最优解决方案，自定义程度最高，如：</p>
+<p><img src="/img/image-20221026194920895.png" srcset="/img/loading.gif" lazyload alt="自绘菜单"></p>
+<p>这是一个图片查看器的右键菜单，长按右键弹出，并且可以实现花里胡哨的效果</p>
+<p>但是要注意一个问题，一般的菜单都是可以实现级联的</p>
+<p>如果要自绘实现级联，那代码量就可想而知了</p>
+<p>所以这个方案好是好，但是我是懒狗，o(╥﹏╥)o</p>
+<h3 id="女娲补天"><a href="#女娲补天" class="headerlink" title="女娲补天"></a>女娲补天</h3><p>实际上，仔细观察<code>Maya</code>的菜单，只有第一级菜单是持久显示的</p>
+<p>只要解决了第一级菜单的显示和响应，后续菜单直接使用<code>QMenu</code>即可</p>
+<p>也就是只要实现第一级触发器即可</p>
+<p>那么有什么能持久显示在窗体上呢</p>
+<p>那么显然，除了<code>QMenu</code>都可以…</p>
+<p>好的，当然，经过层层筛选，发现<code>QToolButton</code>是最合适的载体</p>
+<p>因为这个控件自带菜单显示（setMenu方法）</p>
+<p>补充一点：showMenu是阻塞方法（类似exec，内部循环），在<code>QTimer</code>中用会阻断<code>Timer</code></p>
+<h2 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h2><p>根据高内聚低耦合精神，我们决定将菜单封装为一个单独的窗体</p>
+<p>在窗体上放置<code>QToolButton</code>作为菜单的载体，自然地解决了级联菜单问题</p>
+<p>然后再将窗体设置为透明和鼠标穿透</p>
+<p>Perfect</p>
+<p>哦，我的上帝，太简单了</p>
+<blockquote>
+<p>简直是原子核脑袋</p>
+</blockquote>
+<p>还记得我们的标题吗：长按鼠标弹出菜单</p>
+<p>参考：Apex长按中键弹出标记菜单，松开即可标记</p>
+<p><img src="/img/image-20221026201007425.png" srcset="/img/loading.gif" lazyload alt="Apex Menu"></p>
+<p>所以这题真正的难点在于：按住鼠标按键，并响应菜单</p>
+<p>一般人可能不觉得这有什么难的</p>
+<p>像Apex和Maya自绘的话，也当然不是什么难题</p>
+<p>但对于偷鸡取巧的我们来讲，这就差点被<strong>checkmate</strong>了</p>
+<p>偷鸡，是要承担后果的</p>
+<h3 id="Windows窗口焦点系统"><a href="#Windows窗口焦点系统" class="headerlink" title="Windows窗口焦点系统"></a>Windows窗口焦点系统</h3><p>众所周知，只有焦点窗口才能接收鼠标和键盘输入</p>
+<p>这其中，当属鼠标焦点最特殊</p>
+<blockquote>
+<p>在一个窗口A内，按住鼠标任意按键，拖动鼠标至窗口B，Press &amp; Move &amp; Release消息都会发送给窗口A</p>
+<p>导致作为菜单弹出的B无法正常响应鼠标（即便是转移焦点也不行）</p>
+</blockquote>
+<p>也就是在窗口A中按住鼠标中键弹出菜单B的话，菜单B中的<code>QToolButton</code>是无法正常响应鼠标的，也就无法自动弹出Menu</p>
+<p>离奇的是弹出的<code>QMenu</code>是可以响应鼠标hover的（怀疑是自行拦截了qApp事件）</p>
+<p>所以我们的目标就是让<code>QToolButton</code>响应鼠标并弹出Menu</p>
+<p>唯一的方法是向<code>qApp</code>安装事件过滤器，过滤所有mouseMove事件，控制菜单的弹出和关闭</p>
+<p>当然细节很多，但是有了大思路，小细节只要耐心即可解决</p>
+<p><img src="/img/image-20221026210503942.png" srcset="/img/loading.gif" lazyload alt="image-20221026210503942"></p>
+<p>具体可以参考：<a target="_blank" rel="noopener" href="https://gitee.com/mrbeanc/follower-v2.0/blob/master/toolmenu.cpp">toolmenu.cpp · 蔡姬&#x2F;Follower v2.0 - 码云 - 开源中国 (gitee.com)</a></p>
+<h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/22948145/how-to-show-the-menu-in-qpushbutton-without-blocking/22972318#22972318">qt - How to show the menu in QPushButton without blocking? - Stack Overflow</a></p>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/mrbeanc/follower-v2.0/blob/master/toolmenu.cpp">toolmenu.cpp · 蔡姬&#x2F;Follower v2.0 - 码云 - 开源中国 (gitee.com)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Menu/">#Menu</a>
+      
+        <a href="/tags/MouseLongPress/">#MouseLongPress</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt-鼠标长按式弹出菜单的一种实现方案</div>
+      <div>https://mrbeanc.gitee.io/2022/10/26/Qt-鼠标长按式弹出菜单的一种实现方案/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月26日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/21/Qt-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-%E6%A8%A1%E6%80%81%E7%AA%97%E5%8F%A3/" title="Qt-事件循环 &amp; 模态窗口">
+                        <span class="hidden-mobile">Qt-事件循环 &amp; 模态窗口</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

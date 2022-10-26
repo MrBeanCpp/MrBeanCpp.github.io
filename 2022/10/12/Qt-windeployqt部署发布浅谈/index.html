@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Qt项目打包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt-windeployqt部署发布浅谈">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/10/12/Qt-windeployqt%E9%83%A8%E7%BD%B2%E5%8F%91%E5%B8%83%E6%B5%85%E8%B0%88/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Qt项目打包">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-12T10:12:46.000Z">
+<meta property="article:modified_time" content="2022-10-12T12:10:42.228Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="windeployqt">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Qt-windeployqt部署发布浅谈 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt-windeployqt部署发布浅谈"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-12 18:12" pubdate>
+          2022年10月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Qt-windeployqt部署发布浅谈</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年10月12日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，我们可以在<code>Qt Creator</code>中运行项目，或者是在<code>release/debug</code>文件夹中双击<code>exe</code>运行应用程序</p>
+<p>有些同学可能对后者存在些许疑惑，时常会看到<code>找不到dll</code>等错误</p>
+<p>这是由于未在环境变量中加入<code>msvc/bin</code> | <code>mingw/bin</code>等目录（环境变量可以看做是搜索目录）</p>
+<p>而<code>bin</code>目录中存放的正是项目中依赖的各种<code>Qt-dll</code></p>
+<blockquote>
+<p> <code>exe</code>的运行依赖各种<code>dll</code>，这是常识</p>
+</blockquote>
+<p>但是具体依赖哪些<code>dll</code>，以及哪几类<code>dll</code>呢</p>
+<p>从来源上，可以分为两种：<code>Windows dll</code> &amp; <code>Qt dll</code></p>
+<ul>
+<li><code>Windows dll</code>通常位于<code>C:\Windows\System32</code>文件夹下（以<code>x64</code>为例），一般系统自带，无需特殊处理</li>
+<li><code>Qt dll</code>一般位于<code>msvc/bin</code> | <code>mingw/bin</code>（包含版本号），一般用户系统无<code>Qt</code>，大概率缺失，需要程序自带</li>
+</ul>
+<p>所以，为了将应用程序打包发布到一般<code>PC</code>上，我们需要搜集依赖的<code>Qt-dll</code>并与<code>exe</code>置于同级目录下，方便寻址</p>
+<blockquote>
+<p>But How</p>
+</blockquote>
+<h2 id="正片（叠底"><a href="#正片（叠底" class="headerlink" title="正片（叠底"></a>正片（叠底</h2><p>我们可以通过</p>
+<ul>
+<li><code>Dependencies</code>软件</li>
+<li><code>任务管理器 - 性能 - 资源监视器 - 模块</code></li>
+</ul>
+<p>查看<code>exe</code>的<code>dll</code>依赖</p>
+<p>但是一个个复制实在是，情けない，丢程序员的脸！</p>
+<p><code>Qt</code>为我们提供了命令行工具<code>windeployqt</code>来自动化部署（这名字：win + deploy +qt 秀）</p>
+<p>当然，我们不能在<code>cmd</code>中直接使用该命令</p>
+<p>而是应该在Qt提供的命令行环境 <code>Qt 5.15.2 (MSVC 2019 64-bit)</code> | <code>Qt 5.15.2 (MinGW 8.1.0 64-bit)</code>中进行（选择对应的编译器和版本）</p>
+<p>详细原因请参考我的另一篇blog：<a target="_blank" rel="noopener" href="https://mrbeancpp.github.io/2021/09/17/windeployqt%E5%8F%91%E5%B8%83%E9%A1%B9%E7%9B%AE-%E4%B8%BA%E4%BD%95%E6%80%BB%E6%98%AF%E7%BC%BA%E5%B0%91dll/">windeployqt发布项目 为何总是缺少dll - MrBeanC-Blog (mrbeancpp.github.io)</a></p>
+<p>我们这次的重点并不在于此</p>
+<h2 id="windeployqt"><a href="#windeployqt" class="headerlink" title="windeployqt"></a>windeployqt</h2><p>&#x2F;&#x2F;该工具可以帮助我们将<code>exe</code>所需要的<code>Qt-dll</code>拷贝到<code>exe</code>同级目录下</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs cmd"><span class="hljs-function">Usage: <span class="hljs-title">windeployqt</span> [<span class="hljs-title">options</span>] [<span class="hljs-title">files</span>]</span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-title">Options</span>:</span><br><span class="hljs-function">  -?, -<span class="hljs-title">h</span>, --<span class="hljs-title">help</span>            <span class="hljs-title">Displays</span> <span class="hljs-title">this</span> <span class="hljs-title">help</span>.</span><br><span class="hljs-function">  -<span class="hljs-title">v</span>, --<span class="hljs-title">version</span>             <span class="hljs-title">Displays</span> <span class="hljs-title">version</span> <span class="hljs-title">information</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">dir</span> &lt;<span class="hljs-title">directory</span>&gt;         <span class="hljs-title">Use</span> <span class="hljs-title">directory</span> <span class="hljs-title">instead</span> <span class="hljs-title">of</span> <span class="hljs-title">binary</span> <span class="hljs-title">directory</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">libdir</span> &lt;<span class="hljs-title">path</span>&gt;           <span class="hljs-title">Copy</span> <span class="hljs-title">libraries</span> <span class="hljs-title">to</span> <span class="hljs-title">path</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">plugindir</span> &lt;<span class="hljs-title">path</span>&gt;        <span class="hljs-title">Copy</span> <span class="hljs-title">plugins</span> <span class="hljs-title">to</span> <span class="hljs-title">path</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">debug</span>                   <span class="hljs-title">Assume</span> <span class="hljs-title">debug</span> <span class="hljs-title">binaries</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">release</span>                 <span class="hljs-title">Assume</span> <span class="hljs-title">release</span> <span class="hljs-title">binaries</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">pdb</span>                     <span class="hljs-title">Deploy</span> .<span class="hljs-title">pdb</span> <span class="hljs-title">files</span> (<span class="hljs-title">MSVC</span>).</span><br><span class="hljs-function">  --<span class="hljs-title">force</span>                   <span class="hljs-title">Force</span> <span class="hljs-title">updating</span> <span class="hljs-title">files</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">dry</span>-<span class="hljs-title">run</span>                 <span class="hljs-title">Simulation</span> <span class="hljs-title">mode</span>. <span class="hljs-title">Behave</span> <span class="hljs-title">normally</span>, <span class="hljs-title">but</span> <span class="hljs-title">do</span> <span class="hljs-title">not</span></span><br><span class="hljs-function">                            <span class="hljs-title">copy</span>/<span class="hljs-title">update</span> <span class="hljs-title">any</span> <span class="hljs-title">files</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">patchqt</span>              <span class="hljs-title">Do</span> <span class="hljs-title">not</span> <span class="hljs-title">patch</span> <span class="hljs-title">the</span> <span class="hljs-title">Qt5Core</span> <span class="hljs-title">library</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">plugins</span>              <span class="hljs-title">Skip</span> <span class="hljs-title">plugin</span> <span class="hljs-title">deployment</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">libraries</span>            <span class="hljs-title">Skip</span> <span class="hljs-title">library</span> <span class="hljs-title">deployment</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">qmldir</span> &lt;<span class="hljs-title">directory</span>&gt;      <span class="hljs-title">Scan</span> <span class="hljs-title">for</span> <span class="hljs-title">QML</span>-<span class="hljs-title">imports</span> <span class="hljs-title">starting</span> <span class="hljs-title">from</span> <span class="hljs-title">directory</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">quick</span>-<span class="hljs-title">import</span>         <span class="hljs-title">Skip</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">Qt</span> <span class="hljs-title">Quick</span> <span class="hljs-title">imports</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">translations</span>         <span class="hljs-title">Skip</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">translations</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">system</span>-<span class="hljs-title">d3d</span>-<span class="hljs-title">compiler</span>  <span class="hljs-title">Skip</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">the</span> <span class="hljs-title">system</span> <span class="hljs-title">D3D</span> <span class="hljs-title">compiler</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">compiler</span>-<span class="hljs-title">runtime</span>        <span class="hljs-title">Deploy</span> <span class="hljs-title">compiler</span> <span class="hljs-title">runtime</span> (<span class="hljs-title">Desktop</span> <span class="hljs-title">only</span>).</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">compiler</span>-<span class="hljs-title">runtime</span>     <span class="hljs-title">Do</span> <span class="hljs-title">not</span> <span class="hljs-title">deploy</span> <span class="hljs-title">compiler</span> <span class="hljs-title">runtime</span> (<span class="hljs-title">Desktop</span> <span class="hljs-title">only</span>).</span><br><span class="hljs-function">  --<span class="hljs-title">webkit2</span>                 <span class="hljs-title">Deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">WebKit2</span> (<span class="hljs-title">web</span> <span class="hljs-title">process</span>).</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">webkit2</span>              <span class="hljs-title">Skip</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">WebKit2</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">json</span>                    <span class="hljs-title">Print</span> <span class="hljs-title">to</span> <span class="hljs-title">stdout</span> <span class="hljs-title">in</span> <span class="hljs-title">JSON</span> <span class="hljs-title">format</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">angle</span>                   <span class="hljs-title">Force</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">ANGLE</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">angle</span>                <span class="hljs-title">Disable</span> <span class="hljs-title">deployment</span> <span class="hljs-title">of</span> <span class="hljs-title">ANGLE</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">no</span>-<span class="hljs-title">opengl</span>-<span class="hljs-title">sw</span>            <span class="hljs-title">Do</span> <span class="hljs-title">not</span> <span class="hljs-title">deploy</span> <span class="hljs-title">the</span> <span class="hljs-title">software</span> <span class="hljs-title">rasterizer</span> <span class="hljs-title">library</span>.</span><br><span class="hljs-function">  --<span class="hljs-title">list</span> &lt;<span class="hljs-title">option</span>&gt;           <span class="hljs-title">Print</span> <span class="hljs-title">only</span> <span class="hljs-title">the</span> <span class="hljs-title">names</span> <span class="hljs-title">of</span> <span class="hljs-title">the</span> <span class="hljs-title">files</span> <span class="hljs-title">copied</span>.</span><br><span class="hljs-function">                            <span class="hljs-title">Available</span> <span class="hljs-title">options</span>:</span><br><span class="hljs-function">                             <span class="hljs-title">source</span>:   <span class="hljs-title">absolute</span> <span class="hljs-title">path</span> <span class="hljs-title">of</span> <span class="hljs-title">the</span> <span class="hljs-title">source</span> <span class="hljs-title">files</span></span><br><span class="hljs-function">                             <span class="hljs-title">target</span>:   <span class="hljs-title">absolute</span> <span class="hljs-title">path</span> <span class="hljs-title">of</span> <span class="hljs-title">the</span> <span class="hljs-title">target</span> <span class="hljs-title">files</span></span><br><span class="hljs-function">                             <span class="hljs-title">relative</span>: <span class="hljs-title">paths</span> <span class="hljs-title">of</span> <span class="hljs-title">the</span> <span class="hljs-title">target</span> <span class="hljs-title">files</span>, <span class="hljs-title">relative</span></span><br><span class="hljs-function">                                       <span class="hljs-title">to</span> <span class="hljs-title">the</span> <span class="hljs-title">target</span> <span class="hljs-title">directory</span></span><br><span class="hljs-function">                             <span class="hljs-title">mapping</span>:  <span class="hljs-title">outputs</span> <span class="hljs-title">the</span> <span class="hljs-title">source</span> <span class="hljs-title">and</span> <span class="hljs-title">the</span> <span class="hljs-title">relative</span></span><br><span class="hljs-function">                                       <span class="hljs-title">target</span>, <span class="hljs-title">suitable</span> <span class="hljs-title">for</span> <span class="hljs-title">use</span> <span class="hljs-title">within</span> <span class="hljs-title">an</span></span><br><span class="hljs-function">                                       <span class="hljs-title">Appx</span> <span class="hljs-title">mapping</span> <span class="hljs-title">file</span></span><br><span class="hljs-function">  --<span class="hljs-title">verbose</span> &lt;<span class="hljs-title">level</span>&gt;         <span class="hljs-title">Verbose</span> <span class="hljs-title">level</span>.</span><br><span class="hljs-function">  </span><br><span class="hljs-function"><span class="hljs-title">Arguments</span>:</span><br><span class="hljs-function">  [<span class="hljs-title">files</span>]                   <span class="hljs-title">Binaries</span> <span class="hljs-title">or</span> <span class="hljs-title">directory</span> <span class="hljs-title">containing</span> <span class="hljs-title">the</span> <span class="hljs-title">binary</span>.</span><br></code></pre></td></tr></table></figure>
+
+<p>只要在命令行中改变(<code>cd·Change Directory</code>)工作目录至<code>exe</code>所在目录</p>
+<p>并执行<code>windeployqt test.exe</code></p>
+<p>便会自动将依赖文件（包括<code>dll</code>和图标等众文件）拷贝至<code>exe</code>所在目录</p>
+<p>此时，打包为压缩包并一齐发布即可</p>
+<h3 id="MSVC背刺"><a href="#MSVC背刺" class="headerlink" title="MSVC背刺"></a>MSVC背刺</h3><p>如果是<code>MSVC</code>编译器，要注意一点</p>
+<p><code>MSVC</code>依赖于<code>VS</code>，可能会用到<code>VS</code>下的一些<code>dll</code>如：<code>MSVCP140.dll</code>等<code>C++</code>运行时环境</p>
+<p>不属于<code>Qt</code>，所以需要自行拷贝（虽然多数电脑上包含）</p>
+<h2 id="More"><a href="#More" class="headerlink" title="More"></a>More</h2><p>如果你认为这篇博客到此为止，那就太年轻了</p>
+<p>那和一般的CV blog有什么区别</p>
+<p>咳咳</p>
+<p><code>windeployqt</code>直接打包发布，运行并无大碍，但问题在于默认复制的依赖多数冗余，需要手动精简</p>
+<h3 id="何がいる"><a href="#何がいる" class="headerlink" title="何がいる"></a>何がいる</h3><h4 id="libEGL-libGLESV2-opengl32sw"><a href="#libEGL-libGLESV2-opengl32sw" class="headerlink" title="libEGL libGLESV2 opengl32sw"></a>libEGL libGLESV2 opengl32sw</h4><p><code>libEGL.dll</code>,<code>libGLESV2.dll</code>这两个文件是 ANGLE 的文件，可以去掉</p>
+<p><code>opengl32sw.dll</code>是软件模拟 OpenGL，除非用户的系统连 DirectX 支持都不完整（例如虚拟机），不然也没用</p>
+<p>可以用<code>--no-angle</code> &amp; <code>--no-opengl-sw</code>这俩参数去除</p>
+<h4 id="svg"><a href="#svg" class="headerlink" title="svg"></a>svg</h4><p>如果没有使用<code>svg</code>的话，<code>iconengines\qsvgicon.dll</code>, <code>imageformats\qsvg.dll</code>, <code>Qt5Svg.dll</code> 这三个文件也可以删掉</p>
+<p>这是矢量图格式，大部分程序应该都不需要</p>
+<h4 id="translations"><a href="#translations" class="headerlink" title="translations"></a>translations</h4><p>如果没有国际化支持的话，<code>translations</code>文件夹可以整个删掉</p>
+<p>或者使用参数<code>--no-translations</code></p>
+<h3 id="Final"><a href="#Final" class="headerlink" title="Final"></a>Final</h3><p>综上，推荐使用：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmd">windeployqt --no-angle --no-opengl-sw --no-translations app.exe<br></code></pre></td></tr></table></figure>
+
+<h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/itas109/article/details/80497065">QT使用windeployqt部署发布及其精简_itas109的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u012830675/article/details/102495371">QT MSVC编译项目打包_易日的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://mrbeancpp.github.io/2021/09/17/windeployqt%E5%8F%91%E5%B8%83%E9%A1%B9%E7%9B%AE-%E4%B8%BA%E4%BD%95%E6%80%BB%E6%98%AF%E7%BC%BA%E5%B0%91dll/">windeployqt发布项目 为何总是缺少dll - MrBeanC-Blog (mrbeancpp.github.io)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/windeployqt/">#windeployqt</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt-windeployqt部署发布浅谈</div>
+      <div>https://mrbeanc.gitee.io/2022/10/12/Qt-windeployqt部署发布浅谈/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月12日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/21/Qt-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF-%E6%A8%A1%E6%80%81%E7%AA%97%E5%8F%A3/" title="Qt-事件循环 &amp; 模态窗口">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Qt-事件循环 &amp; 模态窗口</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/10/%E4%B8%80%E5%AF%B9airpods%E5%BC%95%E5%8F%91%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E8%84%91%E7%BB%86%E8%83%9E%E5%A4%A7%E6%AD%BB%E4%BA%A1%E4%BA%8B%E4%BB%B6/" title="一对airpods引发的程序员脑细胞大死亡事件">
+                        <span class="hidden-mobile">一对airpods引发的程序员脑细胞大死亡事件</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

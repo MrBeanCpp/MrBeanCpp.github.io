@@ -1,0 +1,759 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Qt迁移编译器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt编译器迁移：从MinGW到MSVC">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2022/10/09/Qt%E7%BC%96%E8%AF%91%E5%99%A8%E8%BF%81%E7%A7%BB%EF%BC%9A%E4%BB%8EMinGW%E5%88%B0MSVC/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Qt迁移编译器">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221009210739958.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221009211741210.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221009212022400.png">
+<meta property="article:published_time" content="2022-10-09T12:32:54.000Z">
+<meta property="article:modified_time" content="2022-10-11T10:59:14.633Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="MinGW">
+<meta property="article:tag" content="MSVC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20221009210739958.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Qt编译器迁移：从MinGW到MSVC - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Qt编译器迁移：从MinGW到MSVC"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-09 20:32" pubdate>
+          2022年10月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Qt编译器迁移：从MinGW到MSVC</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2022年10月11日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>Qt</code>支持两种编译器</p>
+<ul>
+<li>MSVC（Microsoft Visual C++ Compiler）：微软的VC编译器，如VS中自带</li>
+<li>MinGW（Minimalist GNU for Windows）：是将GNU开发工具移植到Win32平台下的产物</li>
+</ul>
+<h3 id="疯玛吉：选择！"><a href="#疯玛吉：选择！" class="headerlink" title="疯玛吉：选择！"></a>疯玛吉：选择！</h3><p>那么，问题来了，小孩子才全都要，大人必须得选一个了</p>
+<p>为什么要选呢</p>
+<p><strong>第一个问题</strong>在于，<code>MSVC</code>和<code>MinGW</code>编译的<code>dll</code>通常不兼容，不能相互调用，这决定了你能用多少第三方库</p>
+<ul>
+<li>在<code>Windows</code>下，<code>MSVC</code>编译的库更多</li>
+<li>但是<code>MinGW</code>的库能跨平台（<code>Linux</code>）</li>
+</ul>
+<p>所以你用哪个编译不取决于你想用哪个，取决于你习惯用来自哪个平台的第三方库</p>
+<p><strong>其次</strong>，<code>MSVC</code>，一听就是微软家的，<code>Windows</code>也是微软家的，亲生的编译器不用我多说吧（例如一些<code>COM</code>组件的操作在<code>MinGW</code>中就死活不能通过）</p>
+<p>总结：</p>
+<ul>
+<li><code>Windows</code>平台选<code>MSVC</code></li>
+<li>跨平台选<code>MinGW</code></li>
+</ul>
+<h3 id="疯玛吉：再选择！"><a href="#疯玛吉：再选择！" class="headerlink" title="疯玛吉：再选择！"></a>疯玛吉：再选择！</h3><p>除了两种编译器，我们还有三种开发方式</p>
+<p><img src="/img/image-20221009210739958.png" srcset="/img/loading.gif" lazyload alt="对比"></p>
+<p>在VS中可以更好地进行调试，但是毕竟不是原生方式，多少有点问题少年了</p>
+<p>一般选择<code>QtCreator + MSVC</code>方式进行<code>Windows</code>开发</p>
+<h2 id="正片（叠底"><a href="#正片（叠底" class="headerlink" title="正片（叠底"></a>正片（叠底</h2><p>诶，那你说，我作为一个<code>Windows</code>程序员，既然选择<code>QtCreator + MSVC</code>无疑，为什么会写下这篇迁移博客呢？</p>
+<p>咳咳</p>
+<p>说来惭愧，我一直以为<code>MSVC</code>必须要用<code>VS</code>配合开发，就……</p>
+<p>害，说多了都是泪</p>
+<h2 id="迁徙！"><a href="#迁徙！" class="headerlink" title="迁徙！"></a>迁徙！</h2><p>那么，在<code>Qt Creator</code>下，如何从<code>MinGW</code>切换为<code>MSVC</code>呢</p>
+<p>其实说来也简单，首先，我们需要在<code>Qt</code>的<code>MaintenanceTool.exe</code>中添加<code>MSVC</code>组件（包含MSVC版本的dll）</p>
+<p><img src="/img/image-20221009211741210.png" srcset="/img/loading.gif" lazyload alt="Qt维护工具"></p>
+<p>其次，需要下载对应版本的<code>VS</code>（在该例中，我下载的是2022版也ok hhh）</p>
+<p>这样，<code>Qt</code>就能自动检测到<code>VS</code>中的<code>MSVC</code>编译器和<code>debugger</code>了</p>
+<p>然后再项目中就能看到<code>MSVC</code>套件了，点击即可切换</p>
+<p><img src="/img/image-20221009212022400.png" srcset="/img/loading.gif" lazyload alt="切换toolkit"></p>
+<h2 id="大逼兜"><a href="#大逼兜" class="headerlink" title="大逼兜"></a>大逼兜</h2><p>这就完了？想得美，这才哪到哪，也就算是刚在考卷上写完班级姓名吧</p>
+<p>迎面而来的是满屏的<code>Warning</code>和<code>Error</code></p>
+<h3 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h3><p>其中最显眼的便是</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><span class="hljs-built_in">warning</span> C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失<br></code></pre></td></tr></table></figure>
+
+<p>这是由于<code>MSVC</code>默认只支持<code>UTF-8(with BOM)</code>，而<code>MinGW</code>的原始编码可能是<code>UFT-8</code>，导致了编码不兼容</p>
+<p>其中一个办法是更改源文件编码，但费时费力，而且原始的中文可能编译后是乱码（文件中看不出来）</p>
+<p>终极解决方案应该是在<code>.pro</code>文件中加入如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs qmake">msvc &#123;<br>    QMAKE_CFLAGS += /utf-8<br>    QMAKE_CXXFLAGS += /utf-8<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>强制<code>MSVC</code>采用<code>utf-8</code>编译</p>
+<h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><p>在现有工程中直接切换为<code>MSVC</code>还会导致编译问题</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs subunit"><span class="hljs-keyword">error: </span>msvc-version.conf loaded but QMAKE_MSC_VER isn&#x27;t set<br></code></pre></td></tr></table></figure>
+
+<p>还会导致识别不到项目文件</p>
+<p>解决办法：手动清空工程原来编译后生成的文件夹及文件，重新生成工程即可</p>
+<p>（特别是：.stash Makefile 之类的文件）</p>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p>由于<code>MinGW</code>和<code>MSVC</code>的区别，某些库可能链接失败，需要手动在<code>.pro</code>文件中加入<code>lib</code></p>
+<p>如：<code>LIBS += -luser32</code></p>
+<h3 id="dll"><a href="#dll" class="headerlink" title="dll"></a>dll</h3><p>仔细观察<code>Qt</code>的<code>MinGW</code>和<code>MSVC</code>文件夹，会发现他们的<code>dll</code>依赖都是不同的（同名但内容不同 推测是用对应编译器编译的）</p>
+<p>并且<code>MSVC</code>的<code>dll</code>都是有两个版本的（Release和Debug（文件名+d））</p>
+<p>更有甚者，<code>MSVC</code>的<code>plugins/audio</code>文件夹内居然多了一个<code>qtaudio_wasapi.dll</code></p>
+<p>导致<code>QAudioDeviceInfo::availableDevices(QAudio::AudioOutput)</code>卡顿，且重复输出音频设备（转换编译器后发现的第一个恶性bug）</p>
+<p>解决方案是删除该<code>dll</code></p>
+<p>怪，真滴太怪了 家人们</p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>不过，<code>Qt Creator</code>原生支持<code>MSVC</code>，不用联合<code>VS</code>了，よかった www</p>
+<p>我真傻 真的</p>
+<p>Peace</p>
+<h2 id="Careful"><a href="#Careful" class="headerlink" title="Careful"></a>Careful</h2><p>为了让<code>exe</code>在非IDE环境下运行，我们通常都要设置环境变量（<code>PATH</code>）</p>
+<p>但是当<code>MinGW/bin</code>和<code>MSVC/bin</code>的环境变量共存时</p>
+<p>其中的同名<code>dll</code>会产生误导和冲突，<code>exe</code>会自动选择<strong>靠前</strong>的环境变量中的<code>dll</code></p>
+<p>导致编译器不同时产生错误（<code>dll</code>不通用）</p>
+<p>解决方案：</p>
+<ul>
+<li>改用同一个编译器</li>
+<li>拷贝<code>dll</code>至<code>exe</code>同一目录（やばい）</li>
+<li>手动设置<code>exe</code>环境变量</li>
+</ul>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://blog.iamli.cc/archives/129#:~:text=MSVC%20%E4%B8%AD%E7%9A%84utf-8%E7%BC%96%E7%A0%81%E9%97%AE%E9%A2%98%20%2F,Qt%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E9%97%AE%E9%A2%98%20%E5%BD%93%E6%88%91%E4%BB%AC%E5%9C%A8VS%E9%87%8C%E9%9D%A2%E7%BC%96%E8%AF%91%E4%B8%80%E4%B8%AA%E4%BB%A5UTF8%E4%BF%9D%E5%AD%98%E7%9A%84c%E6%BA%90%E7%A8%8B%E5%BA%8F%E6%97%B6%EF%BC%8C%20MSVC%E4%BC%9A%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E7%BC%96%E7%A0%81%E4%BB%8EUTF8%E8%BD%AC%E6%8D%A2%E4%B8%BAANSI%E7%BC%96%E7%A0%81%20%28%E5%BD%93%E5%89%8D%E7%B3%BB%E7%BB%9F%E7%9A%84%E9%A1%B5%E4%BB%A3%E7%A0%81%29">MSVC 中的utf-8编码问题 &#x2F; Qt中文乱码问题 – li的blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lenkco/article/details/123932391">QT+MSVC的UTF-8配置、MSVC的UTF-8配置_lenkco的博客-CSDN博客_msvc utf8</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43521843/article/details/116864525">Qt记录：Qt编程遇C2001错误，提示“常量中有换行符”_星辰丶大海的博客-CSDN博客_qt常量中有换行符</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013185164/article/details/48160561?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-48160561-blog-80573034.pc_relevant_multi_platform_whitelistv3&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-48160561-blog-80573034.pc_relevant_multi_platform_whitelistv3&utm_relevant_index=2">Qt MinGW与MSVC对比_16ern的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/331375227">Qt 用 MSVC 和 MinGW 哪个编译器编译程序比较好？ - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38025219/article/details/105666735">Qt小白之选择何种开发方式（vs+qt or qt+mingw&#x2F;msvc）_行思坐忆，志凌云的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_52040845/article/details/118761684">QAudioDeviceInfo::availableDevices 获取语音输入设备问题_#苔花如米小#的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u011602263/article/details/103882827">Qt编译错误： error: msvc-version.conf loaded but QMAKE_MSC_VER isn’t set_酷侠一剑绝ggh的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013245354/article/details/113772880">QtCreator + MSVC编译器开发_feimimizhiy的博客-CSDN博客_qtcreator配置编译器</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+        <a href="/tags/MinGW/">#MinGW</a>
+      
+        <a href="/tags/MSVC/">#MSVC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Qt编译器迁移：从MinGW到MSVC</div>
+      <div>https://mrbeanc.gitee.io/2022/10/09/Qt编译器迁移：从MinGW到MSVC/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月9日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/10/%E4%B8%80%E5%AF%B9airpods%E5%BC%95%E5%8F%91%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E8%84%91%E7%BB%86%E8%83%9E%E5%A4%A7%E6%AD%BB%E4%BA%A1%E4%BA%8B%E4%BB%B6/" title="一对airpods引发的程序员脑细胞大死亡事件">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">一对airpods引发的程序员脑细胞大死亡事件</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/09/16/Spring-AOP-%E6%9D%82%E8%B0%88%E5%B0%8F%E8%AE%B0/" title="Spring-AOP 杂谈小记">
+                        <span class="hidden-mobile">Spring-AOP 杂谈小记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
