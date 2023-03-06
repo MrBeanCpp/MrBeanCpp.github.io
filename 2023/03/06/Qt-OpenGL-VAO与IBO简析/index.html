@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20230306204158147.png">
 <meta property="article:published_time" content="2023-03-06T11:49:25.000Z">
-<meta property="article:modified_time" content="2023-03-06T13:25:13.065Z">
+<meta property="article:modified_time" content="2023-03-06T13:32:07.750Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="OpenGL">
@@ -339,7 +339,7 @@
 <p><code>IBO</code>的存在是为了优化内存</p>
 <p>比如：我们要画一个正方形，众所周知，一个正方形可以由两个三角形构成（对角分）</p>
 <p>两个三角形有6个顶点，但是正方形只需要4个顶点</p>
-<p><img src="/img/image-20230306204158147.png" srcset="/img/loading.gif" lazyload alt="image-20230306204158147"></p>
+<p><img src="/img/image-20230306204158147.png" srcset="/img/loading.gif" lazyload alt="正方形"></p>
 <p>如此一来，有两个顶点的数据就是重复的，在<code>VBO</code>里包含6个顶点的信息显然是十分滴<strong>stupid</strong></p>
 <p>那为何不直接用索引来代表顶点呢，比如给四个顶点编号（1,2,3,4）</p>
 <p>然后告诉<code>OpenGL</code>，我要绘制两个三角形，一个是（1,2,4），一个是（2,3,4）</p>
