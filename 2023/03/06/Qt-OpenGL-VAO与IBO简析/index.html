@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20230306204158147.png">
 <meta property="article:published_time" content="2023-03-06T11:49:25.000Z">
-<meta property="article:modified_time" content="2023-03-06T13:35:54.102Z">
+<meta property="article:modified_time" content="2023-03-06T13:44:49.982Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="OpenGL">
@@ -230,7 +230,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          3.3k 字
+          3.4k 字
         
       </span>
     
@@ -242,7 +242,7 @@
         
         
           <!-- compatible with older versions-->
-          28 分钟
+          29 分钟
         
       </span>
     
@@ -383,7 +383,7 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp">VAO.<span class="hljs-built_in">bind</span>();<br>VBO.<span class="hljs-built_in">bind</span>();<br>VBO.<span class="hljs-built_in">setData</span>();<br><span class="hljs-comment">//解释VBO数据</span><br>VBO.<span class="hljs-built_in">unbind</span>();<br>VAO.<span class="hljs-built_in">unbind</span>();<br><br>IBO.<span class="hljs-built_in">bind</span>();<br>IBO.<span class="hljs-built_in">setData</span>();<br>IBO.<span class="hljs-built_in">unbind</span>();<br></code></pre></td></tr></table></figure>
 
 <p>绘制部分：<em>伪代码</em></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp">VAO.<span class="hljs-built_in">bind</span>();<br>IBO.<span class="hljs-built_in">bind</span>(); <span class="hljs-comment">//绘制前再绑定到VAO</span><br><span class="hljs-comment">//draw()绘制</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp">VAO.<span class="hljs-built_in">bind</span>();<br>IBO.<span class="hljs-built_in">bind</span>(); <span class="hljs-comment">//绘制前再绑定到VAO</span><br><span class="hljs-comment">//draw()绘制</span><br>IBO.<span class="hljs-built_in">unbind</span>();<br><br>IBO2.<span class="hljs-built_in">bind</span>(); <span class="hljs-comment">//切换IBO</span><br><span class="hljs-comment">//draw()绘制</span><br>IBO2.<span class="hljs-built_in">unbind</span>();<br></code></pre></td></tr></table></figure>
 
 <p>哦对，还想起个问题，为啥<code>VAO</code>这名嫩奇怪啊，顶点数组对象？</p>
 <p>其实是酱紫，我们可以吧ta看成一个数组，每一个元素都是一组顶点数据，通过<code>glVertexAttribPointer</code>设置</p>
