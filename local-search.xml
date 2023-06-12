@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>C++继承体系下函数调用辨析</title>
+    <link href="/2023/06/12/C-%E7%BB%A7%E6%89%BF%E4%BD%93%E7%B3%BB%E4%B8%8B%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BE%A8%E6%9E%90/"/>
+    <url>/2023/06/12/C-%E7%BB%A7%E6%89%BF%E4%BD%93%E7%B3%BB%E4%B8%8B%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BE%A8%E6%9E%90/</url>
+    
+    <content type="html"><![CDATA[<h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><blockquote><p>Darli：如果我想用子类的实例调用父类的同名函数应该怎么写？</p></blockquote><p>测试Code如下：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span> &#123;<br><span class="hljs-keyword">public</span>:<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">m</span><span class="hljs-params">()</span></span>&#123;<br>cout &lt;&lt;<span class="hljs-string">&quot; this is A(m)&quot;</span> &lt;&lt; endl;<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">func</span><span class="hljs-params">()</span></span>&#123;<br>cout &lt;&lt;<span class="hljs-string">&quot; this is A&quot;</span> &lt;&lt; endl;<br>&#125;<br>&#125;;<br> <br><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span>: <span class="hljs-keyword">public</span> A &#123;<br><span class="hljs-keyword">public</span>:<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">m</span><span class="hljs-params">()</span></span>&#123;<br>cout &lt;&lt;<span class="hljs-string">&quot; this is B(m)&quot;</span> &lt;&lt; endl;<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">func</span><span class="hljs-params">()</span></span>&#123;<br>cout &lt;&lt;<span class="hljs-string">&quot; this is B&quot;</span> &lt;&lt; endl;<br>&#125;<br>&#125;;<br> <br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>A a;<br>B b;<br>A* c = <span class="hljs-keyword">new</span> <span class="hljs-built_in">B</span>(); <br>a.<span class="hljs-built_in">func</span>();    <span class="hljs-comment">//this is A</span><br>b.<span class="hljs-built_in">func</span>();    <span class="hljs-comment">//this is B</span><br>b.A::<span class="hljs-built_in">func</span>();  <span class="hljs-comment">//this is A</span><br>c-&gt;<span class="hljs-built_in">func</span>();    <span class="hljs-comment">//this is B</span><br>c-&gt;A::<span class="hljs-built_in">func</span>(); <span class="hljs-comment">//this is A</span><br>((A)(*c)).<span class="hljs-built_in">func</span>();<span class="hljs-comment">//this is A 生成A临时对象实例</span><br>c-&gt;<span class="hljs-built_in">m</span>();<span class="hljs-comment">// this is A(m)</span><br><span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure><h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Maybe：<code>C++</code>继承的同名函数可以分为虚函数重写和普通同名函数，而<code>Java</code>就默认重写了</p><p>在<code>C++</code>体系中，有三种方法可以实现通过子类实例调用父类同名函数：</p><ul><li>域操作符(::) <code>b.A::func(); c-&gt;A::func();</code></li><li>将指针解引用并强转为父类，会产生一个临时父类对象实例，<code>((A)(*c)).func();</code></li><li>父类和子类中的普通同名函数（非virtual），酱紫的话 就失去了多态性 也就是不看实际类型 只看接收的类型，比如<code>A* c = new B(); c-&gt;m();</code>调用的就是A的m()</li></ul><blockquote><p>教学相长也 C++高深也</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>C++</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C++</tag>
+      
+      <tag>继承</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Qt-OpenGL VAO, VBO, IBO简析</title>
     <link href="/2023/03/06/Qt-OpenGL-VAO%E4%B8%8EIBO%E7%AE%80%E6%9E%90/"/>
     <url>/2023/03/06/Qt-OpenGL-VAO%E4%B8%8EIBO%E7%AE%80%E6%9E%90/</url>
