@@ -1,0 +1,743 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Java为什么不支持泛型数组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java为什么不支持泛型数组">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2023/07/15/Java%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%94%AF%E6%8C%81%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Java为什么不支持泛型数组">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-15T06:23:00.000Z">
+<meta property="article:modified_time" content="2023-07-15T08:53:48.174Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="泛型，泛型数组">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Java为什么不支持泛型数组 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java为什么不支持泛型数组"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-15 14:23" pubdate>
+          2023年7月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Java为什么不支持泛型数组</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2023年7月15日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>Java</code>的泛型并不是真正的泛型</p>
+<p>但是，究竟什么才是真正的泛型呢？</p>
+<h3 id="真正的泛型"><a href="#真正的泛型" class="headerlink" title="真正的泛型"></a>真正的泛型</h3><p>根据<code>New Bing</code>的说法：</p>
+<p>真正的泛型是指泛型类型在编译时和<strong>运行时</strong>都能保持类型信息</p>
+<p>真正的泛型的实现方式通常是类型膨胀，也就是为每个泛型参数生成一个单独的类或方法</p>
+<p>这一点可以参考<code>C++</code>的模板实现方式，在编译期为每一种使用的具体类型生成实例。</p>
+<h3 id="Java泛型"><a href="#Java泛型" class="headerlink" title="Java泛型"></a>Java泛型</h3><p><code>Java</code>的泛型并不是真正的泛型，而是伪泛型</p>
+<p>采用了一种称为 <strong>类型擦除</strong> 的技术。类型擦除的意思是，在编译时，泛型类型会被替换为它的<strong>上界</strong>类型（如果没有指定上界，则为 <code>Object</code> 类型），并且在字节码层面，泛型信息会被擦除，<strong>不会保留到运行时</strong></p>
+<p>例如，我们定义了一个泛型类 <code>Pair&lt;T&gt;</code> ，其中 <code>T</code> 是一个无限定的类型变量，那么在编译后，它的原始类型就是 <code>Pair&lt;Object&gt;</code> ，也就是说 T 被替换为了 <code>Object</code> 类型。如果我们定义了一个泛型类 <code>Pair&lt;T extends Comparable&gt;</code> ，其中 <code>T</code> 是一个有限定的类型变量，那么在编译后，它的原始类型就是 <code>Pair&lt;Comparable&gt;</code> ，也就是说 <code>T</code> 被替换为了它的上界 <code>Comparable</code> 类型</p>
+<p>那么，为什么 Java 要采用类型擦除的方式来实现泛型呢？这主要是出于 <strong>向后兼容性</strong> 的考虑。Java 泛型是在 Java 5 中引入的，而在此之前，Java 已经有了很多版本和很多类库。如果 Java 要实现真正的泛型，就需要修改 JVM 的指令集和类文件格式，这样就会导致之前的版本和类库无法在新版本的 JVM 上运行。为了避免这种情况，Java 设计者选择了一种不需要修改 JVM 的方式来实现泛型，也就是类型擦除。</p>
+<p>类型擦除使得 Java 泛型能够与之前的版本和类库保持<strong>兼容</strong>，但也带来了一些<strong>限制和问题</strong>，比如：</p>
+<ul>
+<li>不能使用基本类型作为泛型参数，只能使用包装类 &#x2F;&#x2F; int × Integer √</li>
+<li>不能根据泛型参数创建<strong>数组</strong>或实例化对象，只能使用反射或 Object 类型</li>
+<li>不能对泛型参数进行 instanceof 检查或强制转换，只能使用通配符或边界</li>
+<li>不能在静态方法或静态变量中使用泛型类的类型参数</li>
+<li>不能创建泛型异常类</li>
+</ul>
+<h2 id="为什么不支持泛型数组"><a href="#为什么不支持泛型数组" class="headerlink" title="为什么不支持泛型数组"></a>为什么不支持泛型数组</h2><p>Java不能根据泛型参数创建数组，也不支持泛型数组</p>
+<p>这俩看起来很像，但其实是两种不同的东东：</p>
+<h3 id="不能根据泛型参数创建数组"><a href="#不能根据泛型参数创建数组" class="headerlink" title="不能根据泛型参数创建数组"></a>不能根据泛型参数创建数组</h3><p>不能根据泛型参数创建数组，是指不能使用<code>new T[size]</code>这样的语法来创建一个泛型类型的数组</p>
+<p>因为在编译时<strong>无法确定<code>T</code>的具体类型</strong>，也就找不到对应的类字节码文件</p>
+<p>解决方案参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/minghaiJ/p/11259318.html">Java中创建泛型数组 - minghai - 博客园</a></p>
+<h3 id="不支持泛型数组"><a href="#不支持泛型数组" class="headerlink" title="不支持泛型数组"></a>不支持泛型数组</h3><p>不支持泛型数组，是指不能使用<code>new ArrayList&lt;T&gt;[size]</code>这样的语法来创建一个泛型类型的数组</p>
+<p>因为这样做会<strong>破坏类型安全</strong>，导致运行时的<code>ClassCastException</code>异常</p>
+<p>原因是Java的泛型是基于类型擦除实现的，在<strong>运行时</strong>泛型类型参数的<strong>具体类型信息是被擦除</strong>的，只剩下<code>Object</code>类型</p>
+<p>而Java的数组是<strong>协变</strong>的，也就是说子类数组可以<strong>向上转型</strong>为父类数组，例如<code>String[]</code>可以转为<code>Object[]</code></p>
+<p>如果Java允许创建泛型数组，那么就可能出现如下情况：（New Bing提供）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">List&lt;String&gt;[] strListArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;String&gt;[<span class="hljs-number">10</span>]; <span class="hljs-comment">//假设这样可以创建泛型数组</span><br>Object[] objArray = strListArray; <span class="hljs-comment">//由于数组协变，可以向上转型为Object[]</span><br>objArray[<span class="hljs-number">0</span>] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;Integer&gt;(); <span class="hljs-comment">//由于Object[]可以存放任何对象，可以放入一个ArrayList&lt;Integer&gt;</span><br><span class="hljs-type">String</span> <span class="hljs-variable">str</span> <span class="hljs-operator">=</span> strListArray[<span class="hljs-number">0</span>].get(<span class="hljs-number">0</span>); <span class="hljs-comment">//由于strListArray是List&lt;String&gt;[]类型，可以取出一个String</span><br><span class="hljs-comment">//但实际上strListArray[0]存放的是一个ArrayList&lt;Integer&gt;，所以会抛出ClassCastException</span><br></code></pre></td></tr></table></figure>
+
+<p>为了避免这种情况发生，Java在编译时就<strong>禁止</strong>了创建泛型数组</p>
+<blockquote>
+<p>所以并不是Java实现不了，而是出于安全禁止</p>
+</blockquote>
+<h2 id="What？？"><a href="#What？？" class="headerlink" title="What？？"></a>What？？</h2><p>好的，想必以上的代码并没有触及根本，看了一脸懵逼</p>
+<p>我们来仔细聊聊</p>
+<p>首先看第三行：<code>objArray[0] = new ArrayList&lt;Integer&gt;();</code> &#x2F;&#x2F;Object[]可以存放任何对象</p>
+<blockquote>
+<p>是没错，酱紫编译可以过，但是这和泛不泛型又有什么关系呢？</p>
+</blockquote>
+<p>看以下两段代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">Integer[] arr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Integer</span>[<span class="hljs-number">10</span>];<br>arr[<span class="hljs-number">0</span>] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Float</span>(<span class="hljs-number">10</span>);<br></code></pre></td></tr></table></figure>
+<p>这一段，把<code>Float</code>赋值给<code>Integer</code>数组<code>arr</code>，编译器直接报错</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">Object[] arr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Integer</span>[<span class="hljs-number">10</span>];<br>arr[<span class="hljs-number">0</span>] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Float</span>(<span class="hljs-number">10</span>);<br></code></pre></td></tr></table></figure>
+
+<p>这一段，把<code>Float</code>赋值给<code>Object</code>数组<code>arr</code>，编译通过，但是运行抛出异常（类型不匹配）</p>
+<p>可是可是，你有想过为什么吗，我凭什么知道编译时和运行时出不出错</p>
+<h3 id="静态类型-amp-动态类型"><a href="#静态类型-amp-动态类型" class="headerlink" title="静态类型 &amp; 动态类型"></a>静态类型 &amp; 动态类型</h3><p>Java在编译时只检查静态类型（变量类型[Left]），运行时才检查动态类型（真实类型 aka 引用指向的类型[Right]）</p>
+<p>例如：<code>Object[] arr = new Integer[10];</code>中，<code>arr</code>的静态类型是<code>Object[]</code>，而动态类型是<code>Integer[]</code></p>
+<p>那么，有聪明的小可爱要问了，为什么不在编译时检查动态类型</p>
+<p>好问题，因为编译时没法知道动态类型，看到<strong>动态</strong>俩字了嘛，我们可以根据用户输入改变引用的类型</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Animal</span> <span class="hljs-variable">animal</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">//声明一个Animal类型的变量</span><br><span class="hljs-type">int</span> <span class="hljs-variable">choice</span> <span class="hljs-operator">=</span> Integer.parseInt(args[<span class="hljs-number">0</span>]); <span class="hljs-comment">//从命令行参数获取一个整数</span><br><span class="hljs-keyword">if</span> (choice)<br>    animal = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>(); <span class="hljs-comment">//如果输入为1，创建一个Dog对象并赋值给animal</span><br><span class="hljs-keyword">else</span><br>    animal = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Animal</span>(); <span class="hljs-comment">//否则，创建一个Animal对象并赋值给animal</span><br></code></pre></td></tr></table></figure>
+
+<p>所以编译器直接放弃检查动态类型，只判断静态类型</p>
+<h3 id="泛型数组"><a href="#泛型数组" class="headerlink" title="泛型数组"></a>泛型数组</h3><p>okayokay，继续</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">List&lt;String&gt;[] strListArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;String&gt;[<span class="hljs-number">10</span>];<br>Object[] objArray = strListArray;<br>objArray[<span class="hljs-number">0</span>] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;Integer&gt;();<br></code></pre></td></tr></table></figure>
+
+<p>由于编译器<strong>类型擦除</strong>的存在，会变成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">List&lt;String&gt;[] strListArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>[<span class="hljs-number">10</span>];<br>Object[] objArray = strListArray;<br>objArray[<span class="hljs-number">0</span>] = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>();<br></code></pre></td></tr></table></figure>
+
+<p>编译器：诶，<code>ArrayList</code>可以存入<code>Object[]</code>，过！</p>
+<p>虚拟机：诶，类型擦除，没类型，那就是<code>ArrayList</code>存入<code>ArrayList[]</code>，过！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">String</span> <span class="hljs-variable">str</span> <span class="hljs-operator">=</span> strListArray[<span class="hljs-number">0</span>].get(<span class="hljs-number">0</span>); <br></code></pre></td></tr></table></figure>
+
+<p>由于<code>strListArray</code>是<code>List&lt;String&gt;[]</code>类型，可以取出一个<code>String</code></p>
+<p>但实际上<code>strListArray[0]</code>存放的是一个<code>ArrayList&lt;Integer&gt;</code>，所以会抛出<code>ClassCastException</code></p>
+<p>但是又有小可爱会说了：<strong>不是类型擦除了嘛，怎么还知道自己是<code>ArrayList&lt;Integer&gt;</code></strong></p>
+<p>这是因为当我们从<code>strListArray</code>中取出一个元素时，编译器会自动插入一个<strong>强制转换</strong>，将其转换为<code>List&lt;String&gt;</code>类型。</p>
+<p><strong>结论</strong>：由于<strong>类型擦除</strong>的存在，编译器和虚拟机都没办法区分堆中的<strong>泛型数组</strong>到底存的是什么<strong>具体类型</strong>，而这对强类型语言Java来说是<strong>不可接受</strong>的，为了安全考虑，<code>Java</code>直接不支持泛型数组了</p>
+<p><em>以上内容参考：java为什么不支持泛型数组？ - 红松的回答 - 知乎 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20928981/answer/2993376953">https://www.zhihu.com/question/20928981/answer/2993376953</a></em></p>
+<h2 id="咋办"><a href="#咋办" class="headerlink" title="咋办"></a>咋办</h2><p>那泛型数组不能用咋办？</p>
+<p>可以使用<code>ArrayList</code>动态数组代替原生数组</p>
+<p>因为<code>ArrayList</code>不支持协变，所以也就安全得多（かも）</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>总而言之，言而总之</p>
+<p>Java的类型擦除实现机制导致运行时失去了泛型信息，导致了很多限制</p>
+<p>深究起来就阿巴阿巴了，反正大概就这个亚子，aaaaaaa，寄了再说</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20928981">java为什么不支持泛型数组？ - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/28665443"> Java 不能实现真正泛型的原因是什么？ - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zawier/p/8505098.html">Java 中为什么不能创建泛型数组？ - _路上 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/anlian523/article/details/100643209">Java 泛型的本质——类型擦除_anlian523的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/minghaiJ/p/11259318.html">Java中创建泛型数组 - minghai - 博客园 (cnblogs.com)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Java/" class="category-chain-item">Java</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/">#Java</a>
+      
+        <a href="/tags/%E6%B3%9B%E5%9E%8B%EF%BC%8C%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84/">#泛型，泛型数组</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java为什么不支持泛型数组</div>
+      <div>https://mrbeanc.gitee.io/2023/07/15/Java为什么不支持泛型数组/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月15日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/12/C-%E7%BB%A7%E6%89%BF%E4%BD%93%E7%B3%BB%E4%B8%8B%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BE%A8%E6%9E%90/" title="C++继承体系下函数调用辨析">
+                        <span class="hidden-mobile">C++继承体系下函数调用辨析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
