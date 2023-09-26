@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>QMediaPlayer与解码器浅析</title>
+    <link href="/2023/09/26/QMediaPlayer%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%99%A8%E6%B5%85%E6%9E%90/"/>
+    <url>/2023/09/26/QMediaPlayer%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%99%A8%E6%B5%85%E6%9E%90/</url>
+    
+    <content type="html"><![CDATA[<h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>Qt</code>可以很方便地使用<code>QMediaPlayer</code>类播放音视频（mp3、mp4等）</p><p>但是，当我们兴致冲冲地开始<code>play</code>时，却只收获了一行Error：</p><blockquote><p>DirectShowPlayerService::doRender: Unresolved error code 80040266</p></blockquote><p>这是因为<code>QMediaPlayer</code>底层是使用<code>DirectShowPlayerService</code>，这是一个基于<code>DirectShow</code>框架的后端实现</p><p>但是<code>DirectShowPlayerService</code>没有自带解码库，而是对平台相关的播放器框架做了封装，提供了平台无关的API</p><p>且<code>DirectShow</code>框架默认只支持一些常见的格式（如WMV、AVI、MPG等），如果要播放其他格式的音视频文件，就需要额外安装解码器</p><p><a href="https://learn.microsoft.com/zh-cn/windows/win32/directshow/supported-formats-in-directshow">DirectShow 中支持的格式 - Win32 apps | Microsoft Learn</a></p><h2 id="Pre-正片"><a href="#Pre-正片" class="headerlink" title="Pre - 正片"></a>Pre - 正片</h2><p>好的 现在我们知道了<code>QMediaPlayer</code>不能单独使用，除某些格式外，需要配合第三方解码器使用</p><p>那么什么解码器合适呢？</p><p>随便上网一搜报错，给出的答案都是<a href="https://github.com/Nevcairiel/LAVFilters/releases">LAVFilters</a></p><p>直接干，噼里啪啦安装到<code>Qt</code>目录下（不确定安装位置是否有要求）</p><p>安装过程会自动向<code>Windows</code>注册解码器，无需我们手动操作（不需要在Qt中指定解码器位置之类的）</p><p>好的，现在可以播放<code>mp3</code>音频文件了，よかった收工</p><h2 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h2><p>时光荏苒，斗转星移，转眼间，数年过去了</p><p><a href="https://github.com/SpriteOvO/AirPodsDesktop">AirpodsDesktop</a>需要使用<code>QMediaPlayer</code>播放<code>.avi</code>视频</p><p>出现了令人费解的无法渲染和卡顿现象</p><blockquote><p>起初，没有人在意这场灾难。这只不过是一次卡顿，一顿黑屏，一个视频的灭绝，一个控件的消失。直到每个解码器和这场灾难息息相关。</p></blockquote><p>是的，经过一顿搜索，这与解码器有着脱不开的干系</p><p>在卸载了<code>LAVFilters</code>之后，<code>.avi</code>视频可以正常播放了</p><h3 id="但是mp3播放不了了aaaa"><a href="#但是mp3播放不了了aaaa" class="headerlink" title="但是mp3播放不了了aaaa"></a>但是mp3播放不了了aaaa</h3><p>也就是说<code>mp3</code>需要依赖<code>LAVFilters</code>解码，<code>avi</code>不需要，且<code>LAVFilters</code>还会造成<a href="https://blog.csdn.net/windxgz/article/details/108603033">反作用</a></p><p>又经过一顿搜索发现这种现象并不罕见，<strong>解决方案</strong>：利用效果更好的<a href="http://codecguide.com/download_k-lite_codec_pack_standard.htm">K-Lite</a>替代<code>LAVFilters</code></p><p>酱紫<code>mp3</code>和<code>avi</code>都可以正常播放啦，可喜可贺！</p><h2 id="One-More-Thing"><a href="#One-More-Thing" class="headerlink" title="One More Thing"></a>One More Thing</h2><p>等一下，先别高兴得太早</p><p>大哥，你开发的可是软件，是要给用户使用的，解码器怎么安装</p><p>首先，从安装难度和安装包大小来说，<code>K-Lite</code>要远高于<code>LAVFilters</code></p><p>他俩都是基于<code>FFmpeg</code>开发的，而且貌似<code>K-Lite</code>内含一个<code>LAVFilters</code>（NewBing说的）</p><p>LAVFilters所包含的组件较少，大概就是<code>dll + ax + manifest</code>（在一个文件夹中）</p><p>只要在安装时，在用户电脑里自动执行ax的安装脚本即可</p><p>参考：<a href="https://blog.csdn.net/zyhse/article/details/113716578">在Windows下使用QMediaPlayer实现播放视频CSDN博客</a></p><p>但是<code>K-Lite</code>可能没这么方便</p><p>如果让用户手动安装的话，还需要一些指引（<code>K-Lite</code>选项与步骤繁多）</p><p>所以从这个层面来说<code>LAVFilters</code>更胜一筹（当然为了全面功能性，还是得考虑K-Lite）</p><h3 id="特事特办"><a href="#特事特办" class="headerlink" title="特事特办"></a>特事特办</h3><p>不过，在这个例子中，<code>AirpodsDesktop</code>使用的是<code>avi</code>文件，<code>QMediaPlayer</code>不需要额外的解码器就可以播放这个古老的格式，而我的<a href="https://github.com/MrBeanCpp/Right-Player">Right-Player</a>需要解码器来播放<code>mp3</code></p><p>为了调和这个矛盾，我们可以在安装<code>LAVFilters</code>时，取消勾选视频解码器（但是要保留Splitter分离器）</p><h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>可能有人会想，为什么Edge这样的软件不需要额外安装解码器呢？</p><p><code>NewBing</code>的解释如下：</p><blockquote><p>Edge也是使用DirectShow框架来播放音频和视频文件，但它不是使用DirectShowPlayerService，而是使用自己的后端实现，它可以利用Windows Media Foundation（WMF）或Media Foundation（MF）来提供更高效和更稳定的解码服务</p><p>Edge不需要LAVFilters解码器，是因为它可以使用WMF或MF来提供解码器，而WMF或MF默认支持更多的视频格式，例如H.264、H.265、VP8、VP9等。这些格式涵盖了大部分的网络视频和流媒体服务，因此Edge可以直接播放这些视频文件，不需要额外安装解码器。</p></blockquote><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a href="https://blog.csdn.net/birenxiaofeigg/article/details/104129207">QMediaPlayer视频没有画面显示，或播放卡顿问题解决_vs中通过qmediaplayer 加载不出视频-CSDN博客</a></p><p><a href="https://learn.microsoft.com/zh-cn/windows/win32/directshow/supported-formats-in-directshow">DirectShow 中支持的格式 - Win32 apps | Microsoft Learn</a></p><p><a href="https://blog.csdn.net/windxgz/article/details/108603033">QT总结11——QMediaPlayer无法显示视频_qt中qmediaplayer播放视频无反应-CSDN博客</a></p><p><a href="https://blog.csdn.net/qq_37631516/article/details/105124407">QT视频播放不出来，报错 DirectShowPlayerService::doRender: Unresolved error code 80040266——没有安装视频解码器-CSDN博客</a></p><p><a href="https://github.com/SpriteOvO/AirPodsDesktop">SpriteOvO&#x2F;AirPodsDesktop: ☄️ AirPods desktop user experience enhancement program, for Windows and Linux (WIP) (github.com)</a></p><p><a href="https://github.com/MrBeanCpp/Right-Player">MrBeanCpp&#x2F;Right-Player: 一款轻量级音乐播放器，拥有简洁美观的UI设计 (github.com)</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Qt</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Qt</tag>
+      
+      <tag>QMediaPlayer，解码器</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Java为什么不支持泛型数组</title>
     <link href="/2023/07/15/Java%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%94%AF%E6%8C%81%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84/"/>
     <url>/2023/07/15/Java%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%94%AF%E6%8C%81%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84/</url>

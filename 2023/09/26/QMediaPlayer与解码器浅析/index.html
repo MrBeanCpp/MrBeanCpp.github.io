@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="QMediaPlayer与解码器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QMediaPlayer与解码器浅析">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2023/09/26/QMediaPlayer%E4%B8%8E%E8%A7%A3%E7%A0%81%E5%99%A8%E6%B5%85%E6%9E%90/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="QMediaPlayer与解码器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-26T04:39:39.000Z">
+<meta property="article:modified_time" content="2023-09-26T05:57:42.657Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="QMediaPlayer，解码器">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>QMediaPlayer与解码器浅析 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="QMediaPlayer与解码器浅析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-26 12:39" pubdate>
+          2023年9月26日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">QMediaPlayer与解码器浅析</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2023年9月26日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>Qt</code>可以很方便地使用<code>QMediaPlayer</code>类播放音视频（mp3、mp4等）</p>
+<p>但是，当我们兴致冲冲地开始<code>play</code>时，却只收获了一行Error：</p>
+<blockquote>
+<p>DirectShowPlayerService::doRender: Unresolved error code 80040266</p>
+</blockquote>
+<p>这是因为<code>QMediaPlayer</code>底层是使用<code>DirectShowPlayerService</code>，这是一个基于<code>DirectShow</code>框架的后端实现</p>
+<p>但是<code>DirectShowPlayerService</code>没有自带解码库，而是对平台相关的播放器框架做了封装，提供了平台无关的API</p>
+<p>且<code>DirectShow</code>框架默认只支持一些常见的格式（如WMV、AVI、MPG等），如果要播放其他格式的音视频文件，就需要额外安装解码器</p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/directshow/supported-formats-in-directshow">DirectShow 中支持的格式 - Win32 apps | Microsoft Learn</a></p>
+<h2 id="Pre-正片"><a href="#Pre-正片" class="headerlink" title="Pre - 正片"></a>Pre - 正片</h2><p>好的 现在我们知道了<code>QMediaPlayer</code>不能单独使用，除某些格式外，需要配合第三方解码器使用</p>
+<p>那么什么解码器合适呢？</p>
+<p>随便上网一搜报错，给出的答案都是<a target="_blank" rel="noopener" href="https://github.com/Nevcairiel/LAVFilters/releases">LAVFilters</a></p>
+<p>直接干，噼里啪啦安装到<code>Qt</code>目录下（不确定安装位置是否有要求）</p>
+<p>安装过程会自动向<code>Windows</code>注册解码器，无需我们手动操作（不需要在Qt中指定解码器位置之类的）</p>
+<p>好的，现在可以播放<code>mp3</code>音频文件了，よかった收工</p>
+<h2 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h2><p>时光荏苒，斗转星移，转眼间，数年过去了</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SpriteOvO/AirPodsDesktop">AirpodsDesktop</a>需要使用<code>QMediaPlayer</code>播放<code>.avi</code>视频</p>
+<p>出现了令人费解的无法渲染和卡顿现象</p>
+<blockquote>
+<p>起初，没有人在意这场灾难。这只不过是一次卡顿，一顿黑屏，一个视频的灭绝，一个控件的消失。直到每个解码器和这场灾难息息相关。</p>
+</blockquote>
+<p>是的，经过一顿搜索，这与解码器有着脱不开的干系</p>
+<p>在卸载了<code>LAVFilters</code>之后，<code>.avi</code>视频可以正常播放了</p>
+<h3 id="但是mp3播放不了了aaaa"><a href="#但是mp3播放不了了aaaa" class="headerlink" title="但是mp3播放不了了aaaa"></a>但是mp3播放不了了aaaa</h3><p>也就是说<code>mp3</code>需要依赖<code>LAVFilters</code>解码，<code>avi</code>不需要，且<code>LAVFilters</code>还会造成<a target="_blank" rel="noopener" href="https://blog.csdn.net/windxgz/article/details/108603033">反作用</a></p>
+<p>又经过一顿搜索发现这种现象并不罕见，<strong>解决方案</strong>：利用效果更好的<a target="_blank" rel="noopener" href="http://codecguide.com/download_k-lite_codec_pack_standard.htm">K-Lite</a>替代<code>LAVFilters</code></p>
+<p>酱紫<code>mp3</code>和<code>avi</code>都可以正常播放啦，可喜可贺！</p>
+<h2 id="One-More-Thing"><a href="#One-More-Thing" class="headerlink" title="One More Thing"></a>One More Thing</h2><p>等一下，先别高兴得太早</p>
+<p>大哥，你开发的可是软件，是要给用户使用的，解码器怎么安装</p>
+<p>首先，从安装难度和安装包大小来说，<code>K-Lite</code>要远高于<code>LAVFilters</code></p>
+<p>他俩都是基于<code>FFmpeg</code>开发的，而且貌似<code>K-Lite</code>内含一个<code>LAVFilters</code>（NewBing说的）</p>
+<p>LAVFilters所包含的组件较少，大概就是<code>dll + ax + manifest</code>（在一个文件夹中）</p>
+<p>只要在安装时，在用户电脑里自动执行ax的安装脚本即可</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zyhse/article/details/113716578">在Windows下使用QMediaPlayer实现播放视频CSDN博客</a></p>
+<p>但是<code>K-Lite</code>可能没这么方便</p>
+<p>如果让用户手动安装的话，还需要一些指引（<code>K-Lite</code>选项与步骤繁多）</p>
+<p>所以从这个层面来说<code>LAVFilters</code>更胜一筹（当然为了全面功能性，还是得考虑K-Lite）</p>
+<h3 id="特事特办"><a href="#特事特办" class="headerlink" title="特事特办"></a>特事特办</h3><p>不过，在这个例子中，<code>AirpodsDesktop</code>使用的是<code>avi</code>文件，<code>QMediaPlayer</code>不需要额外的解码器就可以播放这个古老的格式，而我的<a target="_blank" rel="noopener" href="https://github.com/MrBeanCpp/Right-Player">Right-Player</a>需要解码器来播放<code>mp3</code></p>
+<p>为了调和这个矛盾，我们可以在安装<code>LAVFilters</code>时，取消勾选视频解码器（但是要保留Splitter分离器）</p>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p>可能有人会想，为什么Edge这样的软件不需要额外安装解码器呢？</p>
+<p><code>NewBing</code>的解释如下：</p>
+<blockquote>
+<p>Edge也是使用DirectShow框架来播放音频和视频文件，但它不是使用DirectShowPlayerService，而是使用自己的后端实现，它可以利用Windows Media Foundation（WMF）或Media Foundation（MF）来提供更高效和更稳定的解码服务</p>
+<p>Edge不需要LAVFilters解码器，是因为它可以使用WMF或MF来提供解码器，而WMF或MF默认支持更多的视频格式，例如H.264、H.265、VP8、VP9等。这些格式涵盖了大部分的网络视频和流媒体服务，因此Edge可以直接播放这些视频文件，不需要额外安装解码器。</p>
+</blockquote>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/birenxiaofeigg/article/details/104129207">QMediaPlayer视频没有画面显示，或播放卡顿问题解决_vs中通过qmediaplayer 加载不出视频-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/directshow/supported-formats-in-directshow">DirectShow 中支持的格式 - Win32 apps | Microsoft Learn</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/windxgz/article/details/108603033">QT总结11——QMediaPlayer无法显示视频_qt中qmediaplayer播放视频无反应-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37631516/article/details/105124407">QT视频播放不出来，报错 DirectShowPlayerService::doRender: Unresolved error code 80040266——没有安装视频解码器-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/SpriteOvO/AirPodsDesktop">SpriteOvO&#x2F;AirPodsDesktop: ☄️ AirPods desktop user experience enhancement program, for Windows and Linux (WIP) (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/MrBeanCpp/Right-Player">MrBeanCpp&#x2F;Right-Player: 一款轻量级音乐播放器，拥有简洁美观的UI设计 (github.com)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/QMediaPlayer%EF%BC%8C%E8%A7%A3%E7%A0%81%E5%99%A8/">#QMediaPlayer，解码器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>QMediaPlayer与解码器浅析</div>
+      <div>https://mrbeanc.gitee.io/2023/09/26/QMediaPlayer与解码器浅析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月26日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/07/15/Java%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%94%AF%E6%8C%81%E6%B3%9B%E5%9E%8B%E6%95%B0%E7%BB%84/" title="Java为什么不支持泛型数组">
+                        <span class="hidden-mobile">Java为什么不支持泛型数组</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
