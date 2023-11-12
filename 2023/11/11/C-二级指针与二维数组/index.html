@@ -24,7 +24,7 @@
 <meta property="og:description" content="C++ 二级指针与二维数组">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-11-11T10:00:55.000Z">
-<meta property="article:modified_time" content="2023-11-12T09:34:27.833Z">
+<meta property="article:modified_time" content="2023-11-12T09:35:46.354Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="pointer">
@@ -314,7 +314,7 @@
 <p>如果在这种情况下，想要强行通过<code>ptr</code>访问</p>
 <p>只能：<code>*((int*)ptr + i * N + j)</code> 强转为一级指针 &#x2F;&#x2F;N是一行的元素个数</p>
 <h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><p>同时，<code>**ptr</code> 会直接造成越界访问</p>
-<p>这是因为第一次解引用<code>*ptr</code> 其实就已经是第一个元素的值<code>1</code> 了&#x2F;&#x2F;32位系统下</p>
+<p>这是因为第一次解引用<code>*ptr</code> 其实就已经是第一个元素的值<code>1</code> 了 &#x2F;&#x2F;32位系统下</p>
 <p>也就是说，<code>(int)(*ptr)</code> &#x3D;&#x3D; 1 &#x2F;&#x2F;32位系统下</p>
 <p>而且，解引用意味着找到指针所存地址上的值</p>
 <p>如果把第一个元素看做指针，那么该指针所存的地址是<code>1</code>吗？不一定</p>
