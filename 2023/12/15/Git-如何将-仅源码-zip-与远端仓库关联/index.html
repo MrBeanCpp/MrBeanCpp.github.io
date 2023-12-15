@@ -1,0 +1,766 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Git:如何将[仅源码(zip)]与远端仓库关联">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git:如何将[仅源码(zip)]与远端仓库关联">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2023/12/15/Git-%E5%A6%82%E4%BD%95%E5%B0%86-%E4%BB%85%E6%BA%90%E7%A0%81-zip-%E4%B8%8E%E8%BF%9C%E7%AB%AF%E4%BB%93%E5%BA%93%E5%85%B3%E8%81%94/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Git:如何将[仅源码(zip)]与远端仓库关联">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-15T04:52:57.000Z">
+<meta property="article:modified_time" content="2023-12-15T07:38:16.239Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Git:如何将[仅源码(zip)]与远端仓库关联 - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Git:如何将[仅源码(zip)]与远端仓库关联"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-15 12:52" pubdate>
+          2023年12月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Git:如何将[仅源码(zip)]与远端仓库关联</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2023年12月15日 下午
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，大中华区信号不要太好，打不通<code>Github</code>是常态</p>
+<p><code>git clone</code>也是时常<code>error</code></p>
+<p>对于一个大仓库，还不如直接下载<code>源码zip</code>来得快</p>
+<p>但是解压之后我们会发现，这个<code>zip</code>里没有<code>.git</code>文件夹，宛如一只离开蜂群的无人机，再也无法回家</p>
+<p>没有<code>.git</code>文件夹就意味着没有加入版本控制，就无法与远端<code>Github</code>仓库产生联系，就是裸代码（<code>raw codes</code>），再也无法<code>fetch</code>和<code>push</code>了，哭</p>
+<h2 id="辣怎么办"><a href="#辣怎么办" class="headerlink" title="辣怎么办"></a>辣怎么办</h2><blockquote>
+<p>辣就喝牛奶</p>
+</blockquote>
+<p>不管怎么说，总得先创建一个本地<code>git</code>仓库吧</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git init<br></code></pre></td></tr></table></figure>
+
+<p>ok，那么怎么和远端<code>Github</code>仓库产生关联呢</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git remote add origin https://github.com/XXX/XXX.git<br></code></pre></td></tr></table></figure>
+
+<p>酱紫就添加了一个名为<code>origin</code>的远程仓库了</p>
+<p>反映在<code>.git\config</code>文件中就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs config">[remote &quot;origin&quot;]<br>	url = https://github.com/XXX/XXX.git<br>	fetch = +refs/heads/*:refs/remotes/origin/*<br></code></pre></td></tr></table></figure>
+
+<p>这段表明：</p>
+<ul>
+<li>声明了一个远端仓库，名为<code>origin</code></li>
+<li>其<code>url</code>为：<code>https://github.com/XXX/XXX.git</code></li>
+<li>执行 <code>git fetch</code> 操作时，远程仓库的所有分支会被抓取并强制更新到本地的 <code>origin/*</code> 引用上（简而言之就是用远端更新本地）</li>
+</ul>
+<h3 id="By-the-way"><a href="#By-the-way" class="headerlink" title="By the way"></a>By the way</h3><p>其实一个远程仓库也可以对应两个<code>url</code>（如：同时推送到gitee和github）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs config">[remote &quot;origin&quot;]<br>	url = https://gitee.com/XXX/XXX.git<br>	url = git@github.com:XXX/XXX.git    #这里用git或http协议都可以<br>	fetch = +refs/heads/*:refs/remotes/origin/*<br></code></pre></td></tr></table></figure>
+
+<p>类似酱，那么问题来了，从哪个url fetch呢</p>
+<blockquote>
+<p>答：默认是第一个url</p>
+</blockquote>
+<p>且<code>push</code>时会同时向两个<code>url</code>推送，可以用<code>git remote -v</code>查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git remote -v<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">origin  https://gitee.com/XXX/XXX.git (fetch)<br>origin  https://gitee.com/XXX/XXX.git (push)<br>origin  git@github.com:XXX/XXX.git (push)<br></code></pre></td></tr></table></figure>
+
+<h3 id="Okay-back"><a href="#Okay-back" class="headerlink" title="Okay back"></a>Okay back</h3><p>现在，我们有了一个远程仓库<code>origin</code>，但也仅此而已</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git <span class="hljs-built_in">log</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git branch -a<br></code></pre></td></tr></table></figure>
+
+<p>可以发现什么都没有输出，甚至连一个本地分支都没有（主分支也没有）</p>
+<p>啥也没有了属于是，<code>no commit, no branch</code></p>
+<p>那咋整啊，不管了，先<code>fetch</code>一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git fetch <span class="hljs-comment">#默认从origin拉取 因为只有一个仓库</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git branch -a<br>  remotes/origin/dev<br>  remotes/origin/master<br></code></pre></td></tr></table></figure>
+
+<p>太好了，现在有了几个远程分支，但是仍然没有本地分支（<code>git branch</code>显示当前分支为空）</p>
+<p>为什么没有本地分支，也没有当前分支呢？</p>
+<p>因为没有<code>commit</code>，HEAD指针就不知道指向谁，也就没有分支了</p>
+<p>所以这种情况下，我们其实还是没有和远端产生较好的关联（没有本地分支跟踪远程分支）</p>
+<p>同时，由于没有活动分支，也无法进行merge（众所周知，pull &#x3D; fetch + merge）</p>
+<p>那么，我们要怎么让本地拥有和远端master一样的commit记录呢？</p>
+<p>其实就是检出（checkout）到远程分支嘛</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git checkout -b master origin/master<br><span class="hljs-comment"># git checkout -b [branch-name] origin/[branch-name]</span><br><span class="hljs-comment"># 这会创建一个名为 [branch-name] 的新本地分支，该分支跟踪远程的 origin/[branch-name] 分支。</span><br></code></pre></td></tr></table></figure>
+
+<p>在较新Git版本中，如果本地不存在master分支，也可以简写为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git checkout master<br></code></pre></td></tr></table></figure>
+
+<p>Git 可能会为您自动创建一个新的本地分支 <code>master</code> 并将其设置为跟踪远程的 <code>master</code> 分支，这在 Git 2.23 及以上版本中更常见</p>
+<p>但是显然，无论是哪个命令，<code>checkout</code>都会失败</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git checkout master <br>error: The following untracked working tree files would be overwritten by checkout:<br>        README.md<br>        abc.txt<br>Please move or remove them before you switch branches.<br>Aborting<br></code></pre></td></tr></table></figure>
+
+<p>这是因为：工作目录中存在一些未跟踪的文件，这些文件在远程<code>master</code> 分支中也存在，因此Git 阻止了分支切换以避免这些未跟踪文件被覆盖</p>
+<h4 id="Solution："><a href="#Solution：" class="headerlink" title="Solution："></a>Solution：</h4><ol>
+<li>删除所有未跟踪文件：<code>git clean -f</code></li>
+<li>暂存：<code>git stash --include-untracked</code></li>
+<li>提交：<code>git add . &amp; git commit -m &quot;Add untracked files&quot;</code></li>
+<li>强制切换：<code>git checkout -f master</code></li>
+</ol>
+<p>好的，我们还是强制切换吧</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git checkout master<br>Switched to a new branch <span class="hljs-string">&#x27;master&#x27;</span><br>branch <span class="hljs-string">&#x27;master&#x27;</span> <span class="hljs-built_in">set</span> up to track <span class="hljs-string">&#x27;origin/master&#x27;</span>.<br></code></pre></td></tr></table></figure>
+
+<p>Perfect</p>
+<p>现在就跟直接执行<code>git clone</code>之后的仓库一毛一样了</p>
+<h3 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h3><p>我们刚刚采用的是<code>fetch + checkout -f</code>法，那能不能直接<code>pull</code>呢</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git pull origin master<br>...<br>error: The following untracked working tree files would be overwritten by merge:<br>        README.md<br>        abc.txt<br>Please move or remove them before you merge.<br>Aborting<br><br>$ git branch -a<br>  remotes/origin/master<br></code></pre></td></tr></table></figure>
+
+<p>好的，显然是不行，但是从这里我们可以清晰地看到<code>pull = fetch + merge</code></p>
+<p>那么原因还是类似，有未跟踪文件存在，且有被覆盖的风险</p>
+<p>那么<code>pull</code>或<code>merge</code>有没有类似<code>-f</code>的强制指令呢</p>
+<p>答案是没有，因为<code>checkout</code>是切换分支，有覆盖的语义，但是<code>merge</code>或<code>pull</code>是合并两个分支，是平等的</p>
+<p>所以我们只能手动清理这些文件了</p>
+<p>由于这些代码是直接下载的zip，我们也没有修改，所以删了也不心疼，待会儿pull就恢复了，所以直接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git clean -f<br></code></pre></td></tr></table></figure>
+
+<p>库擦一下，工作区空了 &#x2F;哭</p>
+<p>然后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git pull origin master<br>From https://github.com/Zulaikha12/git-test<br> * branch            master     -&gt; FETCH_HEAD<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git branch -a<br>* master<br>  remotes/origin/master<br></code></pre></td></tr></table></figure>
+
+<p>直接完美成功，本地也有了<code>master</code>分支</p>
+<p>但是聪明的小伙伴可能发现了，本地没有分支怎么能<code>merge</code></p>
+<p>根据<code>GPT-4</code>的说法：<code>Git</code>会自动帮我们<code>checkout</code>一个新分支并跟踪远程分支巴拉，反正就是噼里啪啦就好了</p>
+<h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>如果仓库实在太大，<code>fetch</code>跟<code>clone</code>其实压力是一样的</p>
+<p>（只不过下载zip能让你更快地开始工作，之后再考虑fetch）&amp; 玄学：说不定fetch网络更好</p>
+<p>咳咳</p>
+<p>其实我们可以只<code>clone</code>最近的几次提交（浅克隆）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ git <span class="hljs-built_in">clone</span> --depth 1 https://github.com/XXX/XXX<br></code></pre></td></tr></table></figure>
+
+<p>如果需要完整的历史记录，可以通过 <code>git fetch --unshallow</code> 将浅克隆的仓库转换为完整的仓库；这个命令会拉取剩余的历史记录。</p>
+<p>Peace</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><code>GPT-4</code></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/597688197">加速几十倍 git clone 速度的 –depth 1，它的后遗症怎么解决？ - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/astonishqft/article/details/83029490">git切换到指定远程分支_git 切换远程分支-CSDN博客</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Git/" class="category-chain-item">Git</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Git/">#Git</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Git:如何将[仅源码(zip)]与远端仓库关联</div>
+      <div>https://mrbeanc.gitee.io/2023/12/15/Git-如何将-仅源码-zip-与远端仓库关联/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月15日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/29/%E5%BC%82%E6%AD%A5%E7%9A%84%E6%9C%AC%E8%B4%A8/" title="异步的本质">
+                        <span class="hidden-mobile">异步的本质</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
