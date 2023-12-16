@@ -24,7 +24,7 @@
 <meta property="og:description" content="Git:如何将[仅源码(zip)]与远端仓库关联">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-15T04:52:57.000Z">
-<meta property="article:modified_time" content="2023-12-15T09:44:25.736Z">
+<meta property="article:modified_time" content="2023-12-16T06:10:06.139Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary_large_image">
@@ -227,7 +227,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          3.6k 字
+          3.7k 字
         
       </span>
     
@@ -239,7 +239,7 @@
         
         
           <!-- compatible with older versions-->
-          30 分钟
+          31 分钟
         
       </span>
     
@@ -291,7 +291,7 @@
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2023年12月15日 下午
+                    本文最后更新于：2023年12月16日 下午
                   
                 
               </p>
@@ -405,6 +405,9 @@
 <p>直接完美成功，本地也有了<code>master</code>分支</p>
 <p>但是聪明的小伙伴可能发现了，本地没有分支怎么能<code>merge</code></p>
 <p>根据<code>GPT-4</code>的说法：<code>Git</code>会自动帮我们<code>checkout</code>一个新分支并跟踪远程分支巴拉，反正就是噼里啪啦就好了</p>
+<blockquote>
+<p>注：实测发现，nonono，并不会自动设置远程跟踪分支，需要手动设置<br><code>git branch --set-upstream-to=origin/master master</code></p>
+</blockquote>
 <h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>如果仓库实在太大，<code>fetch</code>跟<code>clone</code>其实压力是一样的</p>
 <p>（只不过下载zip能让你更快地开始工作，之后再考虑fetch）&amp; 玄学：说不定fetch网络更好</p>
 <p>咳咳</p>
