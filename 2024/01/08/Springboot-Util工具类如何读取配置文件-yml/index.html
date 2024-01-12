@@ -1,0 +1,724 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Springboot Util工具类如何读取配置文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Springboot Util工具类如何读取配置文件(yml)">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2024/01/08/Springboot-Util%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%A6%82%E4%BD%95%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-yml/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="Springboot Util工具类如何读取配置文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-08T14:47:41.000Z">
+<meta property="article:modified_time" content="2024-01-08T16:29:08.406Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Springboot">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Springboot Util工具类如何读取配置文件(yml) - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Springboot Util工具类如何读取配置文件(yml)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-01-08 22:47" pubdate>
+          2024年1月8日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Springboot Util工具类如何读取配置文件(yml)</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2024年1月9日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，没有<code>Util</code>工具类的<code>Java</code>程序是不完整的</p>
+<p>这天，我们打开了一个<code>Springboot</code>项目，并打算加入一个通用方法（用来拼接静态资源请求路径），那就写一个<code>Util</code>类吧</p>
+<blockquote>
+<p> <strong>GPT-4:</strong><br>在Java中，一个典型的工具（Util）类通常包含一些静态方法，这些方法用于提供通用的、非特定于对象的功能。这些类通常被设计成不可实例化和不可继承的</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Util</span> &#123;<br>    <span class="hljs-meta">@Value(&quot;$&#123;staticServer&#125;&quot;)</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String staticServer; <span class="hljs-comment">//静态资源服务器地址</span><br>    <br>    <span class="hljs-comment">// 私有构造函数，防止实例化</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-title function_">MyUtils</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AssertionError</span>(<span class="hljs-string">&quot;No MyUtils instances for you!&quot;</span>);<br>    &#125;<br>    <br>    <span class="hljs-comment">//拼接完整静态资源URL，如 https://static.server/images/cat.jpg</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getStaticResourceURI</span><span class="hljs-params">(String prefix, String filename)</span> &#123;<br>        <span class="hljs-keyword">return</span> staticServer + prefix + <span class="hljs-string">&#x27;/&#x27;</span> + encodeUri(filename);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">encodeUri</span><span class="hljs-params">(String uri)</span> &#123;<br>        <span class="hljs-keyword">return</span> UriUtils.encode(uri, StandardCharsets.UTF_8);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>优雅，太优雅了</p>
+<p>编译！</p>
+<p>运行！</p>
+<p>Bomb！</p>
+<p>好的，完犊子了，你猜这怎么着，<code>staticServer == null</code></p>
+<h2 id="可怜-弱小-又无助"><a href="#可怜-弱小-又无助" class="headerlink" title="可怜 弱小 又无助"></a>可怜 弱小 又无助</h2><p>这不核理，为什么会这样呢，对静态成员的注入从技术上应该是可以实现的</p>
+<p>不过静态成员并不属于实例对象，可能与<code>IOC</code>容器 &amp; 依赖注入的理念不符，所以<code>Springboot</code>并不直接支持</p>
+<h2 id="辣怎办"><a href="#辣怎办" class="headerlink" title="辣怎办"></a>辣怎办</h2><p>但是这个需求很合理好吧，在工具类中用到配置文件中的键值</p>
+<h3 id="Pre"><a href="#Pre" class="headerlink" title="Pre"></a>Pre</h3><p>不过丑话说在前头，如果要想进行依赖注入，那么<code>Util</code>类必须是一个<code>Bean</code>，因为只有<code>Bean</code>才能被<code>IOC</code>容器管理</p>
+<p>所以，<code>Util</code>的构造函数不能是私有的，还真就得开放给<code>Springboot</code>使用</p>
+<p>总不能又要隐私，又要躺着把钱挣了吧（哪有这好事）</p>
+<p>所以：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span> <span class="hljs-comment">//注册为Bean</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Util</span> &#123;<br>    <span class="hljs-comment">//private MyUtils() &#123; 公开啦！哭</span><br>    <span class="hljs-comment">//    throw new AssertionError(&quot;No MyUtils instances for you!&quot;);</span><br>    <span class="hljs-comment">//&#125;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-利用set方法注入"><a href="#1-利用set方法注入" class="headerlink" title="1. 利用set方法注入"></a>1. 利用set方法注入</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Util</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String staticServer; <span class="hljs-comment">//静态资源服务器地址</span><br>    <br>    <span class="hljs-meta">@Value(&quot;$&#123;staticServer&#125;&quot;)</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setStaticServer</span><span class="hljs-params">(String staticServer)</span> &#123; <span class="hljs-comment">//</span><br>        Util.staticServer = staticServer;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getStaticResourceURI</span><span class="hljs-params">(String prefix, String filename)</span> &#123;<br>        <span class="hljs-keyword">return</span> staticServer + prefix + <span class="hljs-string">&#x27;/&#x27;</span> + encodeUri(filename);<br>    &#125;<br>	...<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>把<code>@Value</code>写在非静态成员方法上，就可以正常被执行</p>
+<p>然后在函数体里对<code>static</code>成员赋值，狸猫换太子</p>
+<h3 id="2-利用-PostConstruct注解"><a href="#2-利用-PostConstruct注解" class="headerlink" title="2. 利用@PostConstruct注解"></a>2. 利用@PostConstruct注解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Util</span> &#123;<br>    <span class="hljs-meta">@Value(&quot;$&#123;staticServer&#125;&quot;)</span><br>    <span class="hljs-keyword">private</span> String staticServer;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Util INS;<br><br>    <span class="hljs-meta">@PostConstruct</span> <span class="hljs-comment">// 在构造函数和依赖注入完成后执行；构造方法 &gt; @Autowired &gt; @PostConstruct，毕竟构造完成才能注入成员</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">()</span> &#123;<br>        INS = <span class="hljs-built_in">this</span>; <span class="hljs-comment">// 获取Bean实例，赋值给静态变量，方便static函数访问</span><br>    &#125; <span class="hljs-comment">// 容器管理的Bean默认是单例的，所以这里的INS是唯一的</span><br><br>    <span class="hljs-comment">// 拼接完整静态资源URL，只对filename进行编码</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getStaticResourceURI</span><span class="hljs-params">(String prefix, String filename)</span> &#123;<br>        <span class="hljs-keyword">return</span> INS.staticServer + prefix + <span class="hljs-string">&#x27;/&#x27;</span> + encodeUri(filename);<br>    &#125;<br><br>    <span class="hljs-comment">// 对uri进行编码，注意&#x27;/&#x27;也会被编码</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">encodeUri</span><span class="hljs-params">(String uri)</span> &#123;<br>        <span class="hljs-keyword">return</span> UriUtils.encode(uri, StandardCharsets.UTF_8); <span class="hljs-comment">//URLEncoder会把&#x27; &#x27;编码为&#x27;+&#x27;而非&#x27;%20&#x27;造成错误</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看到这个名字（<code>@PostConstruct</code>），不知道大家有没有想起什么</p>
+<p>二叉树的后序遍历：<strong>PostOrder</strong></p>
+<p>诶，为什么都是<code>Post</code>，马萨卡</p>
+<p>对喽，<code>PostConstruct</code>是在构造函数之后执行的，核理</p>
+<p>由于执行顺序是：<code>构造方法 &gt; @Autowired &gt; @PostConstruct</code></p>
+<p>所以，执行<code>@PostConstruct</code>的时候，<code>staticSever</code>已经注入完成，不用担心，一切就绪</p>
+<p>我们只要把<code>IOC</code>容器中的<code>Util</code>实例的<code>this</code>指针赋值给<code>static</code>变量<code>INS</code>即可（指针的赋值啊，问题不大）</p>
+<blockquote>
+<p> 什么，你问我哪来的<code>this</code>？</p>
+<p>你加了@Component注册为了Bean，IOC容器默认会构造单例对象的</p>
+</blockquote>
+<blockquote>
+<p>什么，你问我<code>Util</code>开放了构造函数有多个实例怎么办？</p>
+<p>@Component默认是单例的，问题不大，只要你不要自己构造一个出来</p>
+</blockquote>
+<blockquote>
+<p>什么，你问我要是同事构造了<code>Util</code>怎么办？</p>
+<p>砍了ta</p>
+<p>问题不大，本来也没存什么状态</p>
+</blockquote>
+<h3 id="3-ConfigurationProperties"><a href="#3-ConfigurationProperties" class="headerlink" title="3. @ConfigurationProperties"></a>3. @ConfigurationProperties</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Component</span><br><span class="hljs-meta">@ConfigurationProperties</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Util</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> String staticServer;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setStaticServer</span><span class="hljs-params">(String staticServer)</span> &#123;<br>        Util.staticServer = staticServer;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个其实本质上也是利用<code>set</code>方法进行注入的，所以并不违反规则</p>
+<p>好的好的，下班</p>
+<h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/myli92/article/details/124183788">springboot注入静态变量的两种方式_springboot 注入静态变量-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1896241">SpringBoot中静态变量注入方案,一网打尽-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/149c5a951ffc">@ConfigurationProperties与静态加载配置文件 - 简书 (jianshu.com)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Springboot/" class="category-chain-item">Springboot</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/">#Java</a>
+      
+        <a href="/tags/Springboot/">#Springboot</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Springboot Util工具类如何读取配置文件(yml)</div>
+      <div>https://mrbeanc.gitee.io/2024/01/08/Springboot-Util工具类如何读取配置文件-yml/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年1月8日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/12/Springboot%E5%A4%9A%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/" title="Springboot多环境配置">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Springboot多环境配置</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/01/05/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Nginx%E9%83%A8%E7%BD%B2https%E7%BD%91%E7%AB%99%EF%BC%88%E5%89%8D%E5%90%8E%E7%AB%AF%EF%BC%89/" title="如何使用Nginx部署https网站（前后端）">
+                        <span class="hidden-mobile">如何使用Nginx部署https网站（前后端）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
