@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312162452700.png">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312174416634.png">
 <meta property="article:published_time" content="2024-03-12T06:32:06.000Z">
-<meta property="article:modified_time" content="2024-03-12T10:31:05.989Z">
+<meta property="article:modified_time" content="2024-03-12T10:46:30.482Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="High-DPI">
@@ -233,7 +233,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          5k 字
+          5.1k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
           <!-- compatible with older versions-->
-          42 分钟
+          43 分钟
         
       </span>
     
@@ -399,7 +399,9 @@
 <p>大致思想就是，将物理坐标减去该显示器左上角坐标，假装自己是主显示器，左上角为（0,0），这样就可以进行简单乘除缩放了</p>
 <p>缩放完毕后，再把刚刚减去的偏移量加回来即可得到Qt的逻辑坐标</p>
 <h3 id="Other-Problem"><a href="#Other-Problem" class="headerlink" title="Other Problem"></a>Other Problem</h3><p>在多显示器中，我们还可能遇到别的坑</p>
-<p>比如：<code>QListWidget</code>的<code>item</code>的布局没有刷新</p>
+<p>比如：<code>QListWidget</code>的<code>item</code>的布局没有刷新 &amp; 比例不正确</p>
+<p><strong>更新：</strong>如果不启用<code>QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);</code>才会出现这个问题</p>
+<p><strong>加上之后，貌似就没问题了~</strong> Over</p>
 <p>此时可以用<code>QListWidget::doItemsLayout</code>进行强制刷新（这个函数居然文档里没有！<code>GPT-4</code>告诉我的）</p>
 <p>不过什么时机用呢？</p>
 <p>貌似没有找到一个<code>signal</code>可以指示窗口从一个显示器到另一个显示器</p>
