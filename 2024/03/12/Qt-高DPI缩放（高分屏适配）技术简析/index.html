@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312162452700.png">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312174416634.png">
 <meta property="article:published_time" content="2024-03-12T06:32:06.000Z">
-<meta property="article:modified_time" content="2024-03-12T10:46:30.482Z">
+<meta property="article:modified_time" content="2024-03-12T11:49:24.806Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="High-DPI">
@@ -233,7 +233,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          5.1k 字
+          5.2k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
           <!-- compatible with older versions-->
-          43 分钟
+          44 分钟
         
       </span>
     
@@ -406,6 +406,8 @@
 <p>不过什么时机用呢？</p>
 <p>貌似没有找到一个<code>signal</code>可以指示窗口从一个显示器到另一个显示器</p>
 <p>那么可以在<code>moveEvent()</code>中，自行检测当前显示器是否发生变化（<code>QScreen</code>）</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>其实如果与Windows 原生API交互不是太多的话，<code>Qt</code>自带的高DPI适配已经足够优秀了，毕竟是跨平台的，推荐使用</p>
+<p>如果有少量Windows API话，可以手动缩放一下坐标，问题不大</p>
 <h2 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h2><p>嘛，反正Qt作为一个看似是前端（传统前端还有浏览器屏蔽细节呢）其实比全栈还要麻烦（要考虑底层系统交互）的技术点</p>
 <p>只能说坑是踩不完的，而且国内用户其实不是很多，资料也不好找</p>
 <p>不说了，都是泪，且看且珍惜，我午饭还没吃呢</p>
