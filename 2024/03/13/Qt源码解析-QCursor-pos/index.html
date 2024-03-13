@@ -16,26 +16,25 @@
   <meta name="author" content="MrBeanC">
   <meta name="keywords" content="">
   
-    <meta name="description" content="如何使用Nginx部署https网站（Vue + Springboot）">
+    <meta name="description" content="Qt源码解析: QCursor::pos()">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何使用Nginx部署https网站（前后端）">
-<meta property="og:url" content="https://mrbeanc.gitee.io/2024/01/05/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Nginx%E9%83%A8%E7%BD%B2https%E7%BD%91%E7%AB%99%EF%BC%88%E5%89%8D%E5%90%8E%E7%AB%AF%EF%BC%89/index.html">
+<meta property="og:title" content="Qt源码解析: QCursor::pos()">
+<meta property="og:url" content="https://mrbeanc.gitee.io/2024/03/13/Qt%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-QCursor-pos/index.html">
 <meta property="og:site_name" content="MrBeanC-Blog">
-<meta property="og:description" content="如何使用Nginx部署https网站（Vue + Springboot）">
+<meta property="og:description" content="Qt源码解析: QCursor::pos()">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-01-05T15:44:10.000Z">
-<meta property="article:modified_time" content="2024-01-12T12:31:11.500Z">
+<meta property="article:published_time" content="2024-03-13T05:23:52.000Z">
+<meta property="article:modified_time" content="2024-03-13T16:35:21.242Z">
 <meta property="article:author" content="MrBeanC">
-<meta property="article:tag" content="Nginx">
-<meta property="article:tag" content="Ubuntu">
-<meta property="article:tag" content="部署">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="源码解析">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>如何使用Nginx部署https网站（前后端） - MrBeanC-Blog</title>
+  <title>Qt源码解析: QCursor::pos() - MrBeanC-Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -200,7 +199,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="如何使用Nginx部署https网站（前后端）"></span>
+            <span id="subtitle" data-typed-text="Qt源码解析: QCursor::pos()"></span>
           
         </div>
 
@@ -216,8 +215,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-01-05 23:44" pubdate>
-          2024年1月5日 晚上
+        <time datetime="2024-03-13 13:23" pubdate>
+          2024年3月13日 下午
         </time>
       </span>
     
@@ -229,7 +228,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          10 字
+          3.2k 字
         
       </span>
     
@@ -241,7 +240,7 @@
         
         
           <!-- compatible with older versions-->
-          1 分钟
+          27 分钟
         
       </span>
     
@@ -287,13 +286,13 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">如何使用Nginx部署https网站（前后端）</h1>
+            <h1 style="display: none">Qt源码解析: QCursor::pos()</h1>
             
               <p class="note note-info">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年1月12日 晚上
+                    本文最后更新于：2024年3月14日 凌晨
                   
                 
               </p>
@@ -301,7 +300,48 @@
             
               <div class="markdown-body">
                 
-                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>别急 过几天写</p>
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p><code>QCursor::pos()</code>看起来简单，返回鼠标坐标</p>
+<p>其实在高DPI缩放下，返回的确是逻辑坐标，我们可以通过这个函数，管中窥豹</p>
+<p>理解Qt是如何在逻辑坐标系与物理坐标系之间转换的</p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QPoint <span class="hljs-title">QCursor::pos</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span> QCursor::<span class="hljs-built_in">pos</span>(QGuiApplication::<span class="hljs-built_in">primaryScreen</span>());<br>&#125;<br><br><span class="hljs-function">QPoint <span class="hljs-title">QCursor::pos</span><span class="hljs-params">(<span class="hljs-type">const</span> QScreen *screen)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (screen) &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-type">const</span> QPlatformCursor *cursor = screen-&gt;<span class="hljs-built_in">handle</span>()-&gt;<span class="hljs-built_in">cursor</span>()) &#123;<br>            <span class="hljs-type">const</span> QPlatformScreen *ps = screen-&gt;<span class="hljs-built_in">handle</span>();<br>            QPoint nativePos = cursor-&gt;<span class="hljs-built_in">pos</span>(); <span class="hljs-comment">//原生物理坐标</span><br>            ps = ps-&gt;<span class="hljs-built_in">screenForPosition</span>(nativePos); <span class="hljs-comment">//寻找nativePos所在Screen</span><br>            <span class="hljs-keyword">return</span> QHighDpi::<span class="hljs-built_in">fromNativePixels</span>(nativePos, ps-&gt;<span class="hljs-built_in">screen</span>()); <span class="hljs-comment">//</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> QGuiApplicationPrivate::lastCursorPosition.<span class="hljs-built_in">toPoint</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们先来看一下<code>QCursor::pos()</code>的逻辑啊</p>
+<p>有两个重载，无参版本默认把主显示器传给了有参版本</p>
+<p>这里，我们可能会疑惑，诶，为什么需要<code>QScreen</code>参数呢，光标坐标和屏幕有关吗</p>
+<p>别急，接着往下看</p>
+<p>首先，获取了原生屏幕指针（<code>QPlatformScreen</code>），然后通过<code>QPlatformCursor</code>获取到了光标的原生物理坐标（<code>nativePos</code>）</p>
+<p>接着通过<code>ps = ps-&gt;screenForPosition(nativePos)</code>更新了屏幕指针，这是为什么呢</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*!</span><br><span class="hljs-comment">  Find the sibling screen corresponding to \a globalPos.</span><br><span class="hljs-comment">  Returns this screen if no suitable screen is found at the position.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">const</span> QPlatformScreen *<span class="hljs-title">QPlatformScreen::screenForPosition</span><span class="hljs-params">(<span class="hljs-type">const</span> QPoint &amp;point)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">contains</span>(point)) &#123;<br>        <span class="hljs-type">const</span> <span class="hljs-keyword">auto</span> screens = <span class="hljs-built_in">virtualSiblings</span>();<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> QPlatformScreen *screen : screens) &#123;<br>            <span class="hljs-keyword">if</span> (screen-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">contains</span>(point))<br>                <span class="hljs-keyword">return</span> screen;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们可以看到，注释和代码里都提到了一个词：<code>sibling</code></p>
+<p>来看一下Qt文档的解释</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QList&lt;QScreen *&gt; <span class="hljs-title">QScreen::virtualSiblings</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function"><span class="hljs-comment">//Get the screen&#x27;s virtual siblings.</span></span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-comment">//The virtual siblings are the screen instances sharing the same virtual desktop. They share a common coordinate system, and windows can //freely be moved or positioned across them without having to be re-created.</span></span><br></code></pre></td></tr></table></figure>
+
+<p>所以，<code>sibling screens</code>也就是一个虚拟桌面内的所有相邻显示器，一般情况下与<code>qApp-&gt;screens()</code>相等</p>
+<p>因此，<code>screenForPosition()</code>会遍历屏幕，找到鼠标光标所在的那一块</p>
+<p>所以我们不必纠结，为什么一开始传入的是<code>primaryScreen()</code>，会不会不准确</p>
+<p>其实传入什么<code>screen</code>都可以，只要在同一个虚拟桌面内，会自行定位</p>
+<p>这里传入一个指针，是为了定位虚拟桌面而已</p>
+<h4 id="more-more-more：QHighDpi-fromNativePixels"><a href="#more-more-more：QHighDpi-fromNativePixels" class="headerlink" title="more more more：QHighDpi::fromNativePixels"></a>more more more：QHighDpi::fromNativePixels</h4><p>顾名思义，我们已经知道了他可以从物理坐标（原生像素）转化为逻辑坐标</p>
+<p>那么稍微看一下源码吧</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> C&gt;<br><span class="hljs-function">T <span class="hljs-title">fromNativePixels</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;value, <span class="hljs-type">const</span> C *context)</span></span><br><span class="hljs-function"></span>&#123;<br>    QPoint nativePosition = <span class="hljs-built_in">position</span>(value); <span class="hljs-comment">//转换为QPoint</span><br>    QHighDpiScaling::ScaleAndOrigin so = QHighDpiScaling::<span class="hljs-built_in">scaleAndOrigin</span>(context, &amp;nativePosition);<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">scale</span>(value, <span class="hljs-built_in">qreal</span>(<span class="hljs-number">1</span>) / so.factor, so.origin);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>OK，很短，就三行，我们先来看看<code>QHighDpiScaling::scaleAndOrigin</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QHighDpiScaling::ScaleAndOrigin <span class="hljs-title">QHighDpiScaling::scaleAndOrigin</span><span class="hljs-params">(<span class="hljs-type">const</span> QPlatformScreen *platformScreen, QPoint *nativePosition)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!m_active)<br>        <span class="hljs-keyword">return</span> &#123; <span class="hljs-built_in">qreal</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">QPoint</span>() &#125;;<br>    <span class="hljs-keyword">if</span> (!platformScreen)<br>        <span class="hljs-keyword">return</span> &#123; m_factor, <span class="hljs-built_in">QPoint</span>() &#125;; <span class="hljs-comment">// the global factor</span><br>    <span class="hljs-type">const</span> QPlatformScreen *actualScreen = nativePosition ?<br>        platformScreen-&gt;<span class="hljs-built_in">screenForPosition</span>(*nativePosition) : platformScreen;<br>    <span class="hljs-keyword">return</span> &#123; m_factor * <span class="hljs-built_in">screenSubfactor</span>(actualScreen), actualScreen-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">topLeft</span>() &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里再次调用<code>screenForPosition()</code>定位了光标所在屏幕，非常严谨</p>
+<p>返回值有俩：</p>
+<ul>
+<li>计算缩放比：<code>m_factor * screenSubfactor(actualScreen)</code>，巴拉巴拉bomb，可能是内部缩放比 * 外部缩放比？不管了</li>
+<li>计算光标所在屏幕的左上角物理坐标：<code>actualScreen-&gt;geometry().topLeft()</code></li>
+</ul>
+<p>这第二个就是重点了，跟我们自行计算的方法有异曲同工之妙，不过他这里获取到的是真真正正的物理坐标</p>
+<p>然后调用<code>scale(value, qreal(1) / so.factor, so.origin)</code>进行最后的计算</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">inline</span> QPoint <span class="hljs-title">scale</span><span class="hljs-params">(<span class="hljs-type">const</span> QPoint &amp;pos, qreal scaleFactor, QPoint origin = QPoint(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>))</span></span><br><span class="hljs-function"></span>&#123;<br>     <span class="hljs-keyword">return</span> (pos - origin) * scaleFactor + origin;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>先减去左上角的坐标，归一化为（0,0），然后直接乘除缩放比，再把左上角加回来 hhhhhh</p>
+<p>啊，哈，啊哈哈哈</p>
+<h2 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h2><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://codebrowser.dev/qt5/qtbase/src/gui/kernel/qhighdpiscaling_p.h.html#_ZN8QHighDpi16fromNativePixelsERKT_PKT0_">qtbase&#x2F;src&#x2F;gui&#x2F;kernel&#x2F;qhighdpiscaling_p.h] - Codebrowser</a></p>
 
                 
               </div>
@@ -320,7 +360,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E8%BF%90%E7%BB%B4/" class="category-chain-item">运维</a>
+  <a href="/categories/Qt/" class="category-chain-item">Qt</a>
   
   
 
@@ -335,11 +375,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Nginx/">#Nginx</a>
+        <a href="/tags/Qt/">#Qt</a>
       
-        <a href="/tags/Ubuntu/">#Ubuntu</a>
-      
-        <a href="/tags/%E9%83%A8%E7%BD%B2/">#部署</a>
+        <a href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">#源码解析</a>
       
     </div>
   
@@ -351,8 +389,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>如何使用Nginx部署https网站（前后端）</div>
-      <div>https://mrbeanc.gitee.io/2024/01/05/如何使用Nginx部署https网站（前后端）/</div>
+      <div>Qt源码解析: QCursor::pos()</div>
+      <div>https://mrbeanc.gitee.io/2024/03/13/Qt源码解析-QCursor-pos/</div>
     </div>
     <div class="license-meta">
       
@@ -364,7 +402,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年1月5日</div>
+          <div>2024年3月13日</div>
         </div>
       
       
@@ -394,18 +432,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2024/01/08/Springboot-Util%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%A6%82%E4%BD%95%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-yml/" title="Springboot Util工具类如何读取配置文件(yml)">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Springboot Util工具类如何读取配置文件(yml)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/01/05/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E5%9C%B0%E9%83%A8%E7%BD%B2Springboot-in-Ubuntu/" title="如何优雅地部署Springboot in Ubuntu">
-                        <span class="hidden-mobile">如何优雅地部署Springboot in Ubuntu</span>
+                      <a href="/2024/03/12/Qt-%E9%AB%98DPI%E7%BC%A9%E6%94%BE%EF%BC%88%E9%AB%98%E5%88%86%E5%B1%8F%E9%80%82%E9%85%8D%EF%BC%89%E6%8A%80%E6%9C%AF%E7%AE%80%E6%9E%90/" title="Qt 高DPI缩放（高分屏适配）技术简析">
+                        <span class="hidden-mobile">Qt 高DPI缩放（高分屏适配）技术简析</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
