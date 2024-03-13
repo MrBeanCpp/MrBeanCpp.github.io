@@ -27,8 +27,10 @@
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312162917916.png">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312162452700.png">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240312174416634.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240313093044936.png">
+<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240313122842885.png">
 <meta property="article:published_time" content="2024-03-12T06:32:06.000Z">
-<meta property="article:modified_time" content="2024-03-12T12:16:57.659Z">
+<meta property="article:modified_time" content="2024-03-13T05:48:06.490Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="High-DPI">
@@ -233,7 +235,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          5.3k 字
+          10k 字
         
       </span>
     
@@ -245,7 +247,7 @@
         
         
           <!-- compatible with older versions-->
-          44 分钟
+          88 分钟
         
       </span>
     
@@ -297,7 +299,7 @@
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年3月12日 晚上
+                    本文最后更新于：2024年3月13日 下午
                   
                 
               </p>
@@ -373,31 +375,126 @@
 <p>那么，Qt胜出？</p>
 <p>不，事情远远没有这么简单</p>
 <h3 id="Qt-高DPI缩放的原理"><a href="#Qt-高DPI缩放的原理" class="headerlink" title="Qt 高DPI缩放的原理"></a>Qt 高DPI缩放的原理</h3><p>Qt内部采用了<strong>逻辑坐标系统</strong>：使用逻辑坐标来描述界面元素，这些坐标是相对单位，与屏幕的实际物理像素点数独立，而在渲染时自动缩放转换为物理坐标</p>
-<p>也就是说，我们针对96 DPI，1080P显示器设计的以px为单位的UI布局无需更改，我们还是假设程序运行在这样一块标准显示器上，Qt会自动处理缩放</p>
+<p>也就是说，我们针对96 DPI，1080P显示器设计的以<code>px</code>为单位的UI布局无需更改，我们还是假设程序运行在这样一块标准显示器上，Qt会自动处理缩放</p>
 <h3 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h3><p>想法很美好，但是结果呢</p>
-<p>结果是Windows API采用的是物理坐标，而Qt内部采用的是逻辑坐标（所有函数都返回逻辑坐标，如<code>QCursor::pos()</code>）</p>
-<p>这反而增加了复杂性，我们调用Windows API获得的坐标要先转换为Qt内部的逻辑坐标才能进行下一步操作，否则就全乱了</p>
+<p>结果是<code>Windows API</code>采用的是物理坐标（设备相关坐标），而Qt内部采用的是逻辑坐标（设备无关坐标）（所有公开函数都返回逻辑坐标，如<code>QCursor::pos()</code>）</p>
+<p>这反而增加了复杂性，我们调用<code>Windows API</code>获得的坐标要先转换为Qt内部的逻辑坐标才能进行下一步操作，否则就全乱了</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">Widget::nativeEvent</span><span class="hljs-params">(<span class="hljs-type">const</span> QByteArray&amp; eventType, <span class="hljs-type">void</span>* message, <span class="hljs-type">long</span>* result)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-built_in">Q_UNUSED</span>(eventType);<br>    MSG* msg = (MSG*)message;<br>    <span class="hljs-keyword">switch</span> (msg-&gt;message) &#123;<br>    <span class="hljs-keyword">case</span> WM_NCHITTEST:<br>        <span class="hljs-type">int</span> winX = <span class="hljs-built_in">GET_X_LPARAM</span>(msg-&gt;lParam);<br>        <span class="hljs-type">int</span> winY = <span class="hljs-built_in">GET_Y_LPARAM</span>(msg-&gt;lParam);<br>...<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>例如，在原生事件中，我们会接收到Windows传递来的参数</p>
+<p>例如，在原生事件中，我们会接收到<code>Windows</code>传递来的参数</p>
 <p>这些参数中的坐标，一定是物理坐标</p>
-<p>我们需要将其转换为Qt内部逻辑坐标，才能继续使用</p>
+<p>我们需要将其转换为<code>Qt</code>内部逻辑坐标，才能继续使用</p>
 <p>这里也有两种情况</p>
 <ol>
 <li>如果你只有一块显示器，那么很简单，缩放中心就是左上角（0,0），直接<code>winX / scale</code>即可</li>
-<li>如果你有多块显示器，而且DPI还不一样，那么问题就大发了</li>
+<li>如果你有多块显示器，而且<code>DPI</code>还不一样，那么问题就大发了</li>
 </ol>
 <p>假如你的窗口又正好不在主显示器上，那么该显示器的左上角就不是（0,0）了，因为显示器上的坐标是唯一的</p>
 <p>这个时候的转换稍微麻烦一点</p>
-<p>首先，我们要获取Qt物理像素和逻辑像素的比值，也就是<code>devicePixelRatio</code>，一般等于Windows缩放比</p>
+<p>首先，我们要获取Qt物理像素和逻辑像素的比值，也就是<code>devicePixelRatio</code>，一般等于<code>Windows</code>缩放比</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-function">qreal <span class="hljs-title">Util::devicePixelRatio</span><span class="hljs-params">(QWidget* widget)</span></span><br><span class="hljs-function"></span>&#123;<br>    qreal dprScale = <span class="hljs-number">1.0</span>;<br>    QScreen *screen = QGuiApplication::<span class="hljs-built_in">screenAt</span>(widget-&gt;<span class="hljs-built_in">pos</span>());<br>    <span class="hljs-keyword">if</span> (screen != <span class="hljs-literal">nullptr</span>) &#123;<br>        dprScale = screen-&gt;<span class="hljs-built_in">devicePixelRatio</span>(); <span class="hljs-comment">//物理像素/逻辑像素，也就是Windows缩放比</span><br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-comment">// 在屏幕之间拖动时，会有短暂的nullptr的情况！</span><br>        dprScale = QGuiApplication::<span class="hljs-built_in">primaryScreen</span>()-&gt;<span class="hljs-built_in">devicePixelRatio</span>();<br>    &#125;<br>    <span class="hljs-keyword">return</span> dprScale;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>这里要注意，在屏幕之间拖动时，会有短暂的<code>nullptr</code>的情况，我们要处理这种情况，赋予默认值，否则就会空指针异常，然后崩溃（C++基操）</p>
 <p>然后，我们要基于缩放比进行计算</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> <span class="hljs-type">float</span> DPR = Util::<span class="hljs-built_in">devicePixelRatio</span>(<span class="hljs-keyword">this</span>); <span class="hljs-comment">//like 1.25 1.5 1.75 2.0</span><br><span class="hljs-comment">// 获取屏幕的几何信息</span><br>QScreen *screen = QGuiApplication::<span class="hljs-built_in">screenAt</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">pos</span>());<br>QRect screenGeometry = screen-&gt;<span class="hljs-built_in">geometry</span>();<br><span class="hljs-comment">// 转换物理坐标为屏幕的逻辑坐标</span><br>QPoint logicalPos;<br>logicalPos.<span class="hljs-built_in">setX</span>((winX - screenGeometry.<span class="hljs-built_in">x</span>()) / DPR);<br>logicalPos.<span class="hljs-built_in">setY</span>((winY - screenGeometry.<span class="hljs-built_in">y</span>()) / DPR);<br>logicalPos += screenGeometry.<span class="hljs-built_in">topLeft</span>();<br></code></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-type">const</span> <span class="hljs-type">float</span> DPR = Util::<span class="hljs-built_in">devicePixelRatio</span>(<span class="hljs-keyword">this</span>); <span class="hljs-comment">//like 1.25 1.5 1.75 2.0</span><br><span class="hljs-comment">// 获取屏幕的几何信息</span><br>QScreen *screen = QGuiApplication::<span class="hljs-built_in">screenAt</span>(<span class="hljs-keyword">this</span>-&gt;<span class="hljs-built_in">pos</span>());<br>QRect screenGeometry = screen-&gt;<span class="hljs-built_in">geometry</span>(); <span class="hljs-comment">//logical!</span><br><span class="hljs-comment">// 转换物理坐标为Qt的逻辑坐标</span><br>QPoint logicalPos;<br>logicalPos = (<span class="hljs-built_in">QPoint</span>(winX, winY) - screenGeometry.<span class="hljs-built_in">topLeft</span>()) / DPR;<br>logicalPos += screenGeometry.<span class="hljs-built_in">topLeft</span>();<br></code></pre></td></tr></table></figure>
 
 <p>大致思想就是，将物理坐标减去该显示器左上角坐标，假装自己是主显示器，左上角为（0,0），这样就可以进行简单乘除缩放了</p>
 <p>缩放完毕后，再把刚刚减去的偏移量加回来即可得到Qt的逻辑坐标</p>
+<h4 id="真的是这样吗？"><a href="#真的是这样吗？" class="headerlink" title="真的是这样吗？"></a>真的是这样吗？</h4><p>还记得我说过什么吗</p>
+<blockquote>
+<p>Qt内部采用的是逻辑坐标</p>
+</blockquote>
+<p>那么，<code>screen-&gt;geometry()</code>不也就是逻辑坐标吗？</p>
+<p>在多显示器情况下，假设现在的<code>screen</code>不是主屏幕，那么<code>screenGeometry.topLeft()</code>就有可能与物理坐标不想等</p>
+<p>那么一个物理坐标（<code>QPoint(winX, winY)</code>）减去一个逻辑坐标（<code>screenGeometry.topLeft()</code>），结果是显而易见的</p>
+<p>假如主屏幕（或前几块屏幕）的<code>Windows</code>缩放不是<code>100%</code>，就会爆炸（假如逻辑坐标连续）</p>
+<h4 id="僵局"><a href="#僵局" class="headerlink" title="僵局"></a>僵局</h4><p>那么既然Qt内部函数返回的都是逻辑坐标，自然不可能找到一个能将逻辑坐标转换物理坐标的函数了</p>
+<p>那么不是死锁了嘛</p>
+<p>要不我们再看一眼<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/highdpi.html#dprgadget">官方文档</a>吧</p>
+<p><img src="/img/image-20240313093044936.png" srcset="/img/loading.gif" lazyload alt="DprGadget"></p>
+<p>诶，<code>Qt6</code>居然比<code>Qt5</code>多出个小工具（<a target="_blank" rel="noopener" href="https://github.com/qt/qtbase/blob/885aba7ffdfaf410f16364f315411cf8d77da38a/tests/manual/highdpi/dprgadget/main.cpp#L172">DprGadget</a>），貌似是用于高DPI Debug用的，看到几个Native字样，让我扒一扒你用了什么神奇函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++">QPlatformWindow *platformWindow = <span class="hljs-built_in">windowHandle</span>()-&gt;<span class="hljs-built_in">handle</span>();<br>nativeSizeLabel-&gt;<span class="hljs-built_in">setText</span>(<span class="hljs-built_in">QString</span>(<span class="hljs-string">&quot;native size %1 %2&quot;</span>).<span class="hljs-built_in">arg</span>(platformWindow-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">width</span>())<br>                         						.<span class="hljs-built_in">arg</span>(platformWindow-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">height</span>()));<br></code></pre></td></tr></table></figure>
+
+<p>什么！等一下，<code>QPlatformWindow</code>，这个名字一听就很物理坐标啊（而且<code>label</code>的名字也包含<code>native</code>），快让我康康！</p>
+<p>原来是用了<code>#include &lt;QtGui/qpa/qplatformwindow.h&gt;</code>头文件，よし</p>
+<p>诶不过，为什么提示<code>Not Found</code></p>
+<p>有经验的小伙伴应该敏锐地察觉到了，这种情况要么是版本不对，要么是缺少模块</p>
+<p>很快啊，我反手就打开了他的<a target="_blank" rel="noopener" href="https://github.com/qt/qtbase/blob/885aba7ffdfaf410f16364f315411cf8d77da38a/tests/manual/highdpi/dprgadget/dprgadget.pro"><code>.pro</code>文件</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs pro">QT += widgets gui_private<br></code></pre></td></tr></table></figure>
+
+<p>好家伙，<code>gui_private</code>模块，藏着掖着，好好好，这么玩是吧</p>
+<p>果然可以用了！</p>
+<h4 id="more"><a href="#more" class="headerlink" title="more"></a>more</h4><p>不过别急，来都来了，我们深挖一下</p>
+<p>首先，<code>#include &lt;QtGui/qpa/qplatformwindow.h&gt;</code>中的<code>qpa</code>指的是什么</p>
+<p>全称为：<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qpa.html">Qt Platform Abstraction</a>，一听就很不跨平台啊</p>
+<p>但是很接地气，显然是我们想要的</p>
+<p>让我看看都有<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qpa.html#class-overview">什么类</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++">QAbstractEventDispatcher<br>QPlatformAccessibility<br>QPlatformBackingStore<br>QPlatformClipboard<br>QPlatformCursor<br>QPlatformDrag<br>QPlatformFontDatabase<br>QPlatformGraphicsBuffer<br>QPlatformInputContext<br>QPlatformNativeInterface<br>QPlatformOffscreenSurface<br>QPlatformOpenGLContext<br>QPlatformScreen<br>QPlatformServices<br>QPlatformSharedGraphicsCache<br>QPlatformSurface<br>QPlatformWindow<br></code></pre></td></tr></table></figure>
+
+<p>这个<code>QPlatformScreen</code>一听就很香啊，依葫芦画瓢</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">//QScreen::handle() -&gt; QPlatformScreen*</span><br>QScreen::<span class="hljs-built_in">handle</span>()-&gt;<span class="hljs-built_in">geometry</span>()<br></code></pre></td></tr></table></figure>
+
+<p>这样就得到了真真正正的物理坐标！！哭辽</p>
+<h4 id="more-more"><a href="#more-more" class="headerlink" title="more more"></a>more more</h4><p>事情到这里就结束了吗，大概也许</p>
+<p>但是你不觉得，获取屏幕左上角物理坐标，然后再四则运算一下，有点冗余吗</p>
+<p>你想想，<code>Qt</code>内部采用逻辑坐标，渲染采用物理坐标，那么肯定有转换函数存在呀！</p>
+<p>说时迟那时快（？），你想想：<code>QCursor::pos()</code></p>
+<p><code>QCursor::pos()</code>返回的是逻辑坐标，但是要在<code>Windows</code>上获取鼠标坐标，肯定调用了<code>Windows API</code>（物理坐标）啊</p>
+<p>那么其内部必然有转换函数</p>
+<p>很快啊，我直接打开Qt5 <a target="_blank" rel="noopener" href="https://codebrowser.dev/qt5/qtbase/src/gui/kernel/qcursor.cpp.html#_ZN7QCursor3posEPK7QScreen">QCurosr::pos()</a>源码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QPoint <span class="hljs-title">QCursor::pos</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span> QCursor::<span class="hljs-built_in">pos</span>(QGuiApplication::<span class="hljs-built_in">primaryScreen</span>());<br>&#125;<br><br><span class="hljs-function">QPoint <span class="hljs-title">QCursor::pos</span><span class="hljs-params">(<span class="hljs-type">const</span> QScreen *screen)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (screen) &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-type">const</span> QPlatformCursor *cursor = screen-&gt;<span class="hljs-built_in">handle</span>()-&gt;<span class="hljs-built_in">cursor</span>()) &#123;<br>            <span class="hljs-type">const</span> QPlatformScreen *ps = screen-&gt;<span class="hljs-built_in">handle</span>();<br>            QPoint nativePos = cursor-&gt;<span class="hljs-built_in">pos</span>(); <span class="hljs-comment">//原生物理坐标</span><br>            ps = ps-&gt;<span class="hljs-built_in">screenForPosition</span>(nativePos); <span class="hljs-comment">//寻找nativePos所在Screen</span><br>            <span class="hljs-keyword">return</span> QHighDpi::<span class="hljs-built_in">fromNativePixels</span>(nativePos, ps-&gt;<span class="hljs-built_in">screen</span>()); <span class="hljs-comment">//</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> QGuiApplicationPrivate::lastCursorPosition.<span class="hljs-built_in">toPoint</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这不看不得了啊，一看就留口水啊</p>
+<p><code>QHighDpi::fromNativePixels</code>，这么好用的函数你不拿出来给大家伙用！</p>
+<h4 id="QCursor-pos"><a href="#QCursor-pos" class="headerlink" title="QCursor::pos()"></a>QCursor::pos()</h4><p>我们先来看一下<code>QCursor::pos()</code>的逻辑啊</p>
+<p>有两个重载，无参版本默认把主显示器传给了有参版本</p>
+<p>这里，我们可能会疑惑，诶，为什么需要QScreen参数呢，光标坐标和屏幕有关吗</p>
+<p>别急，接着往下看</p>
+<p>首先，获取了原生屏幕指针（<code>QPlatformScreen</code>），然后通过<code>QPlatformCursor</code>获取到了光标的原生物理坐标（<code>nativePos</code>）</p>
+<p>接着通过<code>ps = ps-&gt;screenForPosition(nativePos)</code>更新了屏幕指针，这是为什么呢</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*!</span><br><span class="hljs-comment">  Find the sibling screen corresponding to \a globalPos.</span><br><span class="hljs-comment">  Returns this screen if no suitable screen is found at the position.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-type">const</span> QPlatformScreen *<span class="hljs-title">QPlatformScreen::screenForPosition</span><span class="hljs-params">(<span class="hljs-type">const</span> QPoint &amp;point)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">contains</span>(point)) &#123;<br>        <span class="hljs-type">const</span> <span class="hljs-keyword">auto</span> screens = <span class="hljs-built_in">virtualSiblings</span>();<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> QPlatformScreen *screen : screens) &#123;<br>            <span class="hljs-keyword">if</span> (screen-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">contains</span>(point))<br>                <span class="hljs-keyword">return</span> screen;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们可以看到，注释和代码里都提到了一个词：<code>sibling</code></p>
+<p>来看一下Qt文档的解释</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QList&lt;QScreen *&gt; <span class="hljs-title">QScreen::virtualSiblings</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function"><span class="hljs-comment">//Get the screen&#x27;s virtual siblings.</span></span><br><span class="hljs-function"></span><br><span class="hljs-function"><span class="hljs-comment">//The virtual siblings are the screen instances sharing the same virtual desktop. They share a common coordinate system, and windows can //freely be moved or positioned across them without having to be re-created.</span></span><br></code></pre></td></tr></table></figure>
+
+<p>所以，<code>sibling screens</code>也就是一个虚拟桌面内的所有相邻显示器，一般情况下与<code>qApp-&gt;screens()</code>相等</p>
+<p>因此，<code>screenForPosition()</code>会遍历屏幕，找到鼠标光标所在的那一块</p>
+<p>所以我们不必纠结，为什么一开始传入的是<code>primaryScreen()</code>，会不会不准确</p>
+<p>其实传入什么<code>screen</code>都可以，只要在同一个虚拟桌面内，会自行定位</p>
+<p>这里传入一个指针，是为了定位虚拟桌面而已</p>
+<h3 id="more-more-more：QHighDpi-fromNativePixels"><a href="#more-more-more：QHighDpi-fromNativePixels" class="headerlink" title="more more more：QHighDpi::fromNativePixels"></a>more more more：QHighDpi::fromNativePixels</h3><p>顾名思义，我们已经知道了他可以从物理坐标（原生像素）转化为逻辑坐标</p>
+<p>那么稍微看一下源码吧</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> C&gt;<br><span class="hljs-function">T <span class="hljs-title">fromNativePixels</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;value, <span class="hljs-type">const</span> C *context)</span></span><br><span class="hljs-function"></span>&#123;<br>    QPoint nativePosition = <span class="hljs-built_in">position</span>(value); <span class="hljs-comment">//转换为QPoint</span><br>    QHighDpiScaling::ScaleAndOrigin so = QHighDpiScaling::<span class="hljs-built_in">scaleAndOrigin</span>(context, &amp;nativePosition);<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">scale</span>(value, <span class="hljs-built_in">qreal</span>(<span class="hljs-number">1</span>) / so.factor, so.origin);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>OK，很短，就三行，我们先来看看<code>QHighDpiScaling::scaleAndOrigin</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QHighDpiScaling::ScaleAndOrigin <span class="hljs-title">QHighDpiScaling::scaleAndOrigin</span><span class="hljs-params">(<span class="hljs-type">const</span> QPlatformScreen *platformScreen, QPoint *nativePosition)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">if</span> (!m_active)<br>        <span class="hljs-keyword">return</span> &#123; <span class="hljs-built_in">qreal</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">QPoint</span>() &#125;;<br>    <span class="hljs-keyword">if</span> (!platformScreen)<br>        <span class="hljs-keyword">return</span> &#123; m_factor, <span class="hljs-built_in">QPoint</span>() &#125;; <span class="hljs-comment">// the global factor</span><br>    <span class="hljs-type">const</span> QPlatformScreen *actualScreen = nativePosition ?<br>        platformScreen-&gt;<span class="hljs-built_in">screenForPosition</span>(*nativePosition) : platformScreen;<br>    <span class="hljs-keyword">return</span> &#123; m_factor * <span class="hljs-built_in">screenSubfactor</span>(actualScreen), actualScreen-&gt;<span class="hljs-built_in">geometry</span>().<span class="hljs-built_in">topLeft</span>() &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里再次调用<code>screenForPosition()</code>定位了光标所在屏幕，非常严谨</p>
+<p>返回值有俩：</p>
+<ul>
+<li>计算缩放比：<code>m_factor * screenSubfactor(actualScreen)</code>，巴拉巴拉bomb，可能是内部缩放比 * 外部缩放比？不管了</li>
+<li>计算光标所在屏幕的左上角物理坐标：<code>actualScreen-&gt;geometry().topLeft()</code></li>
+</ul>
+<p>这第二个就是重点了，跟我们自行计算的方法有异曲同工之妙，不过他这里获取到的是真真正正的物理坐标</p>
+<p>然后调用<code>scale(value, qreal(1) / so.factor, so.origin)</code>进行最后的计算</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">inline</span> QPoint <span class="hljs-title">scale</span><span class="hljs-params">(<span class="hljs-type">const</span> QPoint &amp;pos, qreal scaleFactor, QPoint origin = QPoint(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>))</span></span><br><span class="hljs-function"></span>&#123;<br>     <span class="hljs-keyword">return</span> (pos - origin) * scaleFactor + origin;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>哎呀，这不就是我们的计算公式吗</p>
+<p>先减去左上角的坐标，归一化为（0,0），然后直接乘除缩放比，再把左上角加回来 hhhhhh</p>
+<p>啊，哈，啊哈哈哈</p>
+<h4 id="and-MORE"><a href="#and-MORE" class="headerlink" title="and MORE!"></a>and MORE!</h4><p>事情远远没有这么简单（已经很复杂了好嘛喂）</p>
+<p>如图，经过测试，每一块屏幕的虚拟坐标系（黄色区域）是单独计算的，其左上角坐标就是<strong>物理坐标</strong>，（虽然Size是缩放过的）</p>
+<ul>
+<li>测试设备为：4K显示器（150%缩放） + 1080P显示器（100%缩放）</li>
+</ul>
+<p><img src="/img/image-20240313122842885.png" srcset="/img/loading.gif" lazyload alt="物理坐标系 &amp; 逻辑坐标系（黄）"></p>
+<p>惊天大发现，也就是说，虚拟坐标系中的每一块屏幕是<strong>不连续</strong>的！</p>
+<p>鼠标从右边屏幕的左侧边缘，移动到左侧显示器的右边缘，在Qt内部，逻辑坐标是会发生突变的</p>
+<p><code>(3840,1071) -&gt; (2559,720)</code></p>
+<p>所以，如图所示，每一块显示器的<code>QScreen::geometry().topLeft()</code>其实是准确的<strong>物理坐标</strong>，（虽然其Size是逻辑值）</p>
+<p>因此，第一种转换方案其实也没问题，但是<code>QHighDpi::fromNativePixels</code>显然更简单hhhh</p>
+<p><strong>如果不想引入<code>private</code>模块，直接用第一种方式四则运算自行转换也行</strong></p>
 <h3 id="Other-Problem"><a href="#Other-Problem" class="headerlink" title="Other Problem"></a>Other Problem</h3><p>在多显示器中，我们还可能遇到别的坑</p>
 <p>比如：<code>QListWidget</code>的<code>item</code>的布局没有刷新 &amp; 比例不正确</p>
 <p><strong>更新：</strong>如果不启用<code>QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough)</code>才会出现这个问题</p>
@@ -507,6 +604,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2024/03/13/Qt%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90-QCursor-pos/" title="Qt源码解析: QCursor::pos()">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Qt源码解析: QCursor::pos()</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
