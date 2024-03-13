@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240313093044936.png">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20240313122842885.png">
 <meta property="article:published_time" content="2024-03-12T06:32:06.000Z">
-<meta property="article:modified_time" content="2024-03-13T05:48:06.490Z">
+<meta property="article:modified_time" content="2024-03-13T06:06:30.487Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="High-DPI">
@@ -463,7 +463,7 @@
 <p>所以我们不必纠结，为什么一开始传入的是<code>primaryScreen()</code>，会不会不准确</p>
 <p>其实传入什么<code>screen</code>都可以，只要在同一个虚拟桌面内，会自行定位</p>
 <p>这里传入一个指针，是为了定位虚拟桌面而已</p>
-<h3 id="more-more-more：QHighDpi-fromNativePixels"><a href="#more-more-more：QHighDpi-fromNativePixels" class="headerlink" title="more more more：QHighDpi::fromNativePixels"></a>more more more：QHighDpi::fromNativePixels</h3><p>顾名思义，我们已经知道了他可以从物理坐标（原生像素）转化为逻辑坐标</p>
+<h4 id="more-more-more：QHighDpi-fromNativePixels"><a href="#more-more-more：QHighDpi-fromNativePixels" class="headerlink" title="more more more：QHighDpi::fromNativePixels"></a>more more more：QHighDpi::fromNativePixels</h4><p>顾名思义，我们已经知道了他可以从物理坐标（原生像素）转化为逻辑坐标</p>
 <p>那么稍微看一下源码吧</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> C&gt;<br><span class="hljs-function">T <span class="hljs-title">fromNativePixels</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;value, <span class="hljs-type">const</span> C *context)</span></span><br><span class="hljs-function"></span>&#123;<br>    QPoint nativePosition = <span class="hljs-built_in">position</span>(value); <span class="hljs-comment">//转换为QPoint</span><br>    QHighDpiScaling::ScaleAndOrigin so = QHighDpiScaling::<span class="hljs-built_in">scaleAndOrigin</span>(context, &amp;nativePosition);<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">scale</span>(value, <span class="hljs-built_in">qreal</span>(<span class="hljs-number">1</span>) / so.factor, so.origin);<br>&#125;<br></code></pre></td></tr></table></figure>
 
