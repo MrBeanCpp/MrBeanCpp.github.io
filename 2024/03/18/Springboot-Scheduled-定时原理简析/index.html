@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://mrbeanc.gitee.io/img/s-b-s-f-2.jpg">
 <meta property="article:published_time" content="2024-03-18T07:49:48.000Z">
-<meta property="article:modified_time" content="2024-03-18T11:02:51.311Z">
+<meta property="article:modified_time" content="2024-03-18T11:13:50.858Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="Springboot">
@@ -231,7 +231,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          4.7k 字
+          5.2k 字
         
       </span>
     
@@ -243,7 +243,7 @@
         
         
           <!-- compatible with older versions-->
-          39 分钟
+          44 分钟
         
       </span>
     
@@ -331,9 +331,12 @@
 </ul>
 <p>那么他们在面对系统休眠而错过下次执行时间的情况，会怎么处理呢？</p>
 <ul>
-<li><code>corn</code>：当系统唤醒后，<code>cron</code> 调度的任务会在下一个符合表达式的时间点执行。它不会因为错过了预定时间而尝试“补偿”执行</li>
-<li><code>fixedRate</code>：根据实验，系统唤醒后，并不会立即执行任务，而是<strong>继续等待</strong>，几十分钟后，几乎同时执行了<strong>多次</strong>任务（休眠中错过的那几次），补偿了失去的过去（可能是按照预计的时间计算了下一次的时间，没有根据实际系统时间校正）</li>
-<li><code>fixedDelay</code>：推测，也是继续等待攒满<code>Interval</code>，但是不会补偿执行，因为间隔是从上一次任务结束后开始计算的</li>
+<li><p><code>corn</code>：当系统唤醒后，<code>cron</code> 调度的任务会在下一个符合表达式的时间点执行。它不会因为错过了预定时间而尝试“补偿”执行</p>
+</li>
+<li><p><code>fixedRate</code>：根据实验，系统唤醒后，并不会立即执行任务，而是<strong>继续等待</strong>，几十分钟后，几乎同时执行了<strong>多次</strong>任务（休眠中错过的那几次），补偿了失去的过去（可能是按照预计的时间计算了下一次的时间，没有根据实际系统时间校正）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java">#ScheduledTask.Clean <span class="hljs-number">00</span>:<span class="hljs-number">44</span>:<span class="hljs-number">40.224923500</span><br>... <span class="hljs-comment">//休眠中</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.292055800</span> <span class="hljs-comment">//11点多唤醒的，过了一会儿才执行</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">25</span>:<span class="hljs-number">07.293056400</span><br>#ScheduledTask.Clean <span class="hljs-number">12</span>:<span class="hljs-number">44</span>:<span class="hljs-number">10.973081</span><br></code></pre></td></tr></table></figure></li>
+<li><p><code>fixedDelay</code>：推测，也是继续等待攒满<code>Interval</code>，但是不会补偿执行，因为间隔是从上一次任务结束后开始计算的</p>
+</li>
 </ul>
 <p><code>fixedRate</code>和<code>fixedDelay</code>的执行机制应该大差不大</p>
 <p>让我们从<code>fixedRate</code>管中窥豹，看看其底层定时机制</p>
