@@ -19,15 +19,15 @@
     <meta name="description" content="数组越界-&gt;篡改static对象内存-&gt;野指针产生-&gt;非法内存访问导致崩溃">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记一次数组越界引发的内存篡改导致的野指针引用灾难">
-<meta property="og:url" content="https://mrbeanc.gitee.io/2022/03/21/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E7%AF%A1%E6%94%B9%E5%AF%BC%E8%87%B4%E7%9A%84%E9%87%8E%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E7%81%BE%E9%9A%BE/index.html">
+<meta property="og:url" content="https://mrbeancpp.github.io/2022/03/21/%E8%AE%B0%E4%B8%80%E6%AC%A1%E6%95%B0%E7%BB%84%E8%B6%8A%E7%95%8C%E5%BC%95%E5%8F%91%E7%9A%84%E5%86%85%E5%AD%98%E7%AF%A1%E6%94%B9%E5%AF%BC%E8%87%B4%E7%9A%84%E9%87%8E%E6%8C%87%E9%92%88%E5%BC%95%E7%94%A8%E7%81%BE%E9%9A%BE/index.html">
 <meta property="og:site_name" content="MrBeanC-Blog">
 <meta property="og:description" content="数组越界-&gt;篡改static对象内存-&gt;野指针产生-&gt;非法内存访问导致崩溃">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175514697.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175153078.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321175236363.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321181024001.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20220321192456055.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220321175514697.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220321175153078.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220321175236363.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220321181024001.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220321192456055.png">
 <meta property="article:published_time" content="2022-03-21T07:56:16.000Z">
 <meta property="article:modified_time" content="2022-03-29T02:29:44.379Z">
 <meta property="article:author" content="MrBeanC">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="Debug">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20220321175514697.png">
+<meta name="twitter:image" content="https://mrbeancpp.github.io/img/image-20220321175514697.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -80,7 +80,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"mrbeancpp.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -549,7 +549,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>记一次数组越界引发的内存篡改导致的野指针引用灾难</div>
-      <div>https://mrbeanc.gitee.io/2022/03/21/记一次数组越界引发的内存篡改导致的野指针引用灾难/</div>
+      <div>https://mrbeancpp.github.io/2022/03/21/记一次数组越界引发的内存篡改导致的野指针引用灾难/</div>
     </div>
     <div class="license-meta">
       

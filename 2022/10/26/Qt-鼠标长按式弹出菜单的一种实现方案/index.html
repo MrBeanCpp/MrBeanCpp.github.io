@@ -19,16 +19,16 @@
     <meta name="description" content="鼠标长按式弹出菜单">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Qt-鼠标长按式弹出菜单的一种实现方案">
-<meta property="og:url" content="https://mrbeanc.gitee.io/2022/10/26/Qt-%E9%BC%A0%E6%A0%87%E9%95%BF%E6%8C%89%E5%BC%8F%E5%BC%B9%E5%87%BA%E8%8F%9C%E5%8D%95%E7%9A%84%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:url" content="https://mrbeancpp.github.io/2022/10/26/Qt-%E9%BC%A0%E6%A0%87%E9%95%BF%E6%8C%89%E5%BC%8F%E5%BC%B9%E5%87%BA%E8%8F%9C%E5%8D%95%E7%9A%84%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88/index.html">
 <meta property="og:site_name" content="MrBeanC-Blog">
 <meta property="og:description" content="鼠标长按式弹出菜单">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026191207095.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026191539227.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026192838016.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026194920895.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026201007425.png">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221026210503942.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026191207095.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026191539227.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026192838016.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026194920895.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026201007425.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221026210503942.png">
 <meta property="article:published_time" content="2022-10-26T11:00:52.000Z">
 <meta property="article:modified_time" content="2022-10-26T15:05:37.278Z">
 <meta property="article:author" content="MrBeanC">
@@ -36,7 +36,7 @@
 <meta property="article:tag" content="Menu">
 <meta property="article:tag" content="MouseLongPress">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20221026191207095.png">
+<meta name="twitter:image" content="https://mrbeancpp.github.io/img/image-20221026191207095.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -80,7 +80,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"mrbeancpp.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -440,7 +440,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Qt-鼠标长按式弹出菜单的一种实现方案</div>
-      <div>https://mrbeanc.gitee.io/2022/10/26/Qt-鼠标长按式弹出菜单的一种实现方案/</div>
+      <div>https://mrbeancpp.github.io/2022/10/26/Qt-鼠标长按式弹出菜单的一种实现方案/</div>
     </div>
     <div class="license-meta">
       

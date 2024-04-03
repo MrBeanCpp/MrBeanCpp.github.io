@@ -19,11 +19,11 @@
     <meta name="description" content="airpods引发的bug修复灾难">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一对airpods引发的程序员脑细胞大死亡事件">
-<meta property="og:url" content="https://mrbeanc.gitee.io/2022/10/10/%E4%B8%80%E5%AF%B9airpods%E5%BC%95%E5%8F%91%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E8%84%91%E7%BB%86%E8%83%9E%E5%A4%A7%E6%AD%BB%E4%BA%A1%E4%BA%8B%E4%BB%B6/index.html">
+<meta property="og:url" content="https://mrbeancpp.github.io/2022/10/10/%E4%B8%80%E5%AF%B9airpods%E5%BC%95%E5%8F%91%E7%9A%84%E7%A8%8B%E5%BA%8F%E5%91%98%E8%84%91%E7%BB%86%E8%83%9E%E5%A4%A7%E6%AD%BB%E4%BA%A1%E4%BA%8B%E4%BB%B6/index.html">
 <meta property="og:site_name" content="MrBeanC-Blog">
 <meta property="og:description" content="airpods引发的bug修复灾难">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mrbeanc.gitee.io/img/image-20221010144059972.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20221010144059972.png">
 <meta property="article:published_time" content="2022-10-10T03:46:29.000Z">
 <meta property="article:modified_time" content="2022-10-10T06:55:44.273Z">
 <meta property="article:author" content="MrBeanC">
@@ -34,7 +34,7 @@
 <meta property="article:tag" content="dll">
 <meta property="article:tag" content="VS">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mrbeanc.gitee.io/img/image-20221010144059972.png">
+<meta name="twitter:image" content="https://mrbeancpp.github.io/img/image-20221010144059972.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"mrbeanc.gitee.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"mrbeancpp.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -394,7 +394,7 @@
 <blockquote>
 <p>CDSN网友有云：如果是在QT中进行COM编程，则QT的编译套件必须为 MSVC</p>
 </blockquote>
-<p>关于MinGW和MSVC编译器的区别，可以看我上一篇文章：<a target="_blank" rel="noopener" href="https://mrbeancpp.github.io/2022/10/09/Qt%E7%BC%96%E8%AF%91%E5%99%A8%E8%BF%81%E7%A7%BB%EF%BC%9A%E4%BB%8EMinGW%E5%88%B0MSVC/">Qt编译器迁移：从MinGW到MSVC - MrBeanC-Blog (mrbeancpp.github.io)</a></p>
+<p>关于MinGW和MSVC编译器的区别，可以看我上一篇文章：<a href="https://mrbeancpp.github.io/2022/10/09/Qt%E7%BC%96%E8%AF%91%E5%99%A8%E8%BF%81%E7%A7%BB%EF%BC%9A%E4%BB%8EMinGW%E5%88%B0MSVC/">Qt编译器迁移：从MinGW到MSVC - MrBeanC-Blog (mrbeancpp.github.io)</a></p>
 <p>我终于明白了，是时候该换编译器了</p>
 <h3 id="大清还未亡呢"><a href="#大清还未亡呢" class="headerlink" title="大清还未亡呢"></a>大清还未亡呢</h3><p>等，一下</p>
 <p>我是否可以用<code>VS</code>将代码封装为<code>dll</code>，供<code>Qt</code>链接使用呢</p>
@@ -516,7 +516,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>一对airpods引发的程序员脑细胞大死亡事件</div>
-      <div>https://mrbeanc.gitee.io/2022/10/10/一对airpods引发的程序员脑细胞大死亡事件/</div>
+      <div>https://mrbeancpp.github.io/2022/10/10/一对airpods引发的程序员脑细胞大死亡事件/</div>
     </div>
     <div class="license-meta">
       
