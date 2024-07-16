@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>VMware虚拟机在后台运行时性能下降</title>
+    <link href="/2024/07/16/VMware-Background-Performance-Down/"/>
+    <url>/2024/07/16/VMware-Background-Performance-Down/</url>
+    
+    <content type="html"><![CDATA[<h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，World needs <code>Windows</code>. But <code>Linux</code> even matters. (Especially for developers)</p><p>鱼和熊掌能否兼得，也许可以小火慢煎</p><p>有的同学要说了：WSL！</p><p><code>WSL（Windows Subsystem for Linux）</code>，一听名字就感觉性能爆表</p><p>但是如果需要<strong>图形界面</strong>的话，WSL貌似不是特别方便</p><p>此时就需要经典虚拟机出场了，like <code>VMware</code></p><h2 id="主诉（性能下降）"><a href="#主诉（性能下降）" class="headerlink" title="主诉（性能下降）"></a>主诉（性能下降）</h2><p>一个经典的方案是：VSCode（Remote SSH）+ VMWare（Ubuntu）</p><p>我从没有发现其<strong>性能不佳</strong>，直到我开始怀念<code>RustRover (Jetbrains)</code>，但被<code>Jetbrains Gateway</code>的远程开发体验击溃后，我在虚拟机里安装了<code>Jetbrains for Linux</code></p><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs rust">cargo clean<br>cargo build<br></code></pre></td></tr></table></figure><p>看着缩短了5倍的编译时长，我陷入了沉思</p><p>都是<code>Terminal</code>，都是<code>fish</code>，难不成<code>Jetbrains</code>有魔法，还是<code>Remote SSH</code>有大坑</p><p>&#x2F;&#x2F; 经测试：原生终端和<code>Jetbrains</code>终端性能一致 啊哈哈（尬）</p><p>我不经脊背发凉，没有了<code>VSCode Remote SSH</code>，我很难想象出一个替代方案进行远程开发</p><p>为此，我请到了著名<code>Linux</code>专家 - 侯同学，为大家进行<code>WSL + Remote SSH</code>的测试</p><p>Result：<code>WSL</code>原生终端与<code>Remote SSH</code>终端性能并无二异</p><p>看来<code>VSCode</code>不背这个锅，呼呼呼</p><h2 id="先做个检查吧"><a href="#先做个检查吧" class="headerlink" title="先做个检查吧"></a>先做个检查吧</h2><p>盯——（望闻问切）</p><p>好的，请问，<code>Jetbrains</code>终端和<code>VSCode Remote SSH</code>终端有什么不同</p><p>即答：后者是Windows物理机应用，此时，虚拟机运行于后台</p><p>这点其实非常重要，后台进程的优先级显然是低于前台的，（被调度到小核上之类的，CPU片减少之类的）</p><h2 id="切片（Test）"><a href="#切片（Test）" class="headerlink" title="切片（Test）"></a>切片（Test）</h2><p>Okay，我们在Remote SSH终端中输入<code>cargo build</code>，然后回到虚拟机，使其时刻保持在前台</p><p>Result：编译时长大大缩短，与原生终端无异</p><h2 id="破案"><a href="#破案" class="headerlink" title="破案"></a>破案</h2><p>正如我们所猜想的，在后台时，进程优先级下降，导致性能下降（5倍）</p><h2 id="药方"><a href="#药方" class="headerlink" title="药方"></a>药方</h2><p>能否设置虚拟机的进程优先级呢？答案是（薛定谔的）</p><p><img src="/img/image-20240716162912923.png" alt="优先级"></p><p>我们可以看到，右侧可以设置两种情况下的优先级：</p><ul><li>抓取的输入内容</li><li>取消抓取的输入内容</li></ul><p>好的，作为一个the local，我只能告诉你，我每个字都看得懂，But…</p><p>好吧，我们还是看看官方文档吧：</p><p><img src="/img/image-20240716163106655.png" alt="官方文档"></p><p>这个就好理解多了</p><p>I Guess：</p><ul><li>已抓取输入时：前台，获取焦点时</li><li>未抓取输入时：后台，无焦点时</li></ul><p>前者默认是<strong>正常</strong>，设置为<strong>高</strong>后，前台使用虚拟机的性能会提升</p><p>But，后者居然无法设置为<strong>高</strong>！</p><p>只有，<strong>正常</strong>和<strong>低</strong>两个选项，寄</p><p>&#x2F;&#x2F; 可能是为了不抢占物理机，但是居然不给个选项</p><p>有办法吗？也许可以强制设置进程优先级（Windows API）</p><p>参见：<a href="https://www.bilibili.com/read/cv21154645/">还在为大小核调度困扰？教你如何优化性能！ - 哔哩哔哩 (bilibili.com)</a></p><p>あの，我还是用<code>Linux Jetbrains</code>吧，（孩子们，我回来了）</p><h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a href="https://www.bilibili.com/read/cv21154645/">还在为大小核调度困扰？教你如何优化性能！ - 哔哩哔哩 (bilibili.com)</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>虚拟机</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>VMware</tag>
+      
+      <tag>虚拟机</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>QSettings 无法正确处理包含斜杠的key</title>
     <link href="/2024/06/22/QSettings-%E6%97%A0%E6%B3%95%E6%AD%A3%E7%A1%AE%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%E6%96%9C%E6%9D%A0%E7%9A%84key/"/>
     <url>/2024/06/22/QSettings-%E6%97%A0%E6%B3%95%E6%AD%A3%E7%A1%AE%E5%A4%84%E7%90%86%E5%8C%85%E5%90%AB%E6%96%9C%E6%9D%A0%E7%9A%84key/</url>
@@ -1136,9 +1163,9 @@
       
       <tag>Qt</tag>
       
-      <tag>windeployqt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>windeployqt</tag>
       
       <tag>CMD</tag>
       
