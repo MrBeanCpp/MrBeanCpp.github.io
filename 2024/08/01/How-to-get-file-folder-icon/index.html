@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="QFileIconProvider 剖析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何获取文件（夹）图标 without Cache">
+<meta property="og:url" content="https://mrbeancpp.github.io/2024/08/01/How-to-get-file-folder-icon/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="QFileIconProvider 剖析">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-08-01T09:44:02.000Z">
+<meta property="article:modified_time" content="2024-08-01T13:42:31.094Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="Icon">
+<meta property="article:tag" content="QFileIconProvider">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>如何获取文件（夹）图标 without Cache - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeancpp.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="如何获取文件（夹）图标 without Cache"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-08-01 17:44" pubdate>
+          2024年8月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          6.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          55 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">如何获取文件（夹）图标 without Cache</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2024年8月1日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要（迫真）"><a href="#前情提要（迫真）" class="headerlink" title="前情提要（迫真）"></a>前情提要（迫真）</h2><p>书接上回，我们已经介绍了如何设置文件夹图标，想必大家都意犹未尽</p>
+<p>那么根据有<code>Set</code>必有<code>Get</code>定理，本节我们来讲讲图标的获取（on <code>Windows</code>）</p>
+<p>众所周知，<code>Qt</code>是一个<code>Convenient</code>的<code>C++</code>库</p>
+<p>So，长话短说，两行代码秒了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++">QFileIconProvider iconPro;<br>QIcon icon = iconPro.<span class="hljs-built_in">icon</span>(dirPath);<br></code></pre></td></tr></table></figure>
+
+<p>好的，请大家有序退场👋</p>
+<blockquote>
+<p> 新吃席观众还在懵逼，老吃席观众已经开始排排坐了：都知道笔者出手必有大坑</p>
+</blockquote>
+<h2 id="缓存（Cache）"><a href="#缓存（Cache）" class="headerlink" title="缓存（Cache）"></a>缓存（Cache）</h2><p>大家看看这是什么☝，老朋友了</p>
+<p>缓存是个好东西啊，空间换时间，现代CPU都上到三级缓存了</p>
+<blockquote>
+<p>可是没有什么是永恒的，是非好坏、真假对错，甚至是这句话本身 —— MrBeanC</p>
+</blockquote>
+<p>和文件系统打交道，时效性确实不太能保证，无论是<code>HDD</code>亦或是<code>SSD</code>，在<code>Memory</code>面前就是弟弟</p>
+<p>那么<code>Qt</code>给<code>QFileIconProvider</code>上缓存也不难理解了</p>
+<h3 id="文件夹图标缓存"><a href="#文件夹图标缓存" class="headerlink" title="文件夹图标缓存"></a>文件夹图标缓存</h3><p>没错，在程序生命周期内，使用<code>QFileIconProvider::icon</code>获取文件夹图标，会在<strong>全局</strong>范围内进行缓存</p>
+<p>无论后续文件夹图标是否改变，都只会返回第一次缓存的结果</p>
+<h3 id="基操分割线"><a href="#基操分割线" class="headerlink" title="基操分割线"></a>基操分割线</h3><p>到目前为止，都是基操（基本操作）</p>
+<p>但是捏，对于缓存这件事，<code>QFileIconProvider</code>的<a target="_blank" rel="noopener" href="https://doc.qt.io/qt-5/qfileiconprovider.html">文档</a>里只字未提，甚至查不到<code>Cache</code>这个词</p>
+<p>而且哈，这个类，也没有提供任何方法（method）来清除缓存或选择不缓存</p>
+<p>No, Nothing</p>
+<p>这或许就是无形的手吧.🤌</p>
+<p>😠😾🤬💬🗯︎</p>
+<h3 id="So-What"><a href="#So-What" class="headerlink" title="So What"></a>So What</h3><p>可能（不可能）有人觉得这没什么</p>
+<p>万一，我是说万一哈，有这么一款软件，它的功能是修改文件夹图标</p>
+<p>&#x2F;&#x2F; 源码级广告植入：<a target="_blank" rel="noopener" href="https://github.com/MrBeanCpp/Dr-Folder">Dr.Folder</a></p>
+<p>修改完成后，软件会重新获取并展示该图标（或者是不重启的情况下刷新）</p>
+<p>然后假如获取的还是旧图标，你说这不完犊子了😑</p>
+<h3 id="返璞归真"><a href="#返璞归真" class="headerlink" title="返璞归真"></a>返璞归真</h3><p>那没办法了，你仁我义（的反义词）</p>
+<p>还是看看远方的<code>Windows API</code>吧，家人们</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QIcon <span class="hljs-title">getFileIcon</span><span class="hljs-params">(QString filePath)</span> </span>&#123;<br>    filePath = QDir::<span class="hljs-built_in">toNativeSeparators</span>(filePath); <span class="hljs-comment">// IMPORTANT: 否则会找不到文件</span><br><br>    <span class="hljs-built_in">CoInitialize</span>(<span class="hljs-literal">NULL</span>); <span class="hljs-comment">// important for SHGetFileInfo，否则失败</span><br>    SHFILEINFO sfi;<br>    <span class="hljs-built_in">memset</span>(&amp;sfi, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(SHFILEINFO));<br><br>    QIcon icon;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">SHGetFileInfo</span>(filePath.<span class="hljs-built_in">toStdWString</span>().<span class="hljs-built_in">c_str</span>(), <span class="hljs-number">0</span>, &amp;sfi, <span class="hljs-built_in">sizeof</span>(SHFILEINFO), SHGFI_ICON)) &#123;<br>        icon = QtWin::<span class="hljs-built_in">fromHICON</span>(sfi.hIcon); <span class="hljs-comment">// 貌似Qt6删除了这个模块 哭</span><br>        <span class="hljs-built_in">DestroyIcon</span>(sfi.hIcon);<br>    &#125;<br>    <span class="hljs-built_in">CoUninitialize</span>();<br><br>    <span class="hljs-keyword">return</span> icon;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Okay，完美，兄弟们，可以获取到原汁原味的图标了</p>
+<h3 id="小丑"><a href="#小丑" class="headerlink" title="小丑"></a>小丑</h3><p>好的，缓存是没缓存了，但是卡炸了</p>
+<p>这波啊，这波是时间换时效</p>
+<h3 id="系统级缓存（Attention）"><a href="#系统级缓存（Attention）" class="headerlink" title="系统级缓存（Attention）"></a>系统级缓存（Attention）</h3><p>注意，除了<code>Qt</code>内部的图标缓存外，<code>Windows</code>文件系统也会对进行一定的缓存</p>
+<p>参考我的上一篇文章：<a target="_blank" rel="noopener" href="https://blog.cls.ink/2024/07/27/Set-Folder-Icon-and-Refresh-Cache-Immediately/#%E5%9B%BE%E6%A0%87%E7%BC%93%E5%AD%98">更改文件夹图标 &amp; 使其立即生效 - MrBeanC-Blog (cls.ink)</a></p>
+<p>这么说吧，在一定时间内连续调用<code>SHGetFileInfo</code>，其速度会越来越快</p>
+<p>但是第一次的调用时长可达数秒（最多）或数百毫秒（常见），这是不可接受的</p>
+<h3 id="姜还是老的辣"><a href="#姜还是老的辣" class="headerlink" title="姜还是老的辣"></a>姜还是老的辣</h3><p>但是<code>QFileIconProvider</code>人家就不卡，这可和什么内部缓存无关啊</p>
+<p>人家第一次获取就不卡的</p>
+<p>而且比<code>SHGetFileInfo</code>快了一个数量级（WTF？）</p>
+<p>这不科学吧，用了什么黑科技</p>
+<h2 id="QFileIconProvider源码剖析"><a href="#QFileIconProvider源码剖析" class="headerlink" title="QFileIconProvider源码剖析"></a><code>QFileIconProvider</code>源码剖析</h2><blockquote>
+<p>都把自己的心肺肠子翻出来，晒一晒，洗一洗，拾掇拾掇 —— 康熙</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QIcon <span class="hljs-title">QFileIconProviderPrivate::getIcon</span><span class="hljs-params">(<span class="hljs-type">const</span> QFileInfo &amp;fi)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> QGuiApplicationPrivate::<span class="hljs-built_in">platformTheme</span>()-&gt;<span class="hljs-built_in">fileIcon</span>(fi, <span class="hljs-built_in">toThemeIconOptions</span>(options));<br>&#125;<br><span class="hljs-function">QIcon <span class="hljs-title">QFileIconProvider::icon</span><span class="hljs-params">(<span class="hljs-type">const</span> QFileInfo &amp;info)</span> <span class="hljs-type">const</span> </span>&#123;<br>	...<br>    QIcon retIcon = d-&gt;<span class="hljs-built_in">getIcon</span>(info);<br>    <span class="hljs-keyword">if</span> (!retIcon.<span class="hljs-built_in">isNull</span>())<br>        <span class="hljs-keyword">return</span> retIcon;<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们可以看到实现细节隐藏在了<code>platformTheme()-&gt;fileIcon()</code></p>
+<p>这也是<code>Qt</code>实现跨平台的秘诀：每个平台写一份代码</p>
+<p>这里我们来重点关注一下<code>Windows</code>的实现（<code>qtbase/src/plugins/platforms/windows/qwindowstheme.cpp</code>）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function">QIcon <span class="hljs-title">QWindowsTheme::fileIcon</span><span class="hljs-params">(<span class="hljs-type">const</span> QFileInfo &amp;fileInfo, QPlatformTheme::IconOptions iconOptions)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">QIcon</span>(<span class="hljs-keyword">new</span> <span class="hljs-built_in">QWindowsFileIconEngine</span>(fileInfo, iconOptions));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>看到这里不禁感叹：妙哉妙哉</p>
+<p>原来我们通过<code>QFileIconProvider::icon</code>获取的图标里并没有真正的图像数据，而是封装了一个<code>Engine</code>（用于获取图标的中介）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">QWindowsFileIconEngine</span> : <span class="hljs-keyword">public</span> QAbstractFileIconEngine<br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">QWindowsFileIconEngine</span><span class="hljs-params">(<span class="hljs-type">const</span> QFileInfo &amp;info, QPlatformTheme::IconOptions opts)</span> :</span><br><span class="hljs-function">        QAbstractFileIconEngine(info, opts) &#123;</span>&#125;<br><br>    <span class="hljs-function">QList&lt;QSize&gt; <span class="hljs-title">availableSizes</span><span class="hljs-params">(QIcon::Mode = QIcon::Normal, QIcon::State = QIcon::Off)</span> <span class="hljs-type">const</span> <span class="hljs-keyword">override</span></span><br><span class="hljs-function">    </span>&#123; <span class="hljs-keyword">return</span> QWindowsTheme::<span class="hljs-built_in">instance</span>()-&gt;<span class="hljs-built_in">availableFileIconSizes</span>(); &#125;<br><br><span class="hljs-keyword">protected</span>:<br>    <span class="hljs-function">QString <span class="hljs-title">cacheKey</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> <span class="hljs-keyword">override</span></span>;<br>    <span class="hljs-function">QPixmap <span class="hljs-title">filePixmap</span><span class="hljs-params">(<span class="hljs-type">const</span> QSize &amp;size, QIcon::Mode mode, QIcon::State)</span> <span class="hljs-keyword">override</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>怪不得<code>.icon()</code>获取图标那么快呢，敢情是没有真数据啊</p>
+<p>好的，盯帧一下我们就能发现<code>filePixmap</code>这个函数才是真正的重点</p>
+<h3 id="QWindowsFileIconEngine-filePixmap"><a href="#QWindowsFileIconEngine-filePixmap" class="headerlink" title="QWindowsFileIconEngine::filePixmap"></a>QWindowsFileIconEngine::filePixmap</h3><h4 id="文件夹缓存"><a href="#文件夹缓存" class="headerlink" title="文件夹缓存"></a>文件夹缓存</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">bool</span> cacheableDirIcon = <span class="hljs-built_in">fileInfo</span>().<span class="hljs-built_in">isDir</span>() &amp;&amp; !<span class="hljs-built_in">fileInfo</span>().<span class="hljs-built_in">isRoot</span>();<br><span class="hljs-keyword">if</span> (cacheableDirIcon) &#123;<br>    <span class="hljs-function">QMutexLocker <span class="hljs-title">locker</span><span class="hljs-params">(&amp;mx)</span></span>;<br>    <span class="hljs-type">int</span> iIcon = (useDefaultFolderIcon &amp;&amp; defaultFolderIIcon &gt;= <span class="hljs-number">0</span>) ? defaultFolderIIcon<br>        													 : **dirIconEntryCache.<span class="hljs-built_in">object</span>(filePath);<br>    <span class="hljs-keyword">if</span> (iIcon) &#123;<br>        QPixmapCache::<span class="hljs-built_in">find</span>(<span class="hljs-built_in">dirIconPixmapCacheKey</span>(iIcon, iconSize, requestedImageListSize), &amp;pixmap);<br>        <span class="hljs-keyword">if</span> (pixmap.<span class="hljs-built_in">isNull</span>()) <span class="hljs-comment">// Let&#x27;s keep both caches in sync</span><br>            dirIconEntryCache.<span class="hljs-built_in">remove</span>(filePath);<br>        <span class="hljs-keyword">else</span><br>            <span class="hljs-keyword">return</span> pixmap;<br>    &#125;<br>&#125;<br>...<br>...<br><span class="hljs-keyword">if</span> (cacheableDirIcon) &#123;<br>    <span class="hljs-function">QMutexLocker <span class="hljs-title">locker</span><span class="hljs-params">(&amp;mx)</span></span>;<br>    QPixmapCache::<span class="hljs-built_in">insert</span>(key, pixmap);<br>    dirIconEntryCache.<span class="hljs-built_in">insert</span>(filePath, FakePointer&lt;<span class="hljs-type">int</span>&gt;::<span class="hljs-built_in">create</span>(info.iIcon));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>从这里我们可以发现：</p>
+<ul>
+<li>只对文件夹（Directory）进行了缓存（cacheableDirIcon），没有缓存文件（file）； &#x2F;&#x2F; Why?</li>
+<li>使用了<code>QPixmapCache</code>进行缓存，而且是<code>::insert</code>静态方法</li>
+</ul>
+<p>静态方法说明是全局状态</p>
+<div class="note note-info">
+            <p>[<strong>现在可以公开的情报</strong>]</p><p>！！因此，可以使用<code>QPixmapCache::clear()</code>来清除<code>QFileIconProvider</code>的缓存</p>
+          </div>
+
+<p>😑还得是源码</p>
+<h4 id="深入虎穴"><a href="#深入虎穴" class="headerlink" title="深入虎穴"></a>深入虎穴</h4><p>Okay，都到这里了，让我们看看<code>Qt</code>到底用了什么方法来获取图标吧</p>
+<p><code>filePixmap()</code>中调用了以下函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">bool</span> <span class="hljs-title">shGetFileInfoBackground</span><span class="hljs-params">(<span class="hljs-type">const</span> QString &amp;fileName, DWORD attributes,</span></span><br><span class="hljs-params"><span class="hljs-function">                                    SHFILEINFO *info, UINT flags,</span></span><br><span class="hljs-params"><span class="hljs-function">                                    qint64 timeOutMSecs = <span class="hljs-number">5000</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-type">static</span> QShGetFileInfoThread *getFileInfoThread = <span class="hljs-literal">nullptr</span>;<br>    <span class="hljs-keyword">if</span> (!getFileInfoThread) &#123;<br>        getFileInfoThread = <span class="hljs-keyword">new</span> QShGetFileInfoThread;<br>        getFileInfoThread-&gt;<span class="hljs-built_in">start</span>(); <span class="hljs-comment">//启动线程，调用run()函数</span><br>    &#125;<br><br>    <span class="hljs-type">bool</span> result = <span class="hljs-literal">false</span>;<br>    <span class="hljs-function">QShGetFileInfoParams <span class="hljs-title">params</span><span class="hljs-params">(fileName, attributes, info, flags, &amp;result)</span></span>;<br>    <span class="hljs-keyword">if</span> (!getFileInfoThread-&gt;<span class="hljs-built_in">runWithParams</span>(&amp;params, timeOutMSecs)) &#123;<br>        <span class="hljs-comment">// Cancel and reset getFileInfoThread. It&#x27;ll</span><br>        <span class="hljs-comment">// be reinitialized the next time we get called.</span><br>        getFileInfoThread-&gt;<span class="hljs-built_in">cancel</span>();<br>        getFileInfoThread = <span class="hljs-literal">nullptr</span>;<br>        <span class="hljs-built_in">qWarning</span>().<span class="hljs-built_in">noquote</span>() &lt;&lt; <span class="hljs-string">&quot;SHGetFileInfo() timed out for &quot;</span> &lt;&lt; fileName;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>首先这个命名非常有意思，为什么是<strong>Background</strong>呢，难道是多线程？（第一行代码就结束了比赛</p>
+<p>好吧，关注点难道不应该是<code>shGetFileInfoBackground</code>把<code>SHGetFileInfo</code>API写脸上了吗</p>
+<p>这里有一点比较疑惑：为什么<code>Qt</code>在这里要使用多线程呢？</p>
+<p>首先，这是一个<code>filePixmap()</code>是一个同步函数，也没法异步返回</p>
+<p>其次，在主线程中调用了<code>m_doneCondition.wait</code>进行等待，等待被子线程唤醒或超时（5s），意味着还是会阻塞主线程，所以子线程有什么意义</p>
+<p>其实最主要的意义就是这个<strong>超时</strong>机制，由于前面说的<code>SHGetFileInfo</code>可能非常耗时，我们不能无限期等待下去（GUI会卡死）</p>
+<p>所以利用<strong>多线程 + 条件变量</strong>的方式实现<strong>超时机制</strong></p>
+<p>仅单线程的话，控制权会陷入API调用<code>SHGetFileInfo</code>，无法退出</p>
+<p>下面附上<code>QShGetFileInfoThread</code>的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">QShGetFileInfoThread</span> : <span class="hljs-keyword">public</span> QThread &#123;<br>...<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> <span class="hljs-keyword">override</span> </span>&#123;<br>        m_init = <span class="hljs-built_in">CoInitializeEx</span>(<span class="hljs-literal">nullptr</span>, COINIT_MULTITHREADED);<br><br>        <span class="hljs-function">QMutexLocker <span class="hljs-title">readyLocker</span><span class="hljs-params">(&amp;m_readyMutex)</span></span>;<br>        <span class="hljs-keyword">while</span> (!m_cancelled.<span class="hljs-built_in">loadRelaxed</span>()) &#123;<br>            <span class="hljs-keyword">if</span> (!m_params &amp;&amp; !m_cancelled.<span class="hljs-built_in">loadRelaxed</span>()<br>                &amp;&amp; !m_readyCondition.<span class="hljs-built_in">wait</span>(&amp;m_readyMutex, <span class="hljs-built_in">QDeadlineTimer</span>(<span class="hljs-number">1000ll</span>)))<br>                <span class="hljs-keyword">continue</span>;<br><br>            <span class="hljs-keyword">if</span> (m_params) &#123;<br>                <span class="hljs-type">const</span> QString fileName = m_params-&gt;fileName;<br>                SHFILEINFO info;<br>                <span class="hljs-type">const</span> <span class="hljs-type">bool</span> result = <span class="hljs-built_in">SHGetFileInfo</span>(<span class="hljs-built_in">reinterpret_cast</span>&lt;<span class="hljs-type">const</span> <span class="hljs-type">wchar_t</span> *&gt;(fileName.<span class="hljs-built_in">utf16</span>()),<br>                                                  m_params-&gt;attributes, &amp;info, <span class="hljs-built_in">sizeof</span>(SHFILEINFO),<br>                                                  m_params-&gt;flags);<br>                m_doneMutex.<span class="hljs-built_in">lock</span>();<br>                <span class="hljs-keyword">if</span> (!m_cancelled.<span class="hljs-built_in">loadRelaxed</span>()) &#123;<br>                    *m_params-&gt;result = result;<br>                    <span class="hljs-built_in">memcpy</span>(m_params-&gt;info, &amp;info, <span class="hljs-built_in">sizeof</span>(SHFILEINFO));<br>                &#125;<br>                m_params = <span class="hljs-literal">nullptr</span>;<br><br>                m_doneCondition.<span class="hljs-built_in">wakeAll</span>();<br>                m_doneMutex.<span class="hljs-built_in">unlock</span>();<br>            &#125;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (m_init != S_FALSE)<br>            <span class="hljs-built_in">CoUninitialize</span>();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">runWithParams</span><span class="hljs-params">(QShGetFileInfoParams *params, qint64 timeOutMSecs)</span> </span>&#123;<br>        <span class="hljs-function">QMutexLocker <span class="hljs-title">doneLocker</span><span class="hljs-params">(&amp;m_doneMutex)</span></span>;<br><br>        m_readyMutex.<span class="hljs-built_in">lock</span>();<br>        m_params = params;<br>        m_readyCondition.<span class="hljs-built_in">wakeAll</span>();<br>        m_readyMutex.<span class="hljs-built_in">unlock</span>();<br><br>        <span class="hljs-keyword">return</span> m_doneCondition.<span class="hljs-built_in">wait</span>(&amp;m_doneMutex, <span class="hljs-built_in">QDeadlineTimer</span>(timeOutMSecs));<br>    &#125;<br>...<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Why-QFileIconProvider-Fast"><a href="#Why-QFileIconProvider-Fast" class="headerlink" title="Why QFileIconProvider Fast"></a>Why QFileIconProvider Fast</h2><p>好的，接下来还剩下一个问题，为什么用<code>QFileIconProvider</code> 比直接用<code>SHGetFileInfo</code>更快（在加载大量图标的时候）</p>
+<p>首先就是内部缓存机制，其次是延迟获取机制（先返回QIcon + Engine，在合适的时候再调用<code>filePixmap</code>）</p>
+<p>这样可以结合Qt的绘制机制进行一些奇怪的优化（多线程、局部重绘之类的）</p>
+<p>以上，我猜的</p>
+<p>好的，Peace</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://github.com/MrBeanCpp/Dr-Folder">MrBeanCpp&#x2F;Dr-Folder: Select icons for your software folders automatically. (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.cls.ink/2024/07/27/Set-Folder-Icon-and-Refresh-Cache-Immediately">更改文件夹图标 &amp; 使其立即生效 - MrBeanC-Blog</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Windows/" class="category-chain-item">Windows</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+        <a href="/tags/Icon/">#Icon</a>
+      
+        <a href="/tags/QFileIconProvider/">#QFileIconProvider</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>如何获取文件（夹）图标 without Cache</div>
+      <div>https://mrbeancpp.github.io/2024/08/01/How-to-get-file-folder-icon/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年8月1日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/07/27/Set-Folder-Icon-and-Refresh-Cache-Immediately/" title="更改文件夹图标 &amp; 使其立即生效">
+                        <span class="hidden-mobile">更改文件夹图标 &amp; 使其立即生效</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"fmutbgyn8rDyZx0KbsXNOdlt-gzGzoHsz","appKey":"BhEqZGSXY9dJvGosmjKSfvEV","path":"window.location.pathname","placeholder":"Say sth.","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"https://fmutbgyn.lc-cn-n1-shared.com","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
