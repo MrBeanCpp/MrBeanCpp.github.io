@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://mrbeancpp.github.io/img/2CT4G.png">
 <meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241007125801037.png">
 <meta property="article:published_time" content="2024-10-06T15:57:49.000Z">
-<meta property="article:modified_time" content="2024-10-07T09:44:51.172Z">
+<meta property="article:modified_time" content="2024-10-07T10:29:23.245Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Qt">
 <meta property="article:tag" content="CMake">
@@ -233,7 +233,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          3.4k 字
+          5.1k 字
         
       </span>
     
@@ -245,7 +245,7 @@
         
         
           <!-- compatible with older versions-->
-          29 分钟
+          43 分钟
         
       </span>
     
@@ -297,7 +297,7 @@
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年10月7日 下午
+                    本文最后更新于：2024年10月7日 晚上
                   
                 
               </p>
@@ -380,6 +380,16 @@
 <p>但是<code>qDebug()</code>就无法正常输出了，加上<code>QT_ASSUME_STDERR_HAS_CONSOLE=1</code>之后，也只能在<code>debug</code>模式输出</p>
 <p>而<code>std::cout</code>也只能在<code>debug</code>模式输出，aaaaa</p>
 <h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>CMake太恐怖了</p>
+<h2 id="等一下，兄弟们，再等一下"><a href="#等一下，兄弟们，再等一下" class="headerlink" title="等一下，兄弟们，再等一下"></a>等一下，兄弟们，再等一下</h2><p>我又有新发现了</p>
+<p>实际上的规则是：</p>
+<p>如果可执行文件（exe）目录下存在<code>Qt5Core.dll</code>&#x2F;<code>Qt5Cored.dll</code>，那么<code>exe</code>就会在本目录下搜索<code>plugins</code></p>
+<p>且<code>qApp-&gt;libraryPaths()</code>也会是本目录下的<code>plugins</code></p>
+<p>但是，假如在exe同目录下没有<code>Qt5Core.dll</code>&#x2F;<code>Qt5Cored.dll</code>，就会自动从<code>Qt</code>安装目录下搜索正确的<code>plugins</code>下的dll</p>
+<p>WTF，Core是定位符吗？</p>
+<p>所以实际上正确的处理方案是，删除Clion自动生成的<code>CMakeLists.txt</code>中的<code>dll</code>复制部分的代码</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-comment">#if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)</span><br><span class="hljs-comment">#    set(DEBUG_SUFFIX)</span><br><span class="hljs-comment">#    if (MSVC AND CMAKE_BUILD_TYPE MATCHES &quot;Debug&quot;)</span><br><span class="hljs-comment">#        set(DEBUG_SUFFIX &quot;d&quot;)</span><br><span class="hljs-comment">#    endif ()</span><br><span class="hljs-comment">#    set(QT_INSTALL_PATH &quot;$&#123;CMAKE_PREFIX_PATH&#125;&quot;)</span><br><span class="hljs-comment">#    if (NOT EXISTS &quot;$&#123;QT_INSTALL_PATH&#125;/bin&quot;)</span><br><span class="hljs-comment">#        set(QT_INSTALL_PATH &quot;$&#123;QT_INSTALL_PATH&#125;/..&quot;)</span><br><span class="hljs-comment">#        if (NOT EXISTS &quot;$&#123;QT_INSTALL_PATH&#125;/bin&quot;)</span><br><span class="hljs-comment">#            set(QT_INSTALL_PATH &quot;$&#123;QT_INSTALL_PATH&#125;/..&quot;)</span><br><span class="hljs-comment">#        endif ()</span><br><span class="hljs-comment">#    endif ()</span><br><span class="hljs-comment">#    if (EXISTS &quot;$&#123;QT_INSTALL_PATH&#125;/plugins/platforms/qwindows$&#123;DEBUG_SUFFIX&#125;.dll&quot;)</span><br><span class="hljs-comment">#        add_custom_command(TARGET $&#123;PROJECT_NAME&#125; POST_BUILD</span><br><span class="hljs-comment">#                COMMAND $&#123;CMAKE_COMMAND&#125; -E make_directory</span><br><span class="hljs-comment">#                &quot;$&lt;TARGET_FILE_DIR:$&#123;PROJECT_NAME&#125;&gt;/plugins/platforms/&quot;)</span><br><span class="hljs-comment">#        add_custom_command(TARGET $&#123;PROJECT_NAME&#125; POST_BUILD</span><br><span class="hljs-comment">#                COMMAND $&#123;CMAKE_COMMAND&#125; -E copy</span><br><span class="hljs-comment">#                &quot;$&#123;QT_INSTALL_PATH&#125;/plugins/platforms/qwindows$&#123;DEBUG_SUFFIX&#125;.dll&quot;</span><br><span class="hljs-comment">#                &quot;$&lt;TARGET_FILE_DIR:$&#123;PROJECT_NAME&#125;&gt;/plugins/platforms/&quot;)</span><br><span class="hljs-comment">#    endif ()</span><br><span class="hljs-comment">#    foreach (QT_LIB Core Gui Widgets)</span><br><span class="hljs-comment">#        add_custom_command(TARGET $&#123;PROJECT_NAME&#125; POST_BUILD</span><br><span class="hljs-comment">#                COMMAND $&#123;CMAKE_COMMAND&#125; -E copy</span><br><span class="hljs-comment">#                &quot;$&#123;QT_INSTALL_PATH&#125;/bin/Qt5$&#123;QT_LIB&#125;$&#123;DEBUG_SUFFIX&#125;.dll&quot;</span><br><span class="hljs-comment">#                &quot;$&lt;TARGET_FILE_DIR:$&#123;PROJECT_NAME&#125;&gt;&quot;)</span><br><span class="hljs-comment">#    endforeach (QT_LIB)</span><br><span class="hljs-comment">#endif ()</span><br></code></pre></td></tr></table></figure>
+
+<p>aaaaaaaa</p>
 <h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p>[<a target="_blank" rel="noopener" href="https://blog.csdn.net/poinsettia/article/details/129084744">windows] cmake 如何设置 需要使用的 dll_cmake添加dll-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/44784414/qt-gui-theme-looks-old-fashioned">c++ - Qt GUI主题看起来过时 - VoidCC — c++ - Qt GUI theme looks old-fashioned - Stack Overflow</a></p>
 <p><a target="_blank" rel="noopener" href="https://weikeup.medium.com/%E4%BD%BF%E7%94%A8-clion-%E9%96%8B%E7%99%BC-qt5-599784958c0a">使用 CLion 開發 Qt5. Build with CLion 2021.1 11.0.10 &amp; Qt… | by Weikeup | Medium</a></p>
