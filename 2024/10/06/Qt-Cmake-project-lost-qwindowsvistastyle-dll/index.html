@@ -16,28 +16,30 @@
   <meta name="author" content="MrBeanC">
   <meta name="keywords" content="">
   
-    <meta name="description" content="SwitchToThisWindow 导致Qt子控件分裂为窗口">
+    <meta name="description" content="为什么Qt Clion CMake 项目找不到plugins下面的dll呢">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SwitchToThisWindow 点石成金？">
-<meta property="og:url" content="https://mrbeancpp.github.io/2022/04/11/SwitchToThisWindow-%E7%AA%97%E7%8B%AC%E5%88%86%E5%AD%90%EF%BC%9F/index.html">
+<meta property="og:title" content="Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll">
+<meta property="og:url" content="https://mrbeancpp.github.io/2024/10/06/Qt-Cmake-project-lost-qwindowsvistastyle-dll/index.html">
 <meta property="og:site_name" content="MrBeanC-Blog">
-<meta property="og:description" content="SwitchToThisWindow 导致Qt子控件分裂为窗口">
+<meta property="og:description" content="为什么Qt Clion CMake 项目找不到plugins下面的dll呢">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220411225430212.png">
-<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20220411230439944.png">
-<meta property="article:published_time" content="2022-04-11T14:49:09.000Z">
-<meta property="article:modified_time" content="2022-04-11T15:21:38.550Z">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/2CT4G.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241007125801037.png">
+<meta property="article:published_time" content="2024-10-06T15:57:49.000Z">
+<meta property="article:modified_time" content="2024-10-07T05:11:01.921Z">
 <meta property="article:author" content="MrBeanC">
-<meta property="article:tag" content="Windows">
 <meta property="article:tag" content="Qt">
+<meta property="article:tag" content="CMake">
+<meta property="article:tag" content="Clion">
+<meta property="article:tag" content="dll">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://mrbeancpp.github.io/img/image-20220411225430212.png">
+<meta name="twitter:image" content="https://mrbeancpp.github.io/img/2CT4G.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>SwitchToThisWindow 点石成金？ - MrBeanC-Blog</title>
+  <title>Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll - MrBeanC-Blog</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 
@@ -202,7 +204,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="SwitchToThisWindow 点石成金？"></span>
+            <span id="subtitle" data-typed-text="Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll"></span>
           
         </div>
 
@@ -218,8 +220,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-04-11 22:49" pubdate>
-          2022年4月11日 晚上
+        <time datetime="2024-10-06 23:57" pubdate>
+          2024年10月6日 晚上
         </time>
       </span>
     
@@ -231,7 +233,7 @@
         <i class="iconfont icon-chart"></i>
         
           <!-- compatible with older versions-->
-          407 字
+          3.2k 字
         
       </span>
     
@@ -243,7 +245,7 @@
         
         
           <!-- compatible with older versions-->
-          4 分钟
+          27 分钟
         
       </span>
     
@@ -289,13 +291,13 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">SwitchToThisWindow 点石成金？</h1>
+            <h1 style="display: none">Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll</h1>
             
               <p class="note note-info">
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2022年4月11日 晚上
+                    本文最后更新于：2024年10月7日 下午
                   
                 
               </p>
@@ -303,29 +305,81 @@
             
               <div class="markdown-body">
                 
-                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>加更一期</p>
-<p>别前情提要了，熄灯了大哥</p>
-<h2 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h2><p>偶然发现</p>
-<blockquote>
-<p><code>SwitchToThisWindow</code> 作用于<code>Qt</code>子控件（如<code>QLineEdit</code>）导致原本的窗口整体分裂为众多子窗体</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs C++"><span class="hljs-built_in">SwitchToThisWindow</span>(<span class="hljs-built_in">HWND</span>(ui-&gt;lineEdit-&gt;<span class="hljs-built_in">winId</span>()), <span class="hljs-literal">true</span>);<br></code></pre></td></tr></table></figure>
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，<code>Qt6</code>已经开始慢慢抛弃<code>qmake</code>了，开始皈依<code>cmake</code></p>
+<p>而且宇宙第一IDE - <code>Clion</code>，也是不支持<code>qmake</code></p>
+<p>所以，我们在<code>Clion</code>上只能采用<code>cmake</code>编译<code>Qt</code>项目</p>
+<p>但是，很快我们就会发现，运行后的窗体非常地old fashion</p>
+<p><img src="/img/2CT4G.png" srcset="/img/loading.gif" lazyload alt="style对比"></p>
+<p>这是为什么捏？</p>
+<p>其实就是找不着<code>qwindowsvistastyle.dll</code></p>
+<p>该文件位于<code>D:\Qt\5.15.2\msvc2019_64\plugins\styles</code>（Qt安装目录的<code>plugins</code>目录下）</p>
+<p>其实我们可以发现<code>Clion</code>自动生成的<code>CMakeLists.txt</code>把<code>&quot;$&#123;QT_INSTALL_PATH&#125;/plugins/platforms/qwindows$&#123;DEBUG_SUFFIX&#125;.dll&quot;</code>复制到了exe目录下</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">EXISTS</span> <span class="hljs-string">&quot;$&#123;QT_INSTALL_PATH&#125;/plugins/platforms/qwindows$&#123;DEBUG_SUFFIX&#125;.dll&quot;</span>)<br>    <span class="hljs-keyword">add_custom_command</span>(<span class="hljs-keyword">TARGET</span> <span class="hljs-variable">$&#123;PROJECT_NAME&#125;</span> POST_BUILD<br>            <span class="hljs-keyword">COMMAND</span> <span class="hljs-variable">$&#123;CMAKE_COMMAND&#125;</span> -E <span class="hljs-keyword">make_directory</span><br>            <span class="hljs-string">&quot;$&lt;TARGET_FILE_DIR:$&#123;PROJECT_NAME&#125;&gt;/plugins/platforms/&quot;</span>)<br>    <span class="hljs-keyword">add_custom_command</span>(<span class="hljs-keyword">TARGET</span> <span class="hljs-variable">$&#123;PROJECT_NAME&#125;</span> POST_BUILD<br>            <span class="hljs-keyword">COMMAND</span> <span class="hljs-variable">$&#123;CMAKE_COMMAND&#125;</span> -E copy<br>            <span class="hljs-string">&quot;$&#123;QT_INSTALL_PATH&#125;/plugins/platforms/qwindows$&#123;DEBUG_SUFFIX&#125;.dll&quot;</span><br>            <span class="hljs-string">&quot;$&lt;TARGET_FILE_DIR:$&#123;PROJECT_NAME&#125;&gt;/plugins/platforms/&quot;</span>)<br><span class="hljs-keyword">endif</span> ()<br></code></pre></td></tr></table></figure>
 
-<p>众所周知，<code>Spy++</code>探测<code>Qt</code>窗口是只能扫到一整个窗口的</p>
-<p>但是如此操作之后，就能探测到子控件（已经上升为子窗体 拥有<code>HWND</code>）</p>
-<p><img src="/img/image-20220411225430212.png" srcset="/img/loading.gif" lazyload alt="分裂"></p>
-<p>后果是，上层子窗体会拦截<code>WM_NCHITTEST</code>，导致下层主窗体无法接收，导致自定义标题栏无法响应鼠标移动（窗体无法移动）</p>
-<p>我只能说很神奇，这绝对是一个非常难发现的特性（并没有发现任何记载）</p>
-<h3 id="More"><a href="#More" class="headerlink" title="More"></a>More</h3><p>还有更神奇的</p>
-<p>对<code>QListWidget</code>的自定义<code>item</code>使用后发现</p>
-<ul>
-<li>第一行的<code>item</code>是一个整体，第二行开始，每个控件都分裂为窗口</li>
-<li>新增的<code>item</code>在初始化时会表现为首行<code>item</code>样貌，然后瞬间恢复正常</li>
-</ul>
-<p>这就</p>
-<p><img src="/img/image-20220411230439944.png" srcset="/img/loading.gif" lazyload alt="大受震撼"></p>
-<p>交给后人了</p>
-<p>睡了 peace</p>
+<p>但却没有理睬<code>qwindowsvistastyle.dll</code>（可能是因为这不是必须文件吧）</p>
+<h2 id="怎办"><a href="#怎办" class="headerlink" title="怎办"></a>怎办</h2><p>默认情况下，<code>Windows</code> 系统会按以下顺序查找 DLL 文件：</p>
+<ol>
+<li><strong>可执行文件所在的目录</strong>。</li>
+<li><strong>系统目录</strong>（如 <code>C:\Windows\System32</code>）。</li>
+<li><strong>当前工作目录</strong>。</li>
+<li><strong>环境变量 <code>PATH</code> 指定的目录</strong>。</li>
+</ol>
+<p>其实手动地复制一下就可以了（可执行文件所在目录）</p>
+<p>注意路径是<code>style\qwindowsvistastyle.dll</code> or <code>plugins\style\qwindowsvistastyle.dll</code></p>
+<p>但是知其然而不知其所以然</p>
+<p>为什么<code>qmake</code>编译的<code>exe</code>就可以正确定位该<code>dll</code>位置（not <code>.lib</code>）呢（即便我没有设置plugins的环境变量）</p>
+<p>合理的推测是，在编译期将dll搜索目录写入了exe</p>
+<p>但貌似<code>cmake</code>无法做到这一点（on Windows）？</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/poinsettia/article/details/129084744">[windows] cmake 如何设置 需要使用的 dll_cmake添加dll-CSDN博客</a></p>
+<p><code>qmake</code>和<code>cmake</code>最终生成的都是<code>Makefile</code>，没道理出现这样的能力差异</p>
+<h3 id="Qt-Creator-CMake-vs-Clion-CMake"><a href="#Qt-Creator-CMake-vs-Clion-CMake" class="headerlink" title="Qt Creator CMake vs Clion CMake"></a>Qt Creator CMake vs Clion CMake</h3><p>而且而且，使用<code>Qt Creator</code>创建的<code>CMake</code>项目，是可以正确找到<code>plugins</code>文件夹的！</p>
+<p>aaaaaaa</p>
+<h2 id="仙人指路"><a href="#仙人指路" class="headerlink" title="仙人指路"></a>仙人指路</h2><p>Qt官方文档指出：</p>
+<blockquote>
+<p><strong>在 Qt 中，当应用程序启动时，应用程序的可执行目录是 Qt 搜索插件的基本目录。</strong></p>
+<p><strong>Qt 还会查找</strong><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qlibraryinfo.html#path">QLibraryInfo::path</a> <strong>(</strong> <a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qlibraryinfo.html#LibraryPath-enum">QLibraryInfo::PluginsPath</a> <strong>) 指定的目录，该目录通常位于</strong><code>QTDIR/plugins</code><strong>中；</strong> <code>QTDIR</code><strong>是Qt的安装目录。如果您希望 Qt 查看其他位置，您可以通过调用</strong><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qcoreapplication.html#addLibraryPath">QCoreApplication::addLibraryPath</a> <strong>() 添加所需数量的路径。如果你想设置自己的路径，你可以使用</strong><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qcoreapplication.html#setLibraryPaths">QCoreApplication::setLibraryPaths</a> <strong>()。</strong></p>
+<p><strong>或者，您可以使用</strong><code>qt.conf</code><strong>文件来覆盖编译到 Qt 库中的硬编码路径。有关更多信息，请参阅</strong><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/qt-conf.html">使用 qt.conf</a> <strong>。</strong></p>
+<p><strong>另一种可能性是在运行应用程序之前设置</strong><code>QT_PLUGIN_PATH</code><strong>环境变量；可以使用系统路径分隔符分隔多个路径。设置后，Qt 在此变量中指定的路径中查找插件。</strong></p>
+<p><strong>注意：请勿将</strong><code>QT_PLUGIN_PATH</code>导出为系统范围的环境变量，因为它可能会干扰其他 Qt 安装</p>
+</blockquote>
+<p>通过<code>qApp-&gt;libraryPaths()</code>，我们可以观察在不同编译系统下dll的搜索路径</p>
+<p>qmake &amp; Qt Creator cmake：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-string">&quot;D:/Qt/5.15.2/msvc2019_64/plugins&quot;</span>, <span class="hljs-string">&quot;D:/Qt/projects/Follower-v2.0-MSVC-Release/release&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<p>Clion cmake:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">(<span class="hljs-string">&quot;E:/Projects/cpp/QtCmakeTest-2/cmake-build-debug/plugins&quot;</span>, <span class="hljs-string">&quot;E:/Projects/cpp/QtCmakeTest-2/cmake-build-debug&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>The default path list consists of a single entry, the installation directory for plugins. The default installation directory for plugins is INSTALL&#x2F;plugins, where INSTALL is the directory where Qt was installed.</p>
+</blockquote>
+<p>我们可以发现，在默认情况下，qmake的行为与官方文档一致，返回了 Qt安装目录下的<code>plugins</code>目录 &amp; 可执行文件所在目录</p>
+<p><strong>但是cmake却返回了可执行文件目录下的<code>plugins</code>文件夹，这是为什么！</strong></p>
+<p>&#x2F;&#x2F; 这也解释了前文说，为什么<code>style\qwindowsvistastyle.dll</code> or <code>plugins\style\qwindowsvistastyle.dll</code>都可以</p>
+<p>好吧，也许<code>Qt</code>自己知道自己在哪里（<code>$QTDIR</code>），而<code>Clion</code>不知道？</p>
+<p>aaaaaa</p>
+<h2 id="Temp-Solution"><a href="#Temp-Solution" class="headerlink" title="Temp Solution"></a>Temp Solution</h2><p>好吧，寄了，世界十大未解之谜</p>
+<p>那么想要在<code>Clion</code>开发<code>Qt</code>怎么办捏</p>
+<ol>
+<li><p>手动复制<code>plugins\style\qwindowsvistastyle.dll</code></p>
+</li>
+<li><p>使用<code>CMakeLists.txt</code>自动化复制</p>
+</li>
+<li><p>使用<code>qt.conf</code>（最好放入资源文件嵌入exe）</p>
+</li>
+<li><p>使用<code>QCoreApplication::addLibraryPath</code>添加<code>plugins</code>目录</p>
+</li>
+<li><p>在<code>Clion</code>的运行配置中设置局部环境变量<code>QT_PLUGIN_PATH</code>（这样只会影响<code>Clion</code>的开发，不会影响全局）</p>
+<p><img src="/img/image-20241007125801037.png" srcset="/img/loading.gif" lazyload alt="Clion配置环境变量"></p>
+</li>
+</ol>
+<p>当然，这些都是开发配置，对于项目发布，那肯定是要使用<code>windeployqt.exe</code>工具拷贝所有<code>dll</code>的</p>
+<p>详情请参见：<a target="_blank" rel="noopener" href="https://blog.cls.ink/2022/10/12/Qt-windeployqt%E9%83%A8%E7%BD%B2%E5%8F%91%E5%B8%83%E6%B5%85%E8%B0%88/">Qt-windeployqt部署发布浅谈 - MrBeanC-Blog (cls.ink)</a></p>
+<p>Peace</p>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p>[<a target="_blank" rel="noopener" href="https://blog.csdn.net/poinsettia/article/details/129084744">windows] cmake 如何设置 需要使用的 dll_cmake添加dll-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/44784414/qt-gui-theme-looks-old-fashioned">c++ - Qt GUI主题看起来过时 - VoidCC — c++ - Qt GUI theme looks old-fashioned - Stack Overflow</a></p>
+<p><a target="_blank" rel="noopener" href="https://weikeup.medium.com/%E4%BD%BF%E7%94%A8-clion-%E9%96%8B%E7%99%BC-qt5-599784958c0a">使用 CLion 開發 Qt5. Build with CLion 2021.1 11.0.10 &amp; Qt… | by Weikeup | Medium</a></p>
+<p><a target="_blank" rel="noopener" href="https://doc.qt.io/qt-6/deployment-plugins.html">Deploying Plugins | Qt 6.7</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xcksj888/article/details/134237540">Qt程序pro中如何设置运行时库的位置_qt的pro设置库路径-CSDN博客</a></p>
 
                 
               </div>
@@ -359,9 +413,13 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Windows/">#Windows</a>
-      
         <a href="/tags/Qt/">#Qt</a>
+      
+        <a href="/tags/CMake/">#CMake</a>
+      
+        <a href="/tags/Clion/">#Clion</a>
+      
+        <a href="/tags/dll/">#dll</a>
       
     </div>
   
@@ -373,8 +431,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>SwitchToThisWindow 点石成金？</div>
-      <div>https://mrbeancpp.github.io/2022/04/11/SwitchToThisWindow-窗独分子？/</div>
+      <div>Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll</div>
+      <div>https://mrbeancpp.github.io/2024/10/06/Qt-Cmake-project-lost-qwindowsvistastyle-dll/</div>
     </div>
     <div class="license-meta">
       
@@ -386,7 +444,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年4月11日</div>
+          <div>2024年10月6日</div>
         </div>
       
       
@@ -416,18 +474,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/04/26/%E5%85%B3%E4%BA%8EC-%E6%A8%A1%E6%9D%BF%E4%B8%8E%E9%9D%9E%E6%A8%A1%E6%9D%BF%E5%87%BD%E6%95%B0%E9%87%8D%E8%BD%BD/" title="关于C++模板与非模板函数重载">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">关于C++模板与非模板函数重载</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/04/07/Windows-Hook-%E6%8A%80%E6%9C%AF%E6%B5%85%E6%9E%90/" title="Windows Hook 技术浅析">
-                        <span class="hidden-mobile">Windows Hook 技术浅析</span>
+                      <a href="/2024/08/01/How-to-get-file-folder-icon/" title="如何获取文件（夹）图标 without Cache">
+                        <span class="hidden-mobile">如何获取文件（夹）图标 without Cache</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
