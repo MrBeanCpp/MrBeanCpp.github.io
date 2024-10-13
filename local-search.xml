@@ -4,6 +4,41 @@
   
   
   <entry>
+    <title>QMake to CMake</title>
+    <link href="/2024/10/13/QMake-to-CMake/"/>
+    <url>/2024/10/13/QMake-to-CMake/</url>
+    
+    <content type="html"><![CDATA[<h2 id="Test-new-img-src"><a href="#Test-new-img-src" class="headerlink" title="Test new img src"></a>Test new img src</h2><h2 id="详情敬请期待…（等我逃离魔爪）"><a href="#详情敬请期待…（等我逃离魔爪）" class="headerlink" title="详情敬请期待…（等我逃离魔爪）"></a>详情敬请期待…（等我逃离魔爪）</h2><p><img src="/img/%E4%BA%BA%E7%94%9F%E5%95%8A.jpg" alt="life"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Qt</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>C++</tag>
+      
+      <tag>Windows</tag>
+      
+      <tag>Qt</tag>
+      
+      <tag>CMake</tag>
+      
+      <tag>QMake</tag>
+      
+      <tag>Clion</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Qt Clion CMake 项目无法定位 qwindowsvistastyle.dll</title>
     <link href="/2024/10/06/Qt-Cmake-project-lost-qwindowsvistastyle-dll/"/>
     <url>/2024/10/06/Qt-Cmake-project-lost-qwindowsvistastyle-dll/</url>
