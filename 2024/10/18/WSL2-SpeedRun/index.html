@@ -1,0 +1,898 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=dark>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="MrBeanC">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="WSL2 速通 Any%">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WSL2 SpeedRun Any%">
+<meta property="og:url" content="https://mrbeancpp.github.io/2024/10/18/WSL2-SpeedRun/index.html">
+<meta property="og:site_name" content="MrBeanC-Blog">
+<meta property="og:description" content="WSL2 速通 Any%">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018174146435.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018201342053.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018201545728.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018202523735.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018202619936.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018203433563.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018203519716.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018203729170.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018210303009.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018212656790.png">
+<meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018211139456.png">
+<meta property="article:published_time" content="2024-10-18T08:54:50.000Z">
+<meta property="article:modified_time" content="2024-10-18T13:59:06.415Z">
+<meta property="article:author" content="MrBeanC">
+<meta property="article:tag" content="Windows">
+<meta property="article:tag" content="WSL2">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://mrbeancpp.github.io/img/image-20241018174146435.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>WSL2 SpeedRun Any% - MrBeanC-Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"mrbeancpp.github.io","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":"#"},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>MrBeanC</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="WSL2 SpeedRun Any%"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-author" aria-hidden="true"></i>
+        MrBeanC
+      </span>
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-10-18 16:54" pubdate>
+          2024年10月18日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          <!-- compatible with older versions-->
+          5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          <!-- compatible with older versions-->
+          42 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">WSL2 SpeedRun Any%</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    <!-- compatible with older versions-->
+                    本文最后更新于：2024年10月18日 晚上
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>众所周知，这个世界对<code>Windows</code>开发者不太友好🥹</p>
+<p>大量开源项目很难在<code>Windows</code>上跑起来，要么是依赖支持不完善，要么是噼里啪啦</p>
+<p>由于纯<code>Linux</code>笔记本的日常App生态不够完善，因此程序员一般人手一台<code>Mac</code></p>
+<p>但是，我对这<code>Windows</code>爱得深沉😢</p>
+<p>不过好消息是 巨硬（微软）推出了<code>WSL（Windows Subsystem for Linux）</code></p>
+<p>至此，<code>Windows</code>成了最好的<code>Linux</code>虚拟机</p>
+<h2 id="WSL2"><a href="#WSL2" class="headerlink" title="WSL2"></a>WSL2</h2><p><code>WSL2</code>与<code>WSL</code>有着本质的不同</p>
+<p><code>WSL</code>通过指令转译运行于<code>Windows</code>内核之上，没有完整的 <code>Linux</code> 内核，可能会存在兼容性问题</p>
+<p>而<code>WSL2</code>是运行于<code>Hyper-V</code>虚拟化平台之上，运行一个完整的 <code>Linux</code> 内核，整体性能会更好</p>
+<p>此时，<code>Windows</code>和<code>WSL2</code>成了平级关系，均成了虚拟机，会有那么一点点的性能损失</p>
+<p>不过<code>WSL2</code>自带显卡直通（<code>nvidia-smi</code>查看），人工智能专业狂喜</p>
+<p>缺点是<code>WSL2</code>与<code>Windows</code>的文件系统互访会稍慢</p>
+<p>总体上来讲，没有特殊需求还是更推荐<code>WSL2</code>（现在默认也是这个版本）</p>
+<h2 id="Install"><a href="#Install" class="headerlink" title="Install"></a>Install</h2><p>闲话少叙，本篇是速通，还是来讲讲<code>WSL2</code>的安装吧</p>
+<p>首先我们需要开启两个<code>Windows</code>功能：</p>
+<ul>
+<li>适用于Linux的Windows子系统</li>
+<li>虚拟机平台</li>
+</ul>
+<p><img src="/img/image-20241018174146435.png" srcset="/img/loading.gif" lazyload alt="Windows功能"></p>
+<p><em>安装之后会提示重启</em></p>
+<p>接下来，直接到微软商店里搜<code>Ubuntu</code>就有了（推荐22.04版本，24.04可能会有点问题）</p>
+<p>或者使用<code>Powershell</code>（管理员权限）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --install -d Ubuntu-22.04<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>不加<code>-d Ubuntu-22.04</code>也可以，会下载默认版本</p>
+</li>
+<li><p><code>--web-download</code>：从 internet 而不是 Microsoft  Store 下载 WSL 的最新版本，如果网络有问题可以试试</p>
+</li>
+</ul>
+<p> <code>wsl --list --online</code>：可以用于列出所有支持的发行版</p>
+<p>当Ubuntu下载完毕后，会自动进行安装，大概几分钟就好了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">正在安装: Ubuntu 22.04 LTS<br>已安装 Ubuntu 22.04 LTS。<br>正在启动 Ubuntu 22.04 LTS...<br>Installing, this may take a few minutes...<br></code></pre></td></tr></table></figure>
+
+<p>然后会提示输入用户名和密码</p>
+<p>至此，你就成功地进入了<code>WSL2</code></p>
+<p>完结撒花（🫡🎶😉✌️）</p>
+<h2 id="Launch"><a href="#Launch" class="headerlink" title="Launch"></a>Launch</h2><p>之后有多种途径可以进入WSL</p>
+<ol>
+<li><p>命令行</p>
+<p>直接在命令行输入<code>wsl</code>即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\Windows\System32&gt;wsl<br>cls@MrBeanCPC:/mnt/c/Windows/System32$<br></code></pre></td></tr></table></figure>
+
+<p>但要注意，此时的工作目录是<code>Windows</code>的C盘（&#x2F;mnt&#x2F;c）</p>
+<p>可以通过<code>cd ~</code>切换回去，但不太方便</p>
+</li>
+<li><p><code>Windows</code>终端下拉列表</p>
+<p><img src="/img/image-20241018201342053.png" srcset="/img/loading.gif" lazyload alt="终端下拉列表"></p>
+<p>我们可以看到最后一个就是<code>Ubuntu</code></p>
+</li>
+<li><p>开始菜单</p>
+<p>在开始菜单中（Win键），我们可以看到两个新的应用已经被添加</p>
+<p><img src="/img/image-20241018201545728.png" srcset="/img/loading.gif" lazyload alt="WSL &amp; Settings"></p>
+<p><code>WSL Settings</code>是在最近的更新中才添加的可视化配置工具，非常好用</p>
+<p>而<code>WSL</code>打开之后就会进入到默认的Linux发行版，也很方便</p>
+</li>
+</ol>
+<h2 id="Get-out-of-C"><a href="#Get-out-of-C" class="headerlink" title="Get out of C:\"></a>Get out of <code>C:\</code></h2><p><strong>如果你的C盘够大，可以跳过这一节</strong></p>
+<h3 id="安装位置"><a href="#安装位置" class="headerlink" title="安装位置"></a>安装位置</h3><p>默认情况下，WSL 2 使用一个虚拟硬盘（VHD）来存储文件：</p>
+<p><code>C:\Users\&lt;YourUsername&gt;\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_&lt;version&gt;\LocalState\ext4.vhdx</code></p>
+<h3 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h3><p>为了不让C盘爆掉，我们还是需要进行一次迁移</p>
+<p>其实也不难，仅数个步骤：</p>
+<ol>
+<li><p>停止WSL</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --shutdown<br></code></pre></td></tr></table></figure>
+
+<p>我们还可以通过<code>wsl -l -v</code>查看所有安装的linux子系统状态（Stopped&#x2F;Running）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">PS C:\WINDOWS\system32&gt; wsl -l -v<br>  NAME            STATE           VERSION<br>* Ubuntu-22.04    Running         2<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>导出</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --<span class="hljs-built_in">export</span> &lt;名称&gt; &lt;要保存的路径&gt;<br></code></pre></td></tr></table></figure>
+
+<p>例如：<code>wsl --export Ubuntu-22.04 D:\ubuntu.tar</code></p>
+<p>注意，这里的名称要与<code>wsl -l -v</code>显示的<code>Name</code>对应</p>
+</li>
+<li><p>取消注册</p>
+<p>然后我们需要先把原本的Linux删除（C盘）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --unregister Ubuntu-22.04<br></code></pre></td></tr></table></figure>
+
+<p>酱紫，上文提到的<strong>VHD</strong>就消失了（C盘空间释放）</p>
+<p>需要注意的是，<code>WindowsApps</code>文件夹中还会留有一个<code>Ubuntu-22.04</code>的应用，可以在开始菜单（Win键）右键卸载</p>
+<p>&amp; ↑如果直接点击这个应用的话，会自动在C盘再次重装<code>Ubuntu</code>（😾）</p>
+</li>
+<li><p>导入</p>
+<p>此时，我们可以将<code>ubuntu.tar</code>重新导入系统（可选目录）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --import &lt;Name&gt; &lt;安装目录&gt; &lt;.tar路径&gt; --version 2<br></code></pre></td></tr></table></figure>
+
+<p>例如：<code>wsl --import Ubuntu D:\WSL-Ubuntu D:\ubuntu.tar --version 2</code></p>
+<p>此时，我们已经完成了<code>Ubuntu</code>的目录迁移</p>
+<p>可以在终端的下拉列表中看到一个新的配置文件</p>
+<p><img src="/img/image-20241018202523735.png" srcset="/img/loading.gif" lazyload alt="小企鹅"></p>
+<p>其实这个也没有什么特别的，点进设置我们可以看到其内部也是调用了<code>wsl</code>命令</p>
+<p><img src="/img/image-20241018202619936.png" srcset="/img/loading.gif" lazyload alt="终端配置文件"></p>
+<p>用<code>wsl</code>命令启动了名为<code>Ubuntu</code>的发行版，且<code>cd</code>启动目录到了<code>~</code>, Just</p>
+<p>但是直接进入<code>Ubuntu</code>，我们会发现默认用户是<code>root</code>（为什么root在终端没有高亮！震怒🙃）</p>
+</li>
+<li><p>设置默认用户（可选）</p>
+<p>进入<code>WSL2</code>后，我们可以通过编辑<code>/etc/wsl.conf</code>配置默认用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs conf">[user]<br>default=mrbean<br></code></pre></td></tr></table></figure>
+
+<p>加这两行就行</p>
+<p><strong>然后记得<code>wsl --shutdown</code>关闭重启一下</strong></p>
+<p>&#x2F;&#x2F; 什么，你说你不会用vim or nano</p>
+<p>&#x2F;&#x2F; 别急，直接装个gedit（往下看）</p>
+</li>
+</ol>
+<h2 id="WSLg"><a href="#WSLg" class="headerlink" title="WSLg"></a>WSLg</h2><p><code>WSLg</code>是微软的又一黑科技（他真的，我哭死）</p>
+<p>aka, WSL GUI</p>
+<p>可以直接在<code>Windows</code>中打开并显示<code>Linux</code>的<code>GUI</code>程序（显示在任务栏的那种）</p>
+<p>小试牛刀一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install gedit<br>gedit<br></code></pre></td></tr></table></figure>
+
+<p>注意：Ubuntu 24.04启动（非sudo情况下）WSLg可能出现启动慢的情况</p>
+<p><img src="/img/image-20241018203433563.png" srcset="/img/loading.gif" lazyload alt="gedit in windows"></p>
+<p>神不神奇，<code>gedit</code>的界面直接无缝显示在了<code>Windows</code>中</p>
+<p>而且你还能在<code>Windows</code>的开始菜单中看到他（Text Editor）</p>
+<p><img src="/img/image-20241018203519716.png" srcset="/img/loading.gif" lazyload alt="gedit 开始菜单"></p>
+<p>貌似是RDP协议巴拉的</p>
+<p>但是大部分的GUI程序其实显示的时候都会有一个白色边框</p>
+<p><img src="/img/image-20241018203729170.png" srcset="/img/loading.gif" lazyload alt="Chome-WSLg"></p>
+<p>emmmm，非常膈应人</p>
+<p>只能说，可以用，但是，aaaa</p>
+<p>关于解决方案的话，好像资料并不多，这里有一个issue可以看看：<a target="_blank" rel="noopener" href="https://github.com/microsoft/wslg/issues/530">Run X11 windows without windows manager decoration · Issue #530</a></p>
+<p>Linux Chrome安装详见：<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps#install-google-chrome-for-linux">使用 WSL 运行 Linux GUI 应用 | Microsoft Learn</a></p>
+<p>（否则没有浏览器的话<code>Jetbrains</code>的登录、认证跳转会失败）</p>
+<h2 id="中文支持"><a href="#中文支持" class="headerlink" title="中文支持"></a>中文支持</h2><p><code>WSL2</code>貌似默认不能显示中文（会变成方框）</p>
+<p>可以参考一下这篇博客：<a target="_blank" rel="noopener" href="https://blog.csdn.net/lujian45/article/details/135314466#:~:text=%E8%BE%93%E5%85%A5%EF%BC%9Agoogle%2Dchrome-,3.,-%E5%AE%89%E8%A3%85%E4%B8%AD%E6%96%87%E7%8E%AF%E5%A2%83">安装中文环境和字体</a></p>
+<ol>
+<li><h3 id="安装中文环境和字体"><a href="#安装中文环境和字体" class="headerlink" title="安装中文环境和字体"></a>安装中文环境和字体</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo apt install language-pack-zh-hans<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>手动配置一下<code>locale</code>（选择<code>zh_CN.UTF-8 UTF-8</code>）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo dpkg-reconfigure locales<br></code></pre></td></tr></table></figure>
+
+<p>&#x2F;&#x2F; 空格选择，TAB切换按钮</p>
+</li>
+<li><p>映射<code>Windows</code>字体到<code>Ubuntu</code></p>
+<p>打开<code>/etc/fonts/local.conf</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo vim /etc/fonts/local.conf<br></code></pre></td></tr></table></figure>
+
+<p>输入以下内容</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span>?&gt;</span><br><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">fontconfig</span> <span class="hljs-keyword">SYSTEM</span> <span class="hljs-string">&quot;fonts.dtd&quot;</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">fontconfig</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">dir</span>&gt;</span>/mnt/c/Windows/Fonts<span class="hljs-tag">&lt;/<span class="hljs-name">dir</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">fontconfig</span>&gt;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>刷新字体缓存</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">fc-cache -f -v<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>最后重启WSL</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">wsl <span class="hljs-literal">--shutdown</span><br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="WSL-Settings"><a href="#WSL-Settings" class="headerlink" title="WSL Settings"></a>WSL Settings</h2><h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>好了，这是一个老生常谈的问题</p>
+<p>不过好消息是，近期的<code>WSL2</code>更新了<code>mirrored</code>镜像模式（默认是NAT），可以和主机共用一个IP</p>
+<p>开启后，还能自动检测<code>Windows</code>的代理设置，简直不要太方便</p>
+<p><img src="/img/image-20241018210303009.png" srcset="/img/loading.gif" lazyload alt="WSL2设置网络"></p>
+<p>只要打开<code>WSL Settings</code>，并将网络-网络模式改为<code>Mirrored</code>，然后重启即可</p>
+<p>通过<code>ifconfig</code>命令就可以看到ip的变化了</p>
+<h3 id="延迟关闭"><a href="#延迟关闭" class="headerlink" title="延迟关闭"></a>延迟关闭</h3><p><img src="/img/image-20241018212656790.png" srcset="/img/loading.gif" lazyload alt="空闲超时"></p>
+<p>这里顺便说一下，关闭<code>Ubuntu</code>命令行界面之后，WSL并不会马上关闭，而是等待60s不活动之后再关闭</p>
+<h2 id="WSL2与Windows互通"><a href="#WSL2与Windows互通" class="headerlink" title="WSL2与Windows互通"></a>WSL2与Windows互通</h2><h3 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h3><p>两个系统分别都可以访问对方的文件系统，但是跨文件系统会比较慢</p>
+<p>而且<code>WSL2</code>的文件可以直接在<code>Windows</code>的资源管理器中查看（嘿嘿）</p>
+<p><img src="/img/image-20241018211139456.png" srcset="/img/loading.gif" lazyload alt="资源管理器-WSL2"></p>
+<p>在<code>WSL2</code>中，<code>Windows</code>的磁盘路径为：<code>/mnt/c</code>, <code>/mnt/d</code>（c d是盘符，以此类推）</p>
+<p>而在<code>Windows</code>中，WSL2的路径为：<code>\\wsl.localhost\Ubuntu\</code></p>
+<p>都可以用自身的软件打开对方的文件，没有问题，但是很慢（不建议）</p>
+<h3 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h3><p>他俩命令也是互通的，惊不惊喜，意不意外</p>
+<p>在<code>WSL2</code>，可以调用<code>Windows</code>的notepad，explorer等程序，如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">notepad.exe /etc/wsl.conf<br></code></pre></td></tr></table></figure>
+
+<p>而在<code>Windows</code>中，可以使用<code>wsl xxx</code>这样的形式调用WSL命令，如</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">wsl gedit<br></code></pre></td></tr></table></figure>
+
+<p>甚至可以命令混写：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">dir</span> | wsl grep power<br></code></pre></td></tr></table></figure>
+
+<p>秀儿</p>
+<h2 id="端口无权限问题"><a href="#端口无权限问题" class="headerlink" title="端口无权限问题"></a>端口无权限问题</h2><p>注意：开启Hyper-V之后，可能导致某些端口无权限访问，例如heox server默认使用的4000端口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">Error: listen EACCES: permission denied 0.0.0.0:4000<br></code></pre></td></tr></table></figure>
+
+<p>这里提示的并不是端口占用，而是无权限</p>
+<p>使用<code>netstat -ano|findstr &quot;:4000&quot;</code>也是找不到什么结果的</p>
+<p>这是因为开启Hyper-V之后这一段端口被系统保留了，无法使用</p>
+<p>可以使用以下命令查看</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> netsh interface ipv4 show excludedportrange protocol=tcp<br>协议 tcp 端口排除范围<br>开始端口    结束端口<br><span class="hljs-literal">----------</span>    <span class="hljs-literal">--------</span><br>      <span class="hljs-number">1462</span>        <span class="hljs-number">1462</span><br>      <span class="hljs-number">3437</span>        <span class="hljs-number">3536</span><br>      <span class="hljs-number">3537</span>        <span class="hljs-number">3636</span><br>      <span class="hljs-number">3783</span>        <span class="hljs-number">3882</span><br>      <span class="hljs-number">3883</span>        <span class="hljs-number">3982</span><br>      <span class="hljs-number">3983</span>        <span class="hljs-number">4082</span><br>      <span class="hljs-number">4083</span>        <span class="hljs-number">4182</span><br>      <span class="hljs-number">4283</span>        <span class="hljs-number">4382</span><br>      <span class="hljs-number">4383</span>        <span class="hljs-number">4482</span><br>      <span class="hljs-number">4483</span>        <span class="hljs-number">4582</span><br>      <span class="hljs-number">4683</span>        <span class="hljs-number">4782</span><br>      <span class="hljs-number">4783</span>        <span class="hljs-number">4882</span><br>      <span class="hljs-number">5357</span>        <span class="hljs-number">5357</span><br>      <span class="hljs-number">5358</span>        <span class="hljs-number">5457</span><br>     <span class="hljs-number">50000</span>       <span class="hljs-number">50059</span>     *<br><br>* - 管理的端口排除。<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> netsh interface ipv4 show excludedportrange protocol=udp<br><br>协议 udp 端口排除范围<br><br>开始端口    结束端口<br><span class="hljs-literal">----------</span>    <span class="hljs-literal">--------</span><br>     <span class="hljs-number">50000</span>       <span class="hljs-number">50059</span>     *<br>     <span class="hljs-number">52672</span>       <span class="hljs-number">52771</span><br>     <span class="hljs-number">54373</span>       <span class="hljs-number">54472</span><br>     <span class="hljs-number">61228</span>       <span class="hljs-number">61327</span><br>     <span class="hljs-number">61432</span>       <span class="hljs-number">61531</span><br>     <span class="hljs-number">61673</span>       <span class="hljs-number">61772</span><br>     <span class="hljs-number">62278</span>       <span class="hljs-number">62377</span><br>     <span class="hljs-number">62378</span>       <span class="hljs-number">62477</span><br>     <span class="hljs-number">62478</span>       <span class="hljs-number">62577</span><br>     <span class="hljs-number">62578</span>       <span class="hljs-number">62677</span><br>     <span class="hljs-number">62778</span>       <span class="hljs-number">62877</span><br>     <span class="hljs-number">62978</span>       <span class="hljs-number">63077</span><br>     <span class="hljs-number">63178</span>       <span class="hljs-number">63277</span><br><br>* - 管理的端口排除。<br></code></pre></td></tr></table></figure>
+
+<p>所以没办法，只能手动改用其他端口了</p>
+<h3 id="Peace"><a href="#Peace" class="headerlink" title="Peace"></a>Peace</h3><h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps#install-google-chrome-for-linux">使用 WSL 运行 Linux GUI 应用 | Microsoft Learn</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1EF4m1V7pp/">[WSL2教程] WSL安装linux系统以及从C盘迁移至其他盘</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1tW42197za/">超详细的WSL教程：Windows上的Linux子系统_哔哩哔哩_bilibili</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/microsoft/wslg/issues/530">Run X11 windows without windows manager decoration · Issue #530 · microsoft&#x2F;wslg (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/lujian45/article/details/135314466">在Windows10\11的WSL2中使用图形化应用Chrome和搜狗拼音输入法_win11 wsl2 图形化-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/428957165">WSL2 基于WSLg运行Clion等GUI应用 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/wsl/faq">关于适用于 Linux 的 Windows 子系统的常见问题解答 | Microsoft Learn</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/oaks/p/16054012.html">给WSL应用程序创建Windows快捷方式 - oaksharks - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.skitisu.com/win10-1080-port-bind-forbidden/">解决Win10 1080端口无权限使用的问题 - 四季天书SkiTiSu’s blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.ll00.cn/archives/159.html">记录一个端口监听失败问题 - 零零博客 (ll00.cn)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/WSL2/" class="category-chain-item">WSL2</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Windows/">#Windows</a>
+      
+        <a href="/tags/WSL2/">#WSL2</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>WSL2 SpeedRun Any%</div>
+      <div>https://mrbeancpp.github.io/2024/10/18/WSL2-SpeedRun/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>MrBeanC</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年10月18日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/10/13/QMake-to-CMake/" title="QMake to CMake">
+                        <span class="hidden-mobile">QMake to CMake</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"fmutbgyn8rDyZx0KbsXNOdlt-gzGzoHsz","appKey":"BhEqZGSXY9dJvGosmjKSfvEV","path":"window.location.pathname","placeholder":"Say sth.","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"https://fmutbgyn.lc-cn-n1-shared.com","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/tocbot@4.12.3/dist/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/anchor-js@4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
