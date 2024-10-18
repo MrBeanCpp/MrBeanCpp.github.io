@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018212656790.png">
 <meta property="og:image" content="https://mrbeancpp.github.io/img/image-20241018211139456.png">
 <meta property="article:published_time" content="2024-10-18T08:54:50.000Z">
-<meta property="article:modified_time" content="2024-10-18T13:59:06.415Z">
+<meta property="article:modified_time" content="2024-10-18T16:57:55.898Z">
 <meta property="article:author" content="MrBeanC">
 <meta property="article:tag" content="Windows">
 <meta property="article:tag" content="WSL2">
@@ -304,7 +304,7 @@
                 
                   
                     <!-- compatible with older versions-->
-                    本文最后更新于：2024年10月18日 晚上
+                    本文最后更新于：2024年10月19日 凌晨
                   
                 
               </p>
@@ -356,7 +356,7 @@
 <p>直接在命令行输入<code>wsl</code>即可</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">C:\Windows\System32&gt;wsl<br>cls@MrBeanCPC:/mnt/c/Windows/System32$<br></code></pre></td></tr></table></figure>
 
-<p>但要注意，此时的工作目录是<code>Windows</code>的C盘（&#x2F;mnt&#x2F;c）</p>
+<p>但要注意，此时的工作目录是<code>Windows</code>的C盘（&#x2F;mnt&#x2F;c）（😾）</p>
 <p>可以通过<code>cd ~</code>切换回去，但不太方便</p>
 </li>
 <li><p><code>Windows</code>终端下拉列表</p>
@@ -386,7 +386,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">wsl --<span class="hljs-built_in">export</span> &lt;名称&gt; &lt;要保存的路径&gt;<br></code></pre></td></tr></table></figure>
 
 <p>例如：<code>wsl --export Ubuntu-22.04 D:\ubuntu.tar</code></p>
-<p>注意，这里的名称要与<code>wsl -l -v</code>显示的<code>Name</code>对应</p>
+<p>注意，这里的名称要与<code>wsl -l -v</code>显示的<code>Name</code>对应（😾）</p>
 </li>
 <li><p>取消注册</p>
 <p>然后我们需要先把原本的Linux删除（C盘）</p>
@@ -414,7 +414,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs conf">[user]<br>default=mrbean<br></code></pre></td></tr></table></figure>
 
 <p>加这两行就行</p>
-<p><strong>然后记得<code>wsl --shutdown</code>关闭重启一下</strong></p>
+<p><strong>然后记得<code>wsl --shutdown</code>关闭重启一下</strong>（😾）</p>
 <p>&#x2F;&#x2F; 什么，你说你不会用vim or nano</p>
 <p>&#x2F;&#x2F; 别急，直接装个gedit（往下看）</p>
 </li>
@@ -437,7 +437,7 @@
 <p>只能说，可以用，但是，aaaa</p>
 <p>关于解决方案的话，好像资料并不多，这里有一个issue可以看看：<a target="_blank" rel="noopener" href="https://github.com/microsoft/wslg/issues/530">Run X11 windows without windows manager decoration · Issue #530</a></p>
 <p>Linux Chrome安装详见：<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/wsl/tutorials/gui-apps#install-google-chrome-for-linux">使用 WSL 运行 Linux GUI 应用 | Microsoft Learn</a></p>
-<p>（否则没有浏览器的话<code>Jetbrains</code>的登录、认证跳转会失败）</p>
+<p>（否则没有浏览器的话<code>Jetbrains</code>的登录、认证跳转会失败）（😾）</p>
 <h2 id="中文支持"><a href="#中文支持" class="headerlink" title="中文支持"></a>中文支持</h2><p><code>WSL2</code>貌似默认不能显示中文（会变成方框）</p>
 <p>可以参考一下这篇博客：<a target="_blank" rel="noopener" href="https://blog.csdn.net/lujian45/article/details/135314466#:~:text=%E8%BE%93%E5%85%A5%EF%BC%9Agoogle%2Dchrome-,3.,-%E5%AE%89%E8%A3%85%E4%B8%AD%E6%96%87%E7%8E%AF%E5%A2%83">安装中文环境和字体</a></p>
 <ol>
@@ -486,7 +486,7 @@
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">dir</span> | wsl grep power<br></code></pre></td></tr></table></figure>
 
 <p>秀儿</p>
-<h2 id="端口无权限问题"><a href="#端口无权限问题" class="headerlink" title="端口无权限问题"></a>端口无权限问题</h2><p>注意：开启Hyper-V之后，可能导致某些端口无权限访问，例如heox server默认使用的4000端口</p>
+<h2 id="端口无权限问题"><a href="#端口无权限问题" class="headerlink" title="端口无权限问题"></a>端口无权限问题</h2><p>注意：开启<code>Hyper-V</code>之后，可能导致某些端口无权限访问，例如<code>heox server</code>默认使用的4000端口（😾）</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">Error: listen EACCES: permission denied 0.0.0.0:4000<br></code></pre></td></tr></table></figure>
 
 <p>这里提示的并不是端口占用，而是无权限</p>
