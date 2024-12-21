@@ -49,6 +49,8 @@
       
       <tag>C++</tag>
       
+      <tag>Windows</tag>
+      
       <tag>Qt</tag>
       
       <tag>CMake</tag>
@@ -56,8 +58,6 @@
       <tag>QMake</tag>
       
       <tag>Clion</tag>
-      
-      <tag>Windows</tag>
       
     </tags>
     
@@ -113,11 +113,11 @@
     
     <tags>
       
-      <tag>Qt</tag>
+      <tag>Icon</tag>
       
       <tag>Windows</tag>
       
-      <tag>Icon</tag>
+      <tag>Qt</tag>
       
       <tag>QFileIconProvider</tag>
       
@@ -146,9 +146,9 @@
       
       <tag>C++</tag>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>Win11</tag>
       
@@ -202,9 +202,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
@@ -756,9 +756,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>dll</tag>
       
@@ -791,9 +791,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>MinGW</tag>
       
@@ -938,9 +938,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
@@ -1023,9 +1023,9 @@
       
       <tag>C++</tag>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>Debug</tag>
       
@@ -1135,9 +1135,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
@@ -1164,9 +1164,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>WinPcap</tag>
       
@@ -1220,9 +1220,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
@@ -1260,9 +1260,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
@@ -1316,9 +1316,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
       <tag>windeployqt</tag>
       
@@ -1347,9 +1347,9 @@
     
     <tags>
       
-      <tag>Qt</tag>
-      
       <tag>Windows</tag>
+      
+      <tag>Qt</tag>
       
     </tags>
     
